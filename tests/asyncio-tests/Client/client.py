@@ -1,5 +1,4 @@
 #!/usr/bin/env python3.8
-####### TEST #######
 import asyncio
 import sys
 

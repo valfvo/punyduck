@@ -30,3 +30,11 @@
 *.exe
 *.out
 *.app
+
+#Fichier Tests
+test/asyncio-tests/Client/FileTest.py
+test/asyncio-tests/Serveur/FileTest.py
+test/asyncio-tests/Simulation_BD
+test/asyncio-tests/c.py
+test/asyncio-tests/s.py
+test/asyncio-tests/test.py
