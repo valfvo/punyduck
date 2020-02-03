@@ -16,7 +16,7 @@ def decodeBuffer(buffer):
 
 async def encode_file(name):
     try:
-        with open("../Simulation_BD/"+name) as file:
+        with open(name, "rb") as file:
             data = file.read()
     except IOError:
         print("Erreur ! Le fichier n'a pas pu être ouvert")
@@ -25,20 +25,23 @@ async def encode_file(name):
     return data
 
 async def download_file(data):
-    with open("../Simulation_BD/FileTest.py", "w") as file:
+    with open("FileTest.py", "wb") as file:
         file.write(data)
 
 async def send_toClient(writer, message):
     sizeBuffer_send = encodeBuffer(message)
     writer.write(sizeBuffer_send)
     # print(f'\033[36mMessage send : \033[93m{message}\033[0m')
-    writer.write(message.encode())
+    try:
+        writer.write(message.encode())
+    except AttributeError:
+        writer.write(message)
 
 async def receive_fromClient(reader):
     sizeBuffer_received = decodeBuffer(await reader.read(4))
     data = await reader.read(sizeBuffer_received)
 
-    return data.decode()
+    return data
 
 async def handle_echo(reader, writer):
     connexion = True
@@ -50,6 +53,7 @@ async def handle_echo(reader, writer):
             await download_file(data)
         elif action == 1:
             nameFile = await receive_fromClient(reader)
+            print(f"\033[36mClient ask for {nameFile.decode()!r}")
             await send_toClient(writer, await encode_file(nameFile))
         elif action == 2:
             connexion = False
@@ -62,7 +66,7 @@ async def handle_echo(reader, writer):
 
 async def main():
     server = await asyncio.start_server(
-        handle_echo, '192.168.0.16', 8888)
+        handle_echo, '192.168.0.15', 8888)
 
     addr = server.sockets[0].getsockname()
     print(f'Serving on {addr}')
