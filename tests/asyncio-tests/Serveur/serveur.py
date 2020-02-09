@@ -1,6 +1,6 @@
 #!/usr/bin/env python3.8
 import asyncio
-
+import os
 
 def encodeBuffer(message):
     sizeBuffer_send = len(message).to_bytes(4, "big")
@@ -14,21 +14,39 @@ def decodeBuffer(buffer):
     
     return sizeBuffer_received
 
-async def encode_file(name):
+async def send_file(path, writer):
     try:
-        with open(name, "rb") as file:
+        with open(path, "rb") as file:
             data = file.read()
+            # nameFile = path.split('/')[-1].encode()
+            lenghtName = len(path).to_bytes(1, "big")
+            data = lenghtName + path + data
     except IOError:
         print("Erreur ! Le fichier n'a pas pu être ouvert")
         data = "Erreur ! Le fichier n'a pas pu être ouvert"
     
-    return data
+    await send_message(writer, data)
 
-async def download_file(data):
-    with open("FileTest.py", "wb") as file:
+async def receive_file(reader):
+    data = await receive_message(reader)
+    lenghtName = data[0]
+    path = data[1:lenghtName+1]
+    path = path.decode()
+    path = path.split('/')
+    nameFile = path[-1]
+    path2 = ""
+    for i in path[0:-1]:
+        path2 += i + '/'
+    try:
+        os.makedirs(path2)
+    except:
+        pass
+    data = data[(lenghtName+1):]
+    print("file received check ; path2 = ", path2, " nameFile = ", nameFile)
+    with open(nameFile, "wb") as file:
         file.write(data)
 
-async def send_toClient(writer, message):
+async def send_message(writer, message):
     sizeBuffer_send = encodeBuffer(message)
     writer.write(sizeBuffer_send)
     # print(f'\033[36mMessage send : \033[93m{message}\033[0m')
@@ -37,7 +55,7 @@ async def send_toClient(writer, message):
     except AttributeError:
         writer.write(message)
 
-async def receive_fromClient(reader):
+async def receive_message(reader):
     sizeBuffer_received = decodeBuffer(await reader.read(4))
     data = await reader.read(sizeBuffer_received)
 
@@ -48,13 +66,13 @@ async def handle_echo(reader, writer):
     while connexion:
         action = await reader.read(1)
         action = int.from_bytes(action, "big")
+        print("action = ", action)
         if action == 0:
-            data = await receive_fromClient(reader)
-            await download_file(data)
+            await receive_file(reader)
         elif action == 1:
-            nameFile = await receive_fromClient(reader)
+            nameFile = await receive_message(reader)
             print(f"\033[36mClient ask for {nameFile.decode()!r}")
-            await send_toClient(writer, await encode_file(nameFile))
+            await send_file(nameFile, writer)
         elif action == 2:
             connexion = False
         else:
@@ -66,7 +84,7 @@ async def handle_echo(reader, writer):
 
 async def main():
     server = await asyncio.start_server(
-        handle_echo, '192.168.0.15', 8888)
+        handle_echo, '127.0.0.1', 8888)
 
     addr = server.sockets[0].getsockname()
     print(f'Serving on {addr}')
