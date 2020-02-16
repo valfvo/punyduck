@@ -147,7 +147,7 @@ int main()
     ourShader.setInt("texture1", 0);
     ourShader.setInt("texture2", 1);
 
-
+    // glfwMaximizeWindow(window);
     // render loop
     // -----------
     while (!glfwWindowShouldClose(window))
