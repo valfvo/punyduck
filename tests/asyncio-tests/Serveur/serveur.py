@@ -5,7 +5,6 @@ import re
 
 def encodeBuffer(message):
     sizeBuffer_send = len(message).to_bytes(4, "big")
-    # print("\033[91mSize Buffer sent : ", int.from_bytes(sizeBuffer_send, "big"), "\033[0m")
     
     return sizeBuffer_send
 
@@ -24,7 +23,6 @@ async def send_file(path, writer):
     try:
         with open(path, "rb") as file:
             data = file.read()
-            # nameFile = path.split('/')[-1].encode()
             lenghtPath = len(path).to_bytes(1, "big")
             data = lenghtPath + path + data
     except IOError:
@@ -35,7 +33,6 @@ async def send_file(path, writer):
 
 async def receive_file(reader):
     data = await receive_message(reader)
-    # print("data = ", data)
     lenghtPath = data[0]
     path = data[1:lenghtPath+1]
     path = path.decode()
@@ -50,7 +47,6 @@ async def receive_file(reader):
     except:
         pass
     data = data[(lenghtPath+1):]
-    # print(data)
     print("file received check ; path2 = ", path2, " nameFile = ", nameFile)
     with open(path2+nameFile, "wb") as file:
         file.write(data)
@@ -58,7 +54,6 @@ async def receive_file(reader):
 async def send_message(writer, message):
     sizeBuffer_send = encodeBuffer(message)
     writer.write(sizeBuffer_send)
-    # print(f'\033[36mMessage send : \033[93m{message}\033[0m')
     try:
         writer.write(message.encode())
     except AttributeError:
@@ -74,11 +69,6 @@ async def receive_message(reader):
         packet = await reader.read(chuncksize)
         data += packet
         sizeBuffer_received -= len(packet)
-        # if sizeBuffer_received >= 1024:
-            # data += await reader.read(1024)
-        # else:
-            # data += await reader.read(sizeBuffer_received)
-        # sizeBuffer_received -= 1024 #- len(data)
 
     return data
 

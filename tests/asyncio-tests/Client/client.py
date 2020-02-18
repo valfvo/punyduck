@@ -3,8 +3,6 @@ import asyncio
 import os
 import re
 
-#Longueur du nom qui n'est pas la longueur binaire
-
 def encodeBuffer(message):
     if type(message) == bytes:
         print("\033[31mMessage : encodé\033[0m")
@@ -17,7 +15,6 @@ def encodeBuffer(message):
 
 def decodeBuffer(buffer):
     sizeBuffer_received = int.from_bytes(buffer, "big")
-    # print(f"\033[91mReceived size buffer : {sizeBuffer_received!r}\033[0m")
 
     return sizeBuffer_received
 
@@ -31,9 +28,7 @@ async def send_file(path, writer):
     try:
         with open(path, "rb") as file:
             data = file.read()
-            # nameFile = path.split('/')[-1].encode()
         lenghtpath = len(path.encode()).to_bytes(1, "big")
-            # print("lenghtName = ", lenghtName)
         data = lenghtpath + path.encode() + data
     except IOError:
         print("Erreur ! Le fichier n'a pas pu être ouvert")
@@ -42,14 +37,10 @@ async def send_file(path, writer):
     await send_message(writer, data)
 
 async def receive_file(reader):
-    # print("receive_file() begin")
     data = await receive_message(reader)
-    # print("data read check")
     lenghtName = data[0]
-    # print("lenghtname check : ", lenghtName)
     path = data[1:lenghtName+1]
     path = path.decode()
-    # print("path = ", path)
     path = path.split('/')
     nameFile = path[-1]
     path2 = ""
@@ -69,10 +60,8 @@ async def send_message(writer, message):
     sizeBuffer_send = encodeBuffer(message)
     writer.write(sizeBuffer_send)
     await writer.drain()
-    # print(f'\033[36mMessage send : \033[93m{message}\033[0m')
     i = 0
     while len(message) > 0:
-        # print(message[:1024], "\n\n")
         writer.write(message[:1024])
         message = message[1024:]
         i += 1
@@ -116,7 +105,6 @@ async def main():
             await writer.drain()
             nameDir = input("Veuillez entrer le nom du fichier à télécharger : ")
             await send_message(writer, nameDir.encode())
-            # print("send message check")
             await receive_file(reader)
             print(f"{nameDir} successfully downloaded")
         elif action == "quitter":
