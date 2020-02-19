@@ -32,9 +32,8 @@ async def send_file(path, writer):
     await send_message(writer, data)
 
 async def receive_file(reader):
+    path = await receive_message(reader)
     data = await receive_message(reader)
-    lenghtPath = data[0]
-    path = data[1:lenghtPath+1]
     path = path.decode()
     path = path.split('/')
     nameFile = path[-1]
@@ -46,7 +45,6 @@ async def receive_file(reader):
         os.makedirs(path2)
     except:
         pass
-    data = data[(lenghtPath+1):]
     print("file received check ; path2 = ", path2, " nameFile = ", nameFile)
     with open(path2+nameFile, "wb") as file:
         file.write(data)
@@ -61,14 +59,16 @@ async def send_message(writer, message):
 
 async def receive_message(reader):
     sizeBuffer_received = decodeBuffer(await reader.read(4))
-    data = bytearray()
-    chuncksize = 1024
-    while sizeBuffer_received > 0:
-        if sizeBuffer_received < chuncksize:
-            chuncksize = sizeBuffer_received
-        packet = await reader.read(chuncksize)
-        data += packet
-        sizeBuffer_received -= len(packet)
+    data = bytearray(sizeBuffer_received)
+    packetsize = 1024
+    total_read = 0
+    while True:
+        packetsize = min(sizeBuffer_received-total_read, packetsize)
+        if packetsize <= 0:
+            return data
+        packet = await reader.read(packetsize)
+        data[total_read:total_read+len(packet)] = packet
+        total_read += len(packet)
 
     return data
 

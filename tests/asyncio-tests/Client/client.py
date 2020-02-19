@@ -27,14 +27,19 @@ async def send_file(path, writer):
     writer.write(int(0).to_bytes(1, "big"))
     try:
         with open(path, "rb") as file:
-            data = file.read()
-        lenghtpath = len(path.encode()).to_bytes(1, "big")
-        data = lenghtpath + path.encode() + data
+            lenghtpath = len(path.encode()).to_bytes(4, "big")
+            sendpath = lenghtpath + path.encode()
+            print("\033[33m sendpath = ", sendpath, "\033[0m")
+            writer.write(sendpath)
+            filesize = os.path.getsize(path)
+            writer.write(filesize.to_bytes(4, 'big'))
+            loop = asyncio.get_running_loop()
+            await loop.sendfile(writer.transport, file)
+            await writer.drain()
     except IOError:
         print("Erreur ! Le fichier n'a pas pu être ouvert")
         data = "Erreur ! Le fichier n'a pas pu être ouvert".encode()
-    
-    await send_message(writer, data)
+        await send_message(writer, data)
 
 async def receive_file(reader):
     data = await receive_message(reader)
