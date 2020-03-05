@@ -94,6 +94,7 @@ async def send_dir(pathDir, writer):
                 writer.write(int(1).to_bytes(1, "big"))
                 await send_file(pathDir+'/'+fileordir, writer)
     else:
+        writer.write(int(1).to_bytes(1, "big"))
         await send_file(pathDir, writer)
 
 
