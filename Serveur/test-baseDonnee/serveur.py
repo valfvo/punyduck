@@ -14,17 +14,19 @@ def decodeBuffer(buffer):
     
     return sizeBuffer_received
 
-def extract_path(path):
-    newPath = re.search('(../)*(.*)', path).group(2)
-    
-    return newPath
-
-async def send_file(path, writer):
+async def send_file(path, writer, oDir):
     try:
         with open(path, "rb") as file:
-            await send_message(writer, path.encode())
+            pathServer = ""
+            test = False
+            for i in path.split('/'):
+                if i == oDir:
+                    test = True
+                if test:
+                    pathServer += i+'/'
+            pathServer = pathServer[:-1]
+            await send_message(writer, pathServer.encode())
             filesize = os.path.getsize(path)
-            print("filesize = ", filesize)
             writer.write(filesize.to_bytes(4, 'big'))
             loop = asyncio.get_running_loop()
             await loop.sendfile(writer.transport, file)
@@ -42,7 +44,6 @@ async def receive_file(reader):
     path2 = ""
     for i in path[0:-1]:
         path2 += i + '/'
-    path2 = extract_path(path2)
     try:
         os.makedirs(path2)
     except:
@@ -82,20 +83,25 @@ async def receive_message(reader):
 
     return data
 
-async def send_dir(pathDir, writer):
+async def send_dir(pathDir, writer, oDir):
     if os.path.isdir(pathDir):
+        print(pathDir, "est un dossier")
         tree = os.listdir(pathDir)
         for fileordir in tree:
             if os.path.isdir(pathDir+'/'+fileordir):
                 print("dir : ", pathDir+'/'+fileordir)
-                await send_dir(pathDir+'/'+fileordir, writer)
+                await send_dir(pathDir+'/'+fileordir, writer, oDir)
             else:
                 print("file : ", pathDir+'/'+fileordir)
                 writer.write(int(1).to_bytes(1, "big"))
-                await send_file(pathDir+'/'+fileordir, writer)
-    else:
+                await send_file(pathDir+'/'+fileordir, writer, oDir)
+                await writer.drain()
+    elif os.path.isfile(pathDir):
         writer.write(int(1).to_bytes(1, "big"))
-        await send_file(pathDir, writer)
+        print(pathDir, "est un fichier")
+        await send_file(pathDir, writer, oDir)
+    else:
+        print("Veuillez entrer un chemin valide")
 
 
 async def handle_echo(reader, writer):
@@ -110,8 +116,10 @@ async def handle_echo(reader, writer):
         elif action == 1:
             print("Envoi d'un fichier au client")
             path = await receive_message(reader)
-            print(f"\033[36mClient ask for {extract_path(path.decode())!r}\033[0m")
-            await send_dir(path.decode(), writer)
+            path = path.decode()
+            print(f"\033[36mClient ask for {path}\033[0m")
+            oDir = path.split('/')[-1]
+            await send_dir(path, writer, oDir)
             writer.write(b'\x00')
             print('dossier envoye')
         elif action == 2:
