@@ -10,17 +10,24 @@ conn = psycopg2.connect("dbname=paulbunel user=paulbunel")
 cur = conn.cursor()
 ph = PasswordHasher()
 
-def register():
-    register = True
-    while register:
-        login = input("Entrez un login : ")
-        cur.execute("SELECT login FROM UserInfo WHERE login = %s;", (login,))
-        if cur.fetchone() != None:
-            print("\033[31mCe nom est déjà pris\033[0m")
-        else:
-            register = False
+def register(writer, reader):
+    login = input("Entrez un login : ")
+    await send_message(writer, login.encode())
 
     password = input("Choisissez un mot de passe : ")
+    while len(password) < 8:
+        password = input("Mot de passe trop court, choisissez un mot de passe : ")
+    await send_message(writer, password.encode())
+
+    loginValide = await reader.read(1)
+    loginValide = int.from_bytes(loginValide, 'big')
+    while loginValide == 0:
+        print("Ce nom est déjà pris")
+        login = input("Entrez un login : ")
+        await send_message(writer, login.encode())
+        loginValide = await reader.read(1)
+        loginValide = int.from_bytes(loginValide, 'big')
+
     cur.execute("SELECT MAX(idLog) FROM UserInfo;")
     data = cur.fetchone()
     if data[0] == None:
@@ -28,22 +35,20 @@ def register():
     else:
         new_id = data[0]+1
     mail = input("Entrez une adrese mail : ")
+    await send_message(writer, mail.encode())
+    
     cur.execute("INSERT INTO UserInfo (idlog, login, password, email, admin) VALUES(%s, %s, %s, %s, FALSE)", (new_id, login, ph.hash(password), mail))
     conn.commit()
     print("Vous vous êtes correctement inscrit")
 
-def login():
+async def login(writer, reader):
     login = input("Login : ")
-    cur.execute("SELECT password FROM UserInfo WHERE login = %s", (login,))
-    data = cur.fetchone()
+    await send_message(writer, login.encode())
     password = input("Mot de passe : ")
-    try:
-        ph.verify(data[0], password)
-        connecting = False
-        print("Bienvenue, ", login)
-        return login
-    except (TypeError, exceptions.VerifyMismatchError):
-        return "False"
+    await send_message(writer, password.encode())
+    var = await receive_message(reader)
+
+    return val
 
 def delete_account(login):
     action = input("Êtes-vous sûr de vouloir supprimer votre compte ? (y/n)")
@@ -160,23 +165,9 @@ async def send_dir(pathDir, writer, oDir):
         print("Veuillez entrer un chemin valide")
 
 
-def main():
-    action =''
-    while action != 'c' and action != 'd':
-        action = input("Voulez-vous vous connecter ou vous inscrire ? (c/i) : ")
-        if action == 'c':
-            user = login()
-            while user == "False":
-                print("\033[31mLe nom d'utilisateur ou mot de passe est incorrect\033[0m")
-                user = login()
-            asyncio.run(connexion(user))
-        elif action == 'i':
-            register()
-        else:
-            print("Veuillez entre 'c' pour vous connecter ou 'i' pour vous inscrire")
-
-async def connexion(user):
+async def connexion():
     reader, writer = await asyncio.open_connection('127.0.0.1', 50001)
+    await main(writer, reader)
     connexion = True
     while connexion:
         action = input("Voulez-vous envoyer un projet ou en télécharger un ? ")
@@ -230,6 +221,23 @@ async def connexion(user):
     print('Close the connection')
     writer.close()
 
-main()
+async def main(writer, reader):
+    action =''
+    while action != 'c' and action != 'i':
+        action = input("Voulez-vous vous connecter ou vous inscrire ? (c/i) : ")
+        if action == 'c':
+            writer.write(int(0).to_bytes(1, "big"))
+            user = login(writer, reader)
+            while user == "False":
+                print("\033[31mLe nom d'utilisateur ou mot de passe est incorrect\033[0m")
+                user = login(writer, reader)
+            await connexion(user)
+        elif action == 'i':
+            writer.write(int(1).to_bytes(1, "big"))
+            register(writer, reader)
+        else:
+            print("Veuillez entre 'c' pour vous connecter ou 'i' pour vous inscrire")
+
+asyncio.run(connexion())
 cur.close()
 conn.close()

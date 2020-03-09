@@ -2,6 +2,13 @@
 import asyncio
 import os
 import re
+import psycopg2
+from argon2 import *
+import sys
+
+conn = psycopg2.connect("dbname=paulbunel user=paulbunel")
+cur = conn.cursor()
+ph = PasswordHasher()
 
 def encodeBuffer(message):
     sizeBuffer_send = len(message).to_bytes(4, "big")
@@ -103,8 +110,55 @@ async def send_dir(pathDir, writer, oDir):
     else:
         print("Veuillez entrer un chemin valide")
 
+async def connexion(action, writer, reader):
+    action = int.from_bytes(action, 'big')
+    login = await receive_message(reader)
+    password = await receive_message(reader)
+    if action:
+        cur.execute("SELECT login FROM UserInfo WHERE login = %s;", (login,))
+        if cur.fetchone() != None: #Si le login est déjà pris
+            writer.write(int(0).to_bytes(1, "big"))
+            loginValide = False
+        else: #Sinon, s'il est disponible
+            writer.write(int(1).to_bytes(1, "big"))
+            loginValide = True
+        while loginValide == False:
+            login = await receive_message(reader)
+            cur.execute("SELECT login FROM UserInfo WHERE login = %s;", (login,))
+            if cur.fetchone() != None: #Si le login est déjà pris
+                writer.write(int(0).to_bytes(1, "big"))
+                loginValide = True
+            else: #Sinon, s'il est disponible
+                writer.write(int(1).to_bytes(1, "big"))
+                loginValide = False
+        
+        cur.execute("SELECT MAX(idLog) FROM UserInfo;")
+        data = cur.fetchone()
+        if data[0] == None:
+            new_id = 1
+        else:
+            new_id = data[0]+1
+        mail = await receive_message(reader)
+        cur.execute("INSERT INTO UserInfo (idlog, login, password, email, admin) VALUES(%s, %s, %s, %s, FALSE)", (new_id, login, ph.hash(password), mail))
+        conn.commit()
+
+
+    else:
+        cur.execute("SELECT password FROM UserInfo WHERE login = %s", (login,))
+        data = cur.fetchone()
+        try:
+            ph.verify(data[0], password)
+            connecting = False
+            print("Bienvenue, ", login)
+            await send_message(writer, login.encode())
+        except (TypeError, exceptions.VerifyMismatchError):
+            await send_message(writer, "False".encode())
+
+
 
 async def handle_echo(reader, writer):
+    action = await reader.read(1)
+    connexion(action, writer, reader)
     connexion = True
     while connexion:
         action = await reader.read(1)
