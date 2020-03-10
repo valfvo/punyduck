@@ -2,18 +2,11 @@
 import asyncio
 import os
 import re
-import psycopg2
-from argon2 import *
 import sys
 
-conn = psycopg2.connect("dbname=paulbunel user=paulbunel")
-cur = conn.cursor()
-ph = PasswordHasher()
-
-def register(writer, reader):
+async def register(writer, reader):
     login = input("Entrez un login : ")
     await send_message(writer, login.encode())
-
     password = input("Choisissez un mot de passe : ")
     while len(password) < 8:
         password = input("Mot de passe trop court, choisissez un mot de passe : ")
@@ -28,17 +21,9 @@ def register(writer, reader):
         loginValide = await reader.read(1)
         loginValide = int.from_bytes(loginValide, 'big')
 
-    cur.execute("SELECT MAX(idLog) FROM UserInfo;")
-    data = cur.fetchone()
-    if data[0] == None:
-        new_id = 1
-    else:
-        new_id = data[0]+1
     mail = input("Entrez une adrese mail : ")
     await send_message(writer, mail.encode())
-    
-    cur.execute("INSERT INTO UserInfo (idlog, login, password, email, admin) VALUES(%s, %s, %s, %s, FALSE)", (new_id, login, ph.hash(password), mail))
-    conn.commit()
+
     print("Vous vous êtes correctement inscrit")
 
 async def login(writer, reader):
@@ -46,15 +31,11 @@ async def login(writer, reader):
     await send_message(writer, login.encode())
     password = input("Mot de passe : ")
     await send_message(writer, password.encode())
-    var = await receive_message(reader)
+    response = await receive_message(reader)
+    response = response.decode()
+    print("response = ", response)
 
-    return val
-
-def delete_account(login):
-    action = input("Êtes-vous sûr de vouloir supprimer votre compte ? (y/n)")
-    if action == 'y':
-        cur.execute("DELETE FROM UserInfo WHERE login = %s", (login,))
-        conn.commit()
+    return response
 
 def encodeBuffer(message):
     sizeBuffer_send = len(message).to_bytes(4, "big")
@@ -167,33 +148,29 @@ async def send_dir(pathDir, writer, oDir):
 
 async def connexion():
     reader, writer = await asyncio.open_connection('127.0.0.1', 50001)
-    await main(writer, reader)
+    user = await main(writer, reader)
     connexion = True
     while connexion:
         action = input("Voulez-vous envoyer un projet ou en télécharger un ? ")
         if action == "envoyer":
+            writer.write(int(0).to_bytes(1, "big"))
             projectName = input("Veuillez donner un nom à votre projet : ")
-            cur.execute("SELECT nom FROM projet WHERE nom = %s", (projectName,))
-            projectName_invalid = cur.fetchone() != None
-            while projectName_invalid:
+            await send_message(writer, projectName.encode())
+            response = await reader.read(1)
+            # print("response = ", response)
+            while int.from_bytes(response, 'big') == 0:
                 print("Ce nom est déjà pris.")
                 projectName = input("Veuillez donner un nom à votre projet : ")
-                cur.execute("SELECT nom FROM projet WHERE nom = %s", (projectName,))
-                projectName_invalid = cur.fetchone() != None
+                await send_message(writer, projectName.encode())
+                response = await reader.read(1)
 
             path = input("Veuillez entrer le chemin du projet à envoyer : ")
             path = path.replace('\\', '/')
-            cur.execute("SELECT MAX(idProjet) FROM Projet;")
-            data = cur.fetchone()
-            if data[0] == None:
-                new_id = 1
-            else:
-                new_id = data[0]+1
             pathServer = path.split('/')[-1]
-            cur.execute("SELECT idLog FROM UserInfo WHERE login = %s;", (user,))
-            idlog = cur.fetchone()[0]
+            await send_message(writer, pathServer.encode())
+            await send_message(writer, user.encode())
             await send_dir(path, writer, pathServer)
-            cur.execute("INSERT INTO Projet VALUES(%s, %s, %s, FALSE, %s);", (new_id, pathServer, idlog, projectName))
+            writer.write(b'\x01')
         elif action == "telecharger":
             writer.write(int(1).to_bytes(1, "big"))
             await writer.drain()
@@ -216,8 +193,6 @@ async def connexion():
         else:
             print('Veuillez entrer "envoyer", "telecharger" ou "quitter" svp.')
         
-        conn.commit()
-
     print('Close the connection')
     writer.close()
 
@@ -227,17 +202,15 @@ async def main(writer, reader):
         action = input("Voulez-vous vous connecter ou vous inscrire ? (c/i) : ")
         if action == 'c':
             writer.write(int(0).to_bytes(1, "big"))
-            user = login(writer, reader)
+            user = await login(writer, reader)
             while user == "False":
                 print("\033[31mLe nom d'utilisateur ou mot de passe est incorrect\033[0m")
-                user = login(writer, reader)
-            await connexion(user)
+                user = await login(writer, reader)
+            return user
         elif action == 'i':
             writer.write(int(1).to_bytes(1, "big"))
-            register(writer, reader)
+            await register(writer, reader)
         else:
             print("Veuillez entre 'c' pour vous connecter ou 'i' pour vous inscrire")
 
 asyncio.run(connexion())
-cur.close()
-conn.close()

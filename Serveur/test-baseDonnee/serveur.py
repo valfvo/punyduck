@@ -110,10 +110,12 @@ async def send_dir(pathDir, writer, oDir):
     else:
         print("Veuillez entrer un chemin valide")
 
-async def connexion(action, writer, reader):
+async def log(action, writer, reader):
     action = int.from_bytes(action, 'big')
     login = await receive_message(reader)
+    login = login.decode()
     password = await receive_message(reader)
+    password = password.decode()
     if action:
         cur.execute("SELECT login FROM UserInfo WHERE login = %s;", (login,))
         if cur.fetchone() != None: #Si le login est déjà pris
@@ -124,13 +126,14 @@ async def connexion(action, writer, reader):
             loginValide = True
         while loginValide == False:
             login = await receive_message(reader)
+            login = login.decode()
             cur.execute("SELECT login FROM UserInfo WHERE login = %s;", (login,))
             if cur.fetchone() != None: #Si le login est déjà pris
                 writer.write(int(0).to_bytes(1, "big"))
-                loginValide = True
+                loginValide = False
             else: #Sinon, s'il est disponible
                 writer.write(int(1).to_bytes(1, "big"))
-                loginValide = False
+                loginValide = True
         
         cur.execute("SELECT MAX(idLog) FROM UserInfo;")
         data = cur.fetchone()
@@ -139,34 +142,83 @@ async def connexion(action, writer, reader):
         else:
             new_id = data[0]+1
         mail = await receive_message(reader)
+        mail = mail.decode()
         cur.execute("INSERT INTO UserInfo (idlog, login, password, email, admin) VALUES(%s, %s, %s, %s, FALSE)", (new_id, login, ph.hash(password), mail))
         conn.commit()
-
-
     else:
-        cur.execute("SELECT password FROM UserInfo WHERE login = %s", (login,))
-        data = cur.fetchone()
-        try:
-            ph.verify(data[0], password)
-            connecting = False
-            print("Bienvenue, ", login)
-            await send_message(writer, login.encode())
-        except (TypeError, exceptions.VerifyMismatchError):
-            await send_message(writer, "False".encode())
+        incorrectLog = True
+        while incorrectLog:
+            cur.execute("SELECT password FROM UserInfo WHERE login = %s", (login,))
+            data = cur.fetchone()
+            try:
+                ph.verify(data[0], password)
+                connecting = False
+                print("Bienvenue, ", login)
+                await send_message(writer, login.encode())
+                incorrectLog = False
+            except (TypeError, exceptions.VerifyMismatchError):
+                print("caca")
+                await send_message(writer, "False".encode())
+                login = await receive_message(reader)
+                login = login.decode()
+                password = await receive_message(reader)
+                password = password.decode()        
 
-
+def delete_account(login):
+    action = input("Êtes-vous sûr de vouloir supprimer votre compte ? (y/n)")
+    if action == 'y':
+        cur.execute("DELETE FROM UserInfo WHERE login = %s", (login,))
+        conn.commit()
 
 async def handle_echo(reader, writer):
     action = await reader.read(1)
-    connexion(action, writer, reader)
+    await log(action, writer, reader)
     connexion = True
     while connexion:
         action = await reader.read(1)
         action = int.from_bytes(action, "big")
         print("action = ", action)
         if action == 0:
+            projectName = await receive_message(reader)
+            projectName = projectName.decode()
+            cur.execute("SELECT nom FROM projet WHERE nom = %s", (projectName,))
+            projectName_invalid = cur.fetchone() != None
+            while projectName_invalid:
+                writer.write(int(0).to_bytes(1, "big"))
+                print("Ce nom est déjà pris.")
+                projectName = await receive_message(reader)
+                projectName = projectName.decode()
+                cur.execute("SELECT nom FROM projet WHERE nom = %s", (projectName,))
+                projectName_invalid = cur.fetchone() != None
+                # print("projectName_invalid = ", projectName_invalid)
+            writer.write(int(1).to_bytes(1, "big"))
+
+            cur.execute("SELECT MAX(idProjet) FROM Projet;")
+            data = cur.fetchone()
+            if data[0] == None:
+                new_id = 1
+            else:
+                new_id = data[0]+1
+                
+            pathServer = await receive_message(reader)
+            pathServer = pathServer.decode()
+            user = await receive_message(reader)
+            user = user.decode()
+
+            cur.execute("SELECT idLog FROM UserInfo WHERE login = %s;", (user,))
+            idlog = cur.fetchone()[0]
+
+            cur.execute("INSERT INTO Projet VALUES(%s, %s, %s, FALSE, %s);", (new_id, pathServer, idlog, projectName))
+
             print("Réception d'un fichier client")
-            await receive_file(reader)
+            downloading = await reader.read(1)
+            downloading = int.from_bytes(downloading, "big")
+            while downloading == 0:
+                await receive_file(reader)
+                downloading = await reader.read(1)
+                downloading = int.from_bytes(downloading, "big")
+                print("Downloading = ", downloading)
+            conn.commit()
         elif action == 1:
             print("Envoi d'un fichier au client")
             path = await receive_message(reader)
