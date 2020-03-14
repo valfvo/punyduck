@@ -1,6 +1,6 @@
 #include <litequarks/LQuark.hpp>
 
-LQuark& LQuark::appendChild(LQuark* child, LQenum returnEnum) {
+LQuark& LQuark::appendChild(LQuark* child) {
     child->m_parent = this;
     if (m_lastChild) {
         m_lastChild->m_nextSibling = child;
@@ -12,19 +12,11 @@ LQuark& LQuark::appendChild(LQuark* child, LQenum returnEnum) {
         m_lastChild = child;
     }
     ++m_childrenCount;
-
-    switch (returnEnum) {
-        case LQ_RETURN_PARENT:
-            return *m_parent;
-        case LQ_RETURN_CHILD:
-            return *child;
-        default:
-            return *this;
-    }
+    return *this;
 }
 
-LQuark& LQuark::appendChild(LQuark& child, LQenum returnEnum) {
-    return appendChild(&child, returnEnum);
+LQuark& LQuark::appendChild(LQuark& child) {
+    return appendChild(&child);
 }
 
 LQuark& LQuark::insertChild(LQindex index, LQuark& child) {

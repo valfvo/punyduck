@@ -1,6 +1,5 @@
 #include <litequarks/LQShader.hpp>
-
-#include <glad/glad.h>
+#include <glm/mat4x4.hpp>
 
 #include <exception>
 #include <string>

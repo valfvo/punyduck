@@ -15,27 +15,30 @@ public:
     LQuark const* nthSibling(LQindex nth) const;
     LQsize  childrenCount() const;
 
+    LQuark& subTree();
+    LQuark& superTree();
+
     // LQGreenCharge
     template<class TQuark, class ...Args>
-    LQuark& append(Args ...args);
-    LQuark& appendChild(LQuark* child, LQenum returnType=LQ_RETURN_THIS);
-    LQuark& appendChild(LQuark& child, LQenum returnType=LQ_RETURN_THIS);
-    LQuark& insertChild(LQindex index, LQuark& child); // O(n)
-    LQuark& insertChildBefore(LQuark& newChild, LQuark& child); // O()
-    LQuark& insertChildAfter(LQuark& newChild, LQuark& child); // O()
+    inline LQuark& append(Args ...args);
+    LQuark& appendChild(LQuark* child);
+    LQuark& appendChild(LQuark& child);
+    LQuark& insertChild(LQindex index, LQuark& child);
+    LQuark& insertChildBefore(LQuark& newChild, LQuark& child);
+    LQuark& insertChildAfter(LQuark& newChild, LQuark& child);
 
     // LQRedCharge
-    LQuark& detach(); // O()
-    LQuark& removeChild(LQuark& child); // O()
-    LQuark& removeChild(LQindex index); // O()
-    LQuark& removeFirstChild(); // O()
-    LQuark& removeLastChild(); // O()
-    LQuark& removeChildren(LQuark& newParent); // O(n)
+    LQuark& detach();
+    LQuark& removeChild(LQuark& child);
+    LQuark& removeChild(LQindex index);
+    LQuark& removeFirstChild();
+    LQuark& removeLastChild();
+    LQuark& removeChildren(LQuark& newParent);
 
     // LQYellowCharge
-    LQuark& swapWith(LQuark& quark); // O()
-    LQuark& swapChildren(LQuark& first, LQuark& second); // O()
-    LQuark& swapChildren(LQindex first, LQindex second); // O()
+    LQuark& swapWith(LQuark& quark);
+    LQuark& swapChildren(LQuark& first, LQuark& second);
+    LQuark& swapChildren(LQindex first, LQindex second);
 
 protected:
     LQuark* m_parent;
