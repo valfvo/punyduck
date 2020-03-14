@@ -1,4 +1,4 @@
-#include "LQuark.hpp"
+#include <litequarks/LQuark.hpp>
 
 LQuark& LQuark::swapWith(LQuark& quark) {
     LQuark* thisParent = m_parent;
@@ -10,8 +10,8 @@ LQuark& LQuark::swapWith(LQuark& quark) {
     m_nextSibling = quark.m_nextSibling;
 
     quark.m_parent = thisParent;
-    quark.prevSibling = thisPrevSibling;
-    quark.nextSibling = thisNextSibling;
+    quark.m_prevSibling = thisPrevSibling;
+    quark.m_nextSibling = thisNextSibling;
 
     return *this;
 }
@@ -24,13 +24,13 @@ LQuark& LQuark::swapChildren(LQuark& first, LQuark& second) {
 }
 
 LQuark& LQuark::swapChildren(LQindex first, LQindex second) {
-    LQuark* firstChild = nthChild(first);
-    LQuark* secondChild = nthChild(second);
+    LQuark* p_first = nthChild(first);
+    LQuark* p_second = nthChild(second);
 
-    if (firstChild && secondChild
-        && firstChild->m_parent == this && secondChild->m_parent == this
+    if (p_first && p_second
+        && p_first->m_parent == this && p_second->m_parent == this
     ) {
-        firstChild->swapWith(*secondChild);
+        p_first->swapWith(*p_second);
     }
     return *this;
 }

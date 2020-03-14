@@ -1,4 +1,4 @@
-#include "LQuark.hpp"
+#include <litequarks/LQuark.hpp>
 
 LQuark& LQuark::appendChild(LQuark* child, LQenum returnEnum) {
     child->m_parent = this;
@@ -63,4 +63,5 @@ LQuark& LQuark::insertChildAfter(LQuark& newChild, LQuark& child) {
             return appendChild(newChild);
         }
     }
+    return *this;
 }

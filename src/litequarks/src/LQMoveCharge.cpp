@@ -1,4 +1,4 @@
-#include "LQSurface.hpp"
+#include <litequarks/LQSurface.hpp>
 
 void LQSurface::move(GLfloat x, GLfloat y) {
     m_x += x;

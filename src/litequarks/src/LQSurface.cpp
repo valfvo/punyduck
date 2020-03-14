@@ -2,7 +2,7 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
-#include "LQSurface.hpp"
+#include <litequarks/LQSurface.hpp>
 
 //initialisation attributs static
 GLfloat LQSurface::s_vertices[54] = {
@@ -29,7 +29,7 @@ LQSurface::LQSurface()
 LQSurface::LQSurface(GLfloat x, GLfloat y, GLfloat width, GLfloat height)
 // : LQTexture(), m_VBO(0), m_VAO(0), m_FBO(0), m_shader(s_default_shader),
 : LQuark(), LQTexture((int)width, (int)height), m_VBO(0), m_VAO(0), m_FBO(0),
-  m_shader(new Shader("shaderVertex.txt", "shaderFragment.txt")),
+  m_shader(new LQShader("shaderVertex.txt", "shaderFragment.txt")),
   m_x(x), m_y(y), m_width(width), m_height(height),
   m_shapeMap(nullptr), m_clearColor()
 {
@@ -80,7 +80,7 @@ GLuint LQSurface::getVAO() const
     return m_VAO;
 }
 
-Shader* LQSurface::getShader()
+LQShader* LQSurface::getShader()
 {
     return m_shader;
 }

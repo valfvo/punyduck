@@ -29,8 +29,11 @@ void LQEventTarget::mouseClickCallback(LQEvent& event) {
 
 template<typename T>
 int LQEventTarget::linkEventCallbacks() const {
-    LQEventLinker<T>::link(0, static_cast<LQEventCallback>(nullEventCallback));
-    LQEventLinker<T>::link(1, static_cast<LQEventCallback>(mouseMoveCallback));
-    LQEventLinker<T>::link(2, static_cast<LQEventCallback>(mouseClickCallback));
+    LQEventLinker<T>::link(
+        LQ_EVENT_00, static_cast<LQEventCallback>(nullEventCallback));
+    LQEventLinker<T>::link(
+        LQ_EVENT_01, static_cast<LQEventCallback>(mouseMoveCallback));
+    LQEventLinker<T>::link(
+        LQ_EVENT_02, static_cast<LQEventCallback>(mouseClickCallback));
     return 0;
 }

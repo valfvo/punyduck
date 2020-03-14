@@ -1,13 +1,9 @@
 #pragma once
 
-#include "litequarks/LQuark.hpp"
+#include "LQuark.hpp"
 #include "LQTexture.hpp"
 #include "LQColor.hpp"
-#include "Shader.hpp"
-
-class LQTransformCharge;
-class LQDrawCharge;
-class LQMoveCharge;
+#include "LQShader.hpp"
 
 class LQSurface : public LQuark, public LQTexture
 {
@@ -19,7 +15,7 @@ class LQSurface : public LQuark, public LQTexture
 
     //accesseurs
     GLuint getVAO() const;
-    Shader* getShader();
+    LQShader* getShader();
     void setClearColor(LQColor const& color);
     void setClearColor(GLfloat r, GLfloat g, GLfloat b, GLfloat a=1.0f);
     void setClearColor(GLint r, GLint g, GLint b, GLint a=255);
@@ -47,11 +43,11 @@ class LQSurface : public LQuark, public LQTexture
 
     protected : 
     static GLfloat s_vertices[54];
-    static Shader* s_default_shader;
+    static LQShader* s_default_shader;
     GLuint m_VBO;
     GLuint m_VAO;
     GLuint m_FBO;
-    Shader* m_shader;
+    LQShader* m_shader;
     GLfloat m_x;
     GLfloat m_y;
     GLfloat m_width;

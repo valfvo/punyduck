@@ -1,5 +1,4 @@
-#include <iostream>
-#include "LQColor.hpp"
+#include <litequarks/LQColor.hpp>
 
 //constructeurs
 LQColor::LQColor()

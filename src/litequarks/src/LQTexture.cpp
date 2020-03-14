@@ -1,5 +1,5 @@
 #include <iostream>
-#include "LQTexture.hpp"
+#include <litequarks/LQTexture.hpp>
 
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"

@@ -7,10 +7,10 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
-class Shader {
+class LQShader {
 public:
-    Shader();
-    Shader(std::string const& vertexPath, std::string const& fragmentPath);
+    LQShader();
+    LQShader(std::string const& vertexPath, std::string const& fragmentPath);
     void init(std::string const& vertexPath, std::string const& fragmentPath);
     void set(std::string const& name, int value) const;
     void set(std::string const& name, float value) const;

@@ -1,4 +1,4 @@
-#include "Shader.hpp"
+#include <litequarks/LQShader.hpp>
 
 #include <glad/glad.h>
 
@@ -8,18 +8,18 @@
 #include <sstream>
 #include <iostream>
 
-Shader::Shader()
+LQShader::LQShader()
 : ID(0)
 {
 }
 
-Shader::Shader(std::string const& vertexPath, std::string const& fragmentPath)
-: Shader()
+LQShader::LQShader(std::string const& vertexPath, std::string const& fragmentPath)
+: LQShader()
 {
     init(vertexPath, fragmentPath);
 }
 
-void Shader::init(std::string const& vertexPath, std::string const& fragmentPath) {
+void LQShader::init(std::string const& vertexPath, std::string const& fragmentPath) {
     ID = glCreateProgram();
     std::string vertexCode;
     std::string fragmentCode;
@@ -68,15 +68,15 @@ void Shader::init(std::string const& vertexPath, std::string const& fragmentPath
     glDeleteShader(fragment);
 }
 
-void Shader::set(std::string const& name, int value) const {
+void LQShader::set(std::string const& name, int value) const {
     glUniform1i(glGetUniformLocation(ID, name.c_str()), value);
 }
 
-void Shader::set(std::string const& name, float value) const {
+void LQShader::set(std::string const& name, float value) const {
     glUniform1f(glGetUniformLocation(ID, name.c_str()), value);
 }
 
-void Shader::set(std::string const& name, glm::mat4 const& matrix) const {
+void LQShader::set(std::string const& name, glm::mat4 const& matrix) const {
     glUniformMatrix4fv(glGetUniformLocation(ID, name.c_str()), 1, GL_FALSE, &matrix[0][0]);
 }
 
@@ -122,11 +122,11 @@ void Shader::set(std::string const& name, glm::mat4 const& matrix) const {
 //     glUniformMatrix4fv(glGetUniformLocation(ID, name.c_str()), 1, GL_FALSE, &mat[0][0]);
 // }
 
-void Shader::use() const {
+void LQShader::use() const {
     glUseProgram(ID);
 }
 
-void Shader::checkCompileErrors(GLuint shader, std::string const& type) {
+void LQShader::checkCompileErrors(GLuint shader, std::string const& type) {
     int success;
     char infoLog[1024];
     if (type != "PROGRAM") {

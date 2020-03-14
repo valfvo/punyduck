@@ -1,7 +1,5 @@
 #include <iostream>
-#include "LQSurface.hpp"
-#include "LQTexture.hpp"
-#include "LQWindow.hpp"
+#include <litequarks/litequarks.hpp>
 
 #define LQwu 50.0f
 #define LQhu 50.0f

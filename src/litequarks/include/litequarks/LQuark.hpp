@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../LQDeclaration.hpp"
+#include "LQDeclaration.hpp"
 
 class LQuark {
 public:

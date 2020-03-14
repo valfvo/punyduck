@@ -1,18 +1,18 @@
-#include "LQuark.hpp"
+#include <litequarks/LQuark.hpp>
 
 LQuark& LQuark::detach() {
     if (m_prevSibling) {
-        m_prevSibling->nextSibling = m_nextSibling;
+        m_prevSibling->m_nextSibling = m_nextSibling;
     }
     else {
-        m_parent->firstChild = m_nextSibling;
+        m_parent->m_firstChild = m_nextSibling;
     }
 
     if (m_nextSibling) {
-        m_nextSibling->prevSibling = m_prevSibling;
+        m_nextSibling->m_prevSibling = m_prevSibling;
     }
     else {
-        m_parent->lastChild = m_prevSibling;
+        m_parent->m_lastChild = m_prevSibling;
     }
 
     m_parent = nullptr;

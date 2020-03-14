@@ -1,4 +1,4 @@
-#include "LQuark.hpp"
+#include <litequarks/LQuark.hpp>
 
 LQuark::LQuark()
 : m_parent(nullptr), m_prevSibling(nullptr), m_nextSibling(nullptr),
