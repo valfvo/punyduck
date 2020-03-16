@@ -3,9 +3,8 @@
 #include <string>
 #include <glad/glad.h>
 
-class LQTexture
-{
-    public:
+class LQTexture {
+public:
     LQTexture();
     LQTexture(GLuint width, GLuint height);
     // LQTexture(LQTexture const& texture);
@@ -17,7 +16,7 @@ class LQTexture
     GLuint getWidth() const;
     GLuint getHeight() const;
 
-    protected: 
+protected: 
     GLuint m_id;
     GLuint m_width;
     GLuint m_height;
