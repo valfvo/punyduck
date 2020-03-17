@@ -5,15 +5,19 @@
 #include "LQColor.hpp"
 #include "LQShader.hpp"
 
-class LQSurface : public LQuark, public LQTexture
-{
-    public:
+class LQSurface : public LQuark, public LQTexture {
+public:
     //constructeurs
     LQSurface();
     LQSurface(GLfloat x, GLfloat y, GLfloat width, GLfloat height);
     LQSurface(GLfloat x, GLfloat y, GLfloat width, GLfloat height, GLint color);
 
     //accesseurs
+    GLfloat getX() { return m_x; }
+    GLfloat getY() { return m_y; }
+    GLfloat getWidth() { return m_width; }
+    GLfloat getHeight() { return m_height; }
+
     GLuint getVAO() const;
     LQShader* getShader();
     void setClearColor(LQColor const& color);
@@ -38,10 +42,20 @@ class LQSurface : public LQuark, public LQTexture
     void moveTo(glm::vec2 position);
     void moveToX(GLfloat x);
     void moveToY(GLfloat y);
-    // LQDrawCharge
-    // LQTransformCharge
 
-    protected : 
+    // LQDrawCharge
+
+    // LQTransformCharge    
+    void resize(GLfloat width, GLfloat height);
+    void resizeWidth(GLfloat width);
+    void resizeHeight(GLfloat height);
+    void scale(GLfloat scaleW, GLfloat scaleH);
+    void scaleWidth(GLfloat scaleW);
+    void scaleHeight(GLfloat scaleH);
+    // void rotate(GLfloat angle);
+    // void flip(bool xbool, bool ybool);
+
+protected:
     static GLfloat s_vertices[54];
     static LQShader* s_default_shader;
     GLuint m_VBO;

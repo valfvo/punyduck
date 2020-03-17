@@ -29,4 +29,4 @@ $(LQ_DIR)/obj/%.o: $(LQ_DIR)/src/%.cpp
 $(SRC_DIR)/%.o: $(SRC_DIR)/%.c
 	$(CXX) $(CXXFLAGS) -c $< -o $@ $(LIBS_FLAGS)
 
-include $(OBJ:.o=.d)
+-include $(OBJ:.o=.d)

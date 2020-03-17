@@ -1,3 +1,5 @@
+#include <iostream>
+
 #include <litequarks/litequarks.hpp>
 
 #define LQwu 50.0f
@@ -74,6 +76,32 @@ int main() {
         .append<LQSurface>(10.5_wu, 0.5_wu,   2_wu, 1_wu, 0xd470d4);
 
     Accueil.drawChildren();
+
+    #define printViewable(viewable)\
+        std::cout << #viewable << ' ' << &viewable\
+                  << " \nx: " << viewable.getX()\
+                  << ", y:" << viewable.getY()\
+                  << ", width: " << viewable.getWidth()\
+                  << ", height:" << viewable.getHeight() << "\n\n"
+
+    #define printViewables()\
+        printViewable(viewable1);\
+        printViewable(viewable2);\
+        printViewable(viewable3);\
+        printViewable(viewable4);\
+        std::cout << "=============================================\n\n"
+
+    LQViewable viewable1(100.0f, 100.0f, 500.0f, 250.0f);
+    LQViewable viewable2(0.0f, 0.0f, 1.0f, 400.0f);
+    LQViewable viewable3(0.0f, 0.0f, 1.0f, 1.0f);
+    LQViewable viewable4(0.0f, 0.0f, 1.0f, 1.0f);
+    printViewables();
+    // viewable2.width() = 0.5f * viewable1.width();
+    viewable2.width() = viewable1.width() * 0.5f;
+    printViewables();
+    viewable1.width() = 1000.0f;
+    printViewables();
+    // viewable2.width() = viewable1.width();
 
     while (window.alive())  {
         window.clear(); 
