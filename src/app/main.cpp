@@ -35,11 +35,16 @@ LQColor BLUE(0.0f, 0.0f, 1.0f);
 int main() {
     glfwInit();
     LQWindow window(SCREEN_WIDTH, SCREEN_HEIGHT, "Punyduck");
-    LQSurface app(0.0f, 0.0f, SCREEN_WIDTH, SCREEN_HEIGHT, 0x282e34);
+    //LQSurface app(0.0f, 0.0f, SCREEN_WIDTH, SCREEN_HEIGHT, 0x282e34);
+    LQSurface Accueil(0.0f, 0.0f, window.left(), window.top(), 0x282e34);
+    LQSurface Projet(0.0f, 0.0f, window.left(), window.top(), 0x282e34);
+    LQSurface Collection(0.0f, 0.0f, window.left(), window.top(), 0x282e34);
+    LQSurface Profil(0.0f, 0.0f, window.left(), window.top(), 0x282e34);
+    LQSurface Communaute(0.0f, 0.0f, window.left(), window.top(), 0x282e34);
 
-    app
+    Accueil
     // navbar
-    .append<LQSurface>(0.0f, 0.0f, SCREEN_WIDTH, 1.5_wu, 0x282e34).subTree()
+    .append<LQSurface>(0.0f, 0.0f, Accueil.left(), Accueil.top(), 0x282e34).subTree()
         .append<LQSurface>( 0.0f, 0.0f, 2_wu, 1.5_wu, 0x465bb8)
         .append<LQSurface>( 2_wu, 0.0f, 2_wu, 1.5_wu, 0x4e61b5)
         .append<LQSurface>( 4_wu, 0.0f, 2_wu, 1.5_wu, 0x5667b3)
@@ -68,7 +73,7 @@ int main() {
         .append<LQSurface>( 0.5_wu, 0.5_wu, 9.5_wu, 1_wu, 0xd470d4)
         .append<LQSurface>(10.5_wu, 0.5_wu,   2_wu, 1_wu, 0xd470d4);
 
-    app.drawChildren();
+    Accueil.drawChildren();
 
     while (window.alive())  {
         window.clear(); 
