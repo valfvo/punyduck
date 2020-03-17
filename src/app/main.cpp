@@ -45,18 +45,32 @@ int main() {
     LQSurface Communaute(window.left(), window.top(), window.width(), window.height(), 0x282e34);
     LQSurface Depot(window.left(), window.top(), window.width(), window.height(), 0x282e34);
 
+    LQSurface navBar(window.left(), window.top(), window.width(), 1.5_hu, 0x282e34);
+    navBar
+    .append<LQSurface>( navBar.left(), navBar.top(), 2_wu, navBar.height(), 0x465bb8)
+    .append<LQSurface>( navBar.left()+2_wu, navBar.top(), 2_wu, navBar.height(), 0x4e61b5)
+    .append<LQSurface>( navBar.left()+4_wu, navBar.top(), 2_wu, navBar.height(), 0x5667b3)
+    .append<LQSurface>( navBar.left()+6_wu, navBar.top(), 2_wu, navBar.height(), 0x46538c)
+    .append<LQSurface>( navBar.left()+8_wu, navBar.top(), 2_wu, navBar.height(), 0x515c8c)
+    .append<LQSurface>(navBar.left()+10_wu, navBar.top(), 2_wu, navBar.height(), 0x596494)
+    .append<LQSurface>(navBar.left()+12_wu, navBar.top(), 2_wu, navBar.height(), 0x5f6994)
+    .append<LQSurface>(navBar.left()+15_wu, navBar.top(), 2_wu, navBar.height(), 0x636c94)
+    .append<LQSurface>(navBar.left()+17_wu, navBar.top(), 2_wu, navBar.height(), 0x687094)
+    navBar.drawChildren();
+
     Accueil
     // navbar
-    .append<LQSurface>(Accueil.left(), Accueil.top(), Accueil.width(), 1.5_hu, 0x282e34).subTree()
-        .append<LQSurface>( Accueil.left(), Accueil.top(), 2_wu, tree->quark.height, 0x465bb8)
-        .append<LQSurface>( Accueil.left()+2_wu, Accueil.top(), 2_wu, tree->quark.height, 0x4e61b5)
-        .append<LQSurface>( Accueil.left()+4_wu, Accueil.top(), 2_wu, tree->quark.height, 0x5667b3)
-        .append<LQSurface>( Accueil.left()+6_wu, Accueil.top(), 2_wu, tree->quark.height, 0x46538c)
-        .append<LQSurface>( Accueil.left()+8_wu, Accueil.top(), 2_wu, tree->quark.height, 0x515c8c)
-        .append<LQSurface>(Accueil.left()+10_wu, Accueil.top(), 2_wu, tree->quark.height, 0x596494)
-        .append<LQSurface>(Accueil.left()+12_wu, Accueil.top(), 2_wu, tree->quark.height, 0x5f6994)
-        .append<LQSurface>(Accueil.left()+15_wu, Accueil.top(), 2_wu, tree->quark.height, 0x636c94)
-        .append<LQSurface>(Accueil.left()+17_wu, Accueil.top(), 2_wu, tree->quark.height, 0x687094).superTree()
+    .appendChild(navBar)
+    // .append<LQSurface>(Accueil.left(), Accueil.top(), Accueil.width(), 1.5_hu, 0x282e34).subTree()
+    //     .append<LQSurface>( Accueil.left(), Accueil.top(), 2_wu, tree->quark.height, 0x465bb8)
+    //     .append<LQSurface>( Accueil.left()+2_wu, Accueil.top(), 2_wu, tree->quark.height, 0x4e61b5)
+    //     .append<LQSurface>( Accueil.left()+4_wu, Accueil.top(), 2_wu, tree->quark.height, 0x5667b3)
+    //     .append<LQSurface>( Accueil.left()+6_wu, Accueil.top(), 2_wu, tree->quark.height, 0x46538c)
+    //     .append<LQSurface>( Accueil.left()+8_wu, Accueil.top(), 2_wu, tree->quark.height, 0x515c8c)
+    //     .append<LQSurface>(Accueil.left()+10_wu, Accueil.top(), 2_wu, tree->quark.height, 0x596494)
+    //     .append<LQSurface>(Accueil.left()+12_wu, Accueil.top(), 2_wu, tree->quark.height, 0x5f6994)
+    //     .append<LQSurface>(Accueil.left()+15_wu, Accueil.top(), 2_wu, tree->quark.height, 0x636c94)
+    //     .append<LQSurface>(Accueil.left()+17_wu, Accueil.top(), 2_wu, tree->quark.height, 0x687094).superTree()
     // news title
     .append<LQSurface>(Accueil.left()+1_wu,  Accueil.top()+2_hu, Accueil.width()-6_wu, 1_hu, 0xe645e6)
     // new projects
@@ -80,16 +94,17 @@ int main() {
 
     Projet
     //navbar
-    .append<LQSurface>(Projet.left(), Projet.top(), Projet.width(), 1.5_hu, 0x282e34).subTree()
-        .append<LQSurface>( Projet.left(), Projet.top(), 2_wu, tree->quark.height, 0x465bb8)
-        .append<LQSurface>( Projet.left()+2_wu, Projet.top(), 2_wu, tree->quark.height, 0x4e61b5)
-        .append<LQSurface>( Projet.left()+4_wu, Projet.top(), 2_wu, tree->quark.height, 0x5667b3)
-        .append<LQSurface>( Projet.left()+6_wu, Projet.top(), 2_wu, tree->quark.height, 0x46538c)
-        .append<LQSurface>( Projet.left()+8_wu, Projet.top(), 2_wu, tree->quark.height, 0x515c8c)
-        .append<LQSurface>(Projet.left()+10_wu, Projet.top(), 2_wu, tree->quark.height, 0x596494)
-        .append<LQSurface>(Projet.left()+12_wu, Projet.top(), 2_wu, tree->quark.height, 0x5f6994)
-        .append<LQSurface>(Projet.left()+15_wu, Projet.top(), 2_wu, tree->quark.height, 0x636c94)
-        .append<LQSurface>(Projet.left()+17_wu, Projet.top(), 2_wu, tree->quark.height, 0x687094).superTree()
+    .appendChild(navBar)
+    // .append<LQSurface>(Projet.left(), Projet.top(), Projet.width(), 1.5_hu, 0x282e34).subTree()
+    //     .append<LQSurface>( Projet.left(), Projet.top(), 2_wu, tree->quark.height, 0x465bb8)
+    //     .append<LQSurface>( Projet.left()+2_wu, Projet.top(), 2_wu, tree->quark.height, 0x4e61b5)
+    //     .append<LQSurface>( Projet.left()+4_wu, Projet.top(), 2_wu, tree->quark.height, 0x5667b3)
+    //     .append<LQSurface>( Projet.left()+6_wu, Projet.top(), 2_wu, tree->quark.height, 0x46538c)
+    //     .append<LQSurface>( Projet.left()+8_wu, Projet.top(), 2_wu, tree->quark.height, 0x515c8c)
+    //     .append<LQSurface>(Projet.left()+10_wu, Projet.top(), 2_wu, tree->quark.height, 0x596494)
+    //     .append<LQSurface>(Projet.left()+12_wu, Projet.top(), 2_wu, tree->quark.height, 0x5f6994)
+    //     .append<LQSurface>(Projet.left()+15_wu, Projet.top(), 2_wu, tree->quark.height, 0x636c94)
+    //     .append<LQSurface>(Projet.left()+17_wu, Projet.top(), 2_wu, tree->quark.height, 0x687094).superTree()
     //trie et filtre
     .append<LQSurface>(Projet.left()+1_wu, Projet.top()+2_hu, 7_wu, 1_hu, 0xd61ad6)
     //3 boutons en haut a droite
@@ -110,16 +125,17 @@ int main() {
 
     Collection
     //navbar
-    .append<LQSurface>(Collection.left(), Collection.top(), Collection.width(), 1.5_hu, 0x282e34).subTree()
-        .append<LQSurface>( Collection.left(), Collection.top(), 2_wu, tree->quark.height, 0x465bb8)
-        .append<LQSurface>( Collection.left()+2_wu, Collection.top(), 2_wu, tree->quark.height, 0x4e61b5)
-        .append<LQSurface>( Collection.left()+4_wu, Collection.top(), 2_wu, tree->quark.height, 0x5667b3)
-        .append<LQSurface>( Collection.left()+6_wu, Collection.top(), 2_wu, tree->quark.height, 0x46538c)
-        .append<LQSurface>( Collection.left()+8_wu, Collection.top(), 2_wu, tree->quark.height, 0x515c8c)
-        .append<LQSurface>(Collection.left()+10_wu, Collection.top(), 2_wu, tree->quark.height, 0x596494)
-        .append<LQSurface>(Collection.left()+12_wu, Collection.top(), 2_wu, tree->quark.height, 0x5f6994)
-        .append<LQSurface>(Collection.left()+15_wu, Collection.top(), 2_wu, tree->quark.height, 0x636c94)
-        .append<LQSurface>(Collection.left()+17_wu, Collection.top(), 2_wu, tree->quark.height, 0x687094).superTree()
+    .appendChild(navBar)
+    // .append<LQSurface>(Collection.left(), Collection.top(), Collection.width(), 1.5_hu, 0x282e34).subTree()
+    //     .append<LQSurface>( Collection.left(), Collection.top(), 2_wu, tree->quark.height, 0x465bb8)
+    //     .append<LQSurface>( Collection.left()+2_wu, Collection.top(), 2_wu, tree->quark.height, 0x4e61b5)
+    //     .append<LQSurface>( Collection.left()+4_wu, Collection.top(), 2_wu, tree->quark.height, 0x5667b3)
+    //     .append<LQSurface>( Collection.left()+6_wu, Collection.top(), 2_wu, tree->quark.height, 0x46538c)
+    //     .append<LQSurface>( Collection.left()+8_wu, Collection.top(), 2_wu, tree->quark.height, 0x515c8c)
+    //     .append<LQSurface>(Collection.left()+10_wu, Collection.top(), 2_wu, tree->quark.height, 0x596494)
+    //     .append<LQSurface>(Collection.left()+12_wu, Collection.top(), 2_wu, tree->quark.height, 0x5f6994)
+    //     .append<LQSurface>(Collection.left()+15_wu, Collection.top(), 2_wu, tree->quark.height, 0x636c94)
+    //     .append<LQSurface>(Collection.left()+17_wu, Collection.top(), 2_wu, tree->quark.height, 0x687094).superTree()
     //trier par
     .append<LQSurface>(Collection.left()+1_wu, Collection.top()+2_hu, 3_wu, 1_hu, 0xd61ad6)
     //3 boutons en haut a droite
@@ -145,16 +161,17 @@ int main() {
 
     Profil
     //navbar
-    .append<LQSurface>(Profil.left(), Profil.top(), Profil.width(), 1.5_hu, 0x282e34).subTree()
-        .append<LQSurface>( Profil.left(), Profil.top(), 2_wu, tree->quark.height, 0x465bb8)
-        .append<LQSurface>( Profil.left()+2_wu, Profil.top(), 2_wu, tree->quark.height, 0x4e61b5)
-        .append<LQSurface>( Profil.left()+4_wu, Profil.top(), 2_wu, tree->quark.height, 0x5667b3)
-        .append<LQSurface>( Profil.left()+6_wu, Profil.top(), 2_wu, tree->quark.height, 0x46538c)
-        .append<LQSurface>( Profil.left()+8_wu, Profil.top(), 2_wu, tree->quark.height, 0x515c8c)
-        .append<LQSurface>(Profil.left()+10_wu, Profil.top(), 2_wu, tree->quark.height, 0x596494)
-        .append<LQSurface>(Profil.left()+12_wu, Profil.top(), 2_wu, tree->quark.height, 0x5f6994)
-        .append<LQSurface>(Profil.left()+15_wu, Profil.top(), 2_wu, tree->quark.height, 0x636c94)
-        .append<LQSurface>(Profil.left()+17_wu, Profil.top(), 2_wu, tree->quark.height, 0x687094).superTree()
+    .appendChild(navBar)
+    // .append<LQSurface>(Profil.left(), Profil.top(), Profil.width(), 1.5_hu, 0x282e34).subTree()
+    //     .append<LQSurface>( Profil.left(), Profil.top(), 2_wu, tree->quark.height, 0x465bb8)
+    //     .append<LQSurface>( Profil.left()+2_wu, Profil.top(), 2_wu, tree->quark.height, 0x4e61b5)
+    //     .append<LQSurface>( Profil.left()+4_wu, Profil.top(), 2_wu, tree->quark.height, 0x5667b3)
+    //     .append<LQSurface>( Profil.left()+6_wu, Profil.top(), 2_wu, tree->quark.height, 0x46538c)
+    //     .append<LQSurface>( Profil.left()+8_wu, Profil.top(), 2_wu, tree->quark.height, 0x515c8c)
+    //     .append<LQSurface>(Profil.left()+10_wu, Profil.top(), 2_wu, tree->quark.height, 0x596494)
+    //     .append<LQSurface>(Profil.left()+12_wu, Profil.top(), 2_wu, tree->quark.height, 0x5f6994)
+    //     .append<LQSurface>(Profil.left()+15_wu, Profil.top(), 2_wu, tree->quark.height, 0x636c94)
+    //     .append<LQSurface>(Profil.left()+17_wu, Profil.top(), 2_wu, tree->quark.height, 0x687094).superTree()
     //grand carre haut de page
     .append<LQSurface>(Profil.left(), Profil.top()+1.5_hu, profil.width(), 3.5_hu, 0xd61ad6).subTree()
         .append<LQSurface>(tree->quark.left()+7_wu, tree->quark.left()+0.5_hu, 3_wu, 2.5_hu, 0xd470d4).superTree()
@@ -177,16 +194,17 @@ int main() {
 
     Communaute
     //navbar
-    .append<LQSurface>(Communaute.left(), Communaute.top(), Communaute.width(), 1.5_hu, 0x282e34).subTree()
-        .append<LQSurface>( Communaute.left(), Communaute.top(), 2_wu, tree->quark.height, 0x465bb8)
-        .append<LQSurface>( Communaute.left()+2_wu, Communaute.top(), 2_wu, tree->quark.height, 0x4e61b5)
-        .append<LQSurface>( Communaute.left()+4_wu, Communaute.top(), 2_wu, tree->quark.height, 0x5667b3)
-        .append<LQSurface>( Communaute.left()+6_wu, Communaute.top(), 2_wu, tree->quark.height, 0x46538c)
-        .append<LQSurface>( Communaute.left()+8_wu, Communaute.top(), 2_wu, tree->quark.height, 0x515c8c)
-        .append<LQSurface>(Communaute.left()+10_wu, Communaute.top(), 2_wu, tree->quark.height, 0x596494)
-        .append<LQSurface>(Communaute.left()+12_wu, Communaute.top(), 2_wu, tree->quark.height, 0x5f6994)
-        .append<LQSurface>(Communaute.left()+15_wu, Communaute.top(), 2_wu, tree->quark.height, 0x636c94)
-        .append<LQSurface>(Communaute.left()+17_wu, Communaute.top(), 2_wu, tree->quark.height, 0x687094).superTree()
+    .appendChild(navBar)
+    // .append<LQSurface>(Communaute.left(), Communaute.top(), Communaute.width(), 1.5_hu, 0x282e34).subTree()
+    //     .append<LQSurface>( Communaute.left(), Communaute.top(), 2_wu, tree->quark.height, 0x465bb8)
+    //     .append<LQSurface>( Communaute.left()+2_wu, Communaute.top(), 2_wu, tree->quark.height, 0x4e61b5)
+    //     .append<LQSurface>( Communaute.left()+4_wu, Communaute.top(), 2_wu, tree->quark.height, 0x5667b3)
+    //     .append<LQSurface>( Communaute.left()+6_wu, Communaute.top(), 2_wu, tree->quark.height, 0x46538c)
+    //     .append<LQSurface>( Communaute.left()+8_wu, Communaute.top(), 2_wu, tree->quark.height, 0x515c8c)
+    //     .append<LQSurface>(Communaute.left()+10_wu, Communaute.top(), 2_wu, tree->quark.height, 0x596494)
+    //     .append<LQSurface>(Communaute.left()+12_wu, Communaute.top(), 2_wu, tree->quark.height, 0x5f6994)
+    //     .append<LQSurface>(Communaute.left()+15_wu, Communaute.top(), 2_wu, tree->quark.height, 0x636c94)
+    //     .append<LQSurface>(Communaute.left()+17_wu, Communaute.top(), 2_wu, tree->quark.height, 0x687094).superTree()
     //bouton forum
     .append<LQSurface>(Communaute.left()+1_wu, Communaute.top()+2_hu, 3_wu, 1_hu, 0xd61ad6)
     //bouton categorie
@@ -204,16 +222,17 @@ int main() {
 
     Depot
     //navbar
+    .appendChild(navBar)
     .append<LQSurface>(Depot.left(), Depot.top(), Depot.width(), 1.5_hu, 0x282e34).subTree()
-        .append<LQSurface>( Depot.left(), Depot.top(), 2_wu, tree->quark.height, 0x465bb8)
-        .append<LQSurface>( Depot.left()+2_wu, Depot.top(), 2_wu, tree->quark.height, 0x4e61b5)
-        .append<LQSurface>( Depot.left()+4_wu, Depot.top(), 2_wu, tree->quark.height, 0x5667b3)
-        .append<LQSurface>( Depot.left()+6_wu, Depot.top(), 2_wu, tree->quark.height, 0x46538c)
-        .append<LQSurface>( Depot.left()+8_wu, Depot.top(), 2_wu, tree->quark.height, 0x515c8c)
-        .append<LQSurface>(Depot.left()+10_wu, Depot.top(), 2_wu, tree->quark.height, 0x596494)
-        .append<LQSurface>(Depot.left()+12_wu, Depot.top(), 2_wu, tree->quark.height, 0x5f6994)
-        .append<LQSurface>(Depot.left()+15_wu, Depot.top(), 2_wu, tree->quark.height, 0x636c94)
-        .append<LQSurface>(Depot.left()+17_wu, Depot.top(), 2_wu, tree->quark.height, 0x687094).superTree()
+        // .append<LQSurface>( Depot.left(), Depot.top(), 2_wu, tree->quark.height, 0x465bb8)
+        // .append<LQSurface>( Depot.left()+2_wu, Depot.top(), 2_wu, tree->quark.height, 0x4e61b5)
+        // .append<LQSurface>( Depot.left()+4_wu, Depot.top(), 2_wu, tree->quark.height, 0x5667b3)
+        // .append<LQSurface>( Depot.left()+6_wu, Depot.top(), 2_wu, tree->quark.height, 0x46538c)
+        // .append<LQSurface>( Depot.left()+8_wu, Depot.top(), 2_wu, tree->quark.height, 0x515c8c)
+        // .append<LQSurface>(Depot.left()+10_wu, Depot.top(), 2_wu, tree->quark.height, 0x596494)
+        // .append<LQSurface>(Depot.left()+12_wu, Depot.top(), 2_wu, tree->quark.height, 0x5f6994)
+        // .append<LQSurface>(Depot.left()+15_wu, Depot.top(), 2_wu, tree->quark.height, 0x636c94)
+        // .append<LQSurface>(Depot.left()+17_wu, Depot.top(), 2_wu, tree->quark.height, 0x687094).superTree()
     //zone depot
     .append<LQSurface>(Depot.left()+3_wu, Depot.top()+2_hu, 13_wu, 3_hu, 0xd61ad6)
     //titre porjet
