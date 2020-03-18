@@ -6,8 +6,13 @@ using LQindex = std::ptrdiff_t;
 using LQsize  = std::ptrdiff_t;
 using LQenum  = int;
 
-template<class TQuark, class TMember>
-using LQGetterPointer = TMember (TQuark::*)();
+using LQMetricKind = int;
+#define LQMetricKind_Distance 0x1000
+#define LQMetricKind_Length   0x1001
+#define LQMetricKind_Coords   0x1002
 
 template<class TQuark, class TMember>
-using LQSetterPointer = void (TQuark::*)(TMember);
+using LQGetterPtr = TMember (TQuark::*)();
+
+template<class TQuark, class TMember>
+using LQSetterPtr = void (TQuark::*)(TMember);

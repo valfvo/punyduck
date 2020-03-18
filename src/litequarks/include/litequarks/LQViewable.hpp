@@ -1,6 +1,6 @@
 #pragma once
 
-#include "LQLength.hpp"
+#include "LQMetric.hpp"
 #include "LQSurface.hpp"
 
 class LQViewable : public LQSurface {
@@ -9,21 +9,21 @@ public:
     LQViewable(GLfloat x, GLfloat y, GLfloat width, GLfloat height);
     LQViewable(GLfloat x, GLfloat y, GLfloat width, GLfloat height, GLint color);
 
-    LQLength<LQViewable> left();
-    LQLength<LQViewable> right();
-    LQLength<LQViewable> top();
-    LQLength<LQViewable> bottom();
+    LQMetricExpr<LQViewable> left();
+    LQMetricExpr<LQViewable> right();
+    LQMetricExpr<LQViewable> top();
+    LQMetricExpr<LQViewable> bottom();
 
-    LQLength<LQViewable> width();
-    LQLength<LQViewable> height();
+    LQMetricExpr<LQViewable> width();
+    LQMetricExpr<LQViewable> height();
     // margin
     // padding-top
 
 protected:
     void linkToLengths();
 
-    LQLength<LQViewable> m_left;
-    LQLength<LQViewable> m_top;
-    LQLength<LQViewable> m_w;
-    LQLength<LQViewable> m_h;
+    LQMetric<LQViewable> m_left;
+    LQMetric<LQViewable> m_top;
+    LQMetric<LQViewable> m_w;
+    LQMetric<LQViewable> m_h;
 };

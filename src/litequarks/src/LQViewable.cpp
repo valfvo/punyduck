@@ -1,65 +1,71 @@
 #include <litequarks/LQViewable.hpp>
 
 LQViewable::LQViewable()
-: LQSurface(), m_left(), m_top(), m_w(), m_h()
+: LQSurface(),
+  m_left(LQMetricKind_Coords), m_top(LQMetricKind_Coords),
+  m_w(LQMetricKind_Length), m_h(LQMetricKind_Length)
 {
     linkToLengths();
 }
 
 LQViewable::LQViewable(GLfloat x, GLfloat y, GLfloat width, GLfloat height)
-: LQSurface(x, y, width, height), m_left(), m_top(), m_w(), m_h()
+: LQSurface(x, y, width, height),
+  m_left(LQMetricKind_Coords), m_top(LQMetricKind_Coords),
+  m_w(LQMetricKind_Length), m_h(LQMetricKind_Length)
 {
     linkToLengths();
 }
 
 LQViewable::LQViewable(GLfloat x, GLfloat y, GLfloat width, GLfloat height, GLint color) 
-: LQSurface(x, y, width, height, color), m_left(), m_top(), m_w(), m_h()
+: LQSurface(x, y, width, height, color),
+  m_left(LQMetricKind_Coords), m_top(LQMetricKind_Coords),
+  m_w(LQMetricKind_Length), m_h(LQMetricKind_Length)
 {
     linkToLengths();
 }
 
-LQLength<LQViewable> LQViewable::left() {
+LQMetricExpr<LQViewable> LQViewable::left() {
     return m_left;
 }
 
-LQLength<LQViewable> LQViewable::right() {
-     return m_left + m_width;
+LQMetricExpr<LQViewable> LQViewable::right() {
+    return (LQMetricExpr<LQViewable>)m_w + m_left;
 }
 
-LQLength<LQViewable> LQViewable::top() {
+LQMetricExpr<LQViewable> LQViewable::top() {
     return m_top;
 }
 
-LQLength<LQViewable> LQViewable::bottom() {
-    return m_top + m_height;
+LQMetricExpr<LQViewable> LQViewable::bottom() {
+    return (LQMetricExpr<LQViewable>)m_top + m_h;
 }
 
-LQLength<LQViewable> LQViewable::width() {
-    return m_w.mock();
+LQMetricExpr<LQViewable> LQViewable::width() {
+    return m_w;
 }
 
-LQLength<LQViewable> LQViewable::height() {
+LQMetricExpr<LQViewable> LQViewable::height() {
     return m_h;
 }
 
 void LQViewable::linkToLengths() {
     m_left.linkToQuark(
         this,
-        static_cast<LQGetterPointer<LQViewable, GLfloat>>(&LQViewable::getX),
-        static_cast<LQSetterPointer<LQViewable, GLfloat>>(&LQViewable::moveToX));
+        static_cast<LQGetterPtr<LQViewable, GLfloat>>(&LQViewable::getX),
+        static_cast<LQSetterPtr<LQViewable, GLfloat>>(&LQViewable::moveToX));
 
     m_top.linkToQuark(
         this,
-        static_cast<LQGetterPointer<LQViewable, GLfloat>>(&LQViewable::getY),
-        static_cast<LQSetterPointer<LQViewable, GLfloat>>(&LQViewable::moveToY));
+        static_cast<LQGetterPtr<LQViewable, GLfloat>>(&LQViewable::getY),
+        static_cast<LQSetterPtr<LQViewable, GLfloat>>(&LQViewable::moveToY));
 
     m_w.linkToQuark(
         this,
-        static_cast<LQGetterPointer<LQViewable, GLfloat>>(&LQViewable::getWidth),
-        static_cast<LQSetterPointer<LQViewable, GLfloat>>(&LQViewable::resizeWidth));
+        static_cast<LQGetterPtr<LQViewable, GLfloat>>(&LQViewable::getWidth),
+        static_cast<LQSetterPtr<LQViewable, GLfloat>>(&LQViewable::resizeWidth));
 
     m_h.linkToQuark(
         this,
-        static_cast<LQGetterPointer<LQViewable, GLfloat>>(&LQViewable::getHeight),
-        static_cast<LQSetterPointer<LQViewable, GLfloat>>(&LQViewable::resizeHeight));
+        static_cast<LQGetterPtr<LQViewable, GLfloat>>(&LQViewable::getHeight),
+        static_cast<LQSetterPtr<LQViewable, GLfloat>>(&LQViewable::resizeHeight));
 }
