@@ -13,7 +13,7 @@ void ClientGateway::operator()() {
 
     FILE* fp = _Py_fopen("client.py", "rb");
     if (fp) {
-        PyRun_SimpleFile(fp, "client.py");
+        PyRun_SimpleFile(fp, "..\\..\\Serveur\\client.py");
     }
     else {
         printf("invalid file\n");

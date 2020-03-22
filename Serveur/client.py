@@ -4,31 +4,41 @@ import os
 import re
 import sys
 import litequarks as lq
+from argon2 import *
 
+ph = PasswordHasher()
  
 async def register(writer, reader): #Fonction appelée pour inscrire un nouvel utilisateur
-    #On envoie un login et un mot de pass au serveur
+    #On envoie un login et un mot de passe au serveur
     login = input("Entrez un login : ")
-    await send_message(writer, login.encode())
     password = input("Choisissez un mot de passe : ")
     while len(password) < 8:
         password = input("Mot de passe trop court, choisissez un mot de passe : ")
-    await send_message(writer, password.encode())
+    
+    mail = input("Entrez une adrese mail : ")
+
+    query = "INSERT INTO UserInfo (login, password, email, admin, idImage, idBio) VALUES('%s', '%s', '%s', FALSE, 1, 1)" % (login, ph.hash(password), mail)
+    print(type(query), " Query = ", query)
+    await send_message(writer, query.encode())
 
     #Le serveur nous dit si le login est disponible, ou s'il est déjà utilisé par un autre compte. Dans ce cas, on en entre un nouveau
     loginValide = await reader.read(1)
-    loginValide = int.from_bytes(loginValide, 'big')
-    while loginValide == 0: #Tant que le login n'est pas valide, on envoie un nouveau login au serveur pour le tester
+    print("loginvalide = ", loginValide)
+    while loginValide == b'\x00': #Tant que le login n'est pas valide, on envoie un nouveau login au serveur pour le tester
         print("Ce nom est déjà pris")
         login = input("Entrez un login : ")
-        await send_message(writer, login.encode())
-        loginValide = await reader.read(1)
-        loginValide = int.from_bytes(loginValide, 'big')
+        password = input("Choisissez un mot de passe : ")
+        while len(password) < 8:
+            password = input("Mot de passe trop court, choisissez un mot de passe : ")
+        
+        mail = input("Entrez une adrese mail : ")
 
-    mail = input("Entrez une adrese mail : ")
-    await send_message(writer, mail.encode())
+        query = "INSERT INTO UserInfo (login, password, email, admin, idImage, idBio) VALUES('%s', '%s', '%s', FALSE, 1, 1)" % (login, ph.hash(password), mail)
+        await send_message(writer, query.encode())
+        loginValide = await reader.read(1)
 
     print("Vous vous êtes correctement inscrit")
+    lq.transmit_response(b'\x01')
 
 async def login(writer, reader): #Fonction appelée quand un utilisateur souhaite se connecter
     #On envoie un login et un mot de passe au serveur
@@ -41,6 +51,7 @@ async def login(writer, reader): #Fonction appelée quand un utilisateur souhait
     response = await receive_message(reader)
     response = response.decode()
     print("response = ", response)
+    lq.transmit_response(login.encode())
     while response == "False": #Tant que les identifiants sont incorrects, on en envoie de nouveaux au serveur pour les tester
         print("\033[31mLe nom d'utilisateur ou mot de passe est incorrect\033[0m")
         login = input("Login : ")
@@ -52,6 +63,7 @@ async def login(writer, reader): #Fonction appelée quand un utilisateur souhait
 
 def encodeBuffer(message): #Fonction qui renvoie la taille d'un message en binaire
     sizeBuffer_send = len(message).to_bytes(4, "big")
+    print("sizeBuffer_send : ", len(message))
 
     return sizeBuffer_send
 
@@ -110,9 +122,9 @@ async def receive_file(reader): #Fonction appelée pour recevoir un fichier envo
 async def send_message(writer, message): #Fonction pouvant envoyer un message au serveur
     sizeBuffer_send = encodeBuffer(message) #On récupère la taille du message à envoyer
     writer.write(sizeBuffer_send)
-    await writer.drain()
 
     if len(message) > 1024:
+        print("test")
         i = 0
         while i < len(message)/1024: #On envoie le message kilo par kilo si celui-ci est suffisament grand
             writer.write(message[i*1024:(i+1)*1024])
@@ -120,10 +132,11 @@ async def send_message(writer, message): #Fonction pouvant envoyer un message au
             if i % 10 == 0:
                 await writer.drain()
     else:
+        print("message to send : ", message, ", type : ", type(message))
         writer.write(message)
+        await writer.drain()
+        print("message envoyé")
         
-    await writer.drain()
-
 async def receive_message(reader): #Fonction pour récupérer un message envoyé par la fonction "send_message()" ou "loop.sendfile()" du serveur
     sizeBuffer_received = await reader.read(4) #On lit la taille du message à recevoir
     print("Size Buffer received = ", sizeBuffer_received)
@@ -177,84 +190,107 @@ async def get_info_ProjetValides(idProjet, writer, reader):
 async def main():
     """Fonction principale, appelée au début du programme. Après avoir établi la connexion avec le serveur, elle appelle la fonction connexion
     qui gère la connexion à son compte. Ensuite, on demande à l'utilisateur s'il souhaite envoyer ou recevoir un projet."""
-    reader, writer = await asyncio.open_connection('127.0.0.1', 50001)
-
-    r = lq.poll_request()
-    # r[1] = 6
-    print(type(r), r.tobytes())
-    test = "Test send_data".encode()
-    lq.send_data(test)
-
-    user = await connexion(writer, reader) #On appelle la fonction connexion
+    reader, writer = await asyncio.open_connection('127.0.0.1', 50002)
     connected = True
     while connected: #Tant qu'on est connecté au serveur, on demande si l'utilisateur veut envoyer ou recevoir un projet
-        action = input("Voulez-vous envoyer un projet ou en télécharger un ? ")
+        action = lq.poll_request()
+        if action:
+            task = asyncio.create_task(send_message(writer, action))
+            print("action : ", action, " action.tobytes() : ", action.tobytes())
+            await task
+            if action == b'0':
+                connected = False
+            elif action.tobytes()[0] == 49:
+                result = await reader.read(1)
+                print("result : ", result)
+                while result == b'\x00':
+                    print("111111111111111111")
+                    lq.transmit_response(b'\x30')
+                    print("222222222222222222")
+                    action = None
+                    while True:
+                        action = lq.poll_request()
+                        if action != None:
+                            print("action : ", action.tobytes())
+                            break
+                    task = asyncio.create_task(send_message(writer, action))
+                    await task
+                    result = await reader.read(1)
+                lq.transmit_response(b'')
+                
 
-        if action == "envoyer":
-            writer.write(b'\x00') #On envoie un zéro au serveur pour indiquer qu'il va recevoir les informations d'un projet
+            # await asyncio.sleep(1000)
 
-            #On envoie au serveur le nom du projet choisit par l'utilisateur. Il nous renvoie une réponse indiquant la disponibilité du nom
-            projectName = input("Veuillez donner un nom à votre projet : ")
-            await send_message(writer, projectName.encode())
-            response = await reader.read(1)
-            while int.from_bytes(response, 'big') == 0: #Si le nom n'est pas disponible, on renvoie un nouveau nom jusqu'à ce qu'il soit disponible
-                print("Ce nom est déjà pris.")
-                projectName = input("Veuillez donner un nom à votre projet : ")
-                await send_message(writer, projectName.encode())
-                response = await reader.read(1)
+            # await send_message(writer, action)
+            # action = action.decode()
+            # print("action : ", action)
+            # if action == "login":
+            #     writer.write(b'\x00') #On envoie 0 au serveur pour qu'il sache que le client va se connecter
+            #     user = await login(writer, reader)
 
-            #On envoie ensuite le chemin du projet ainsi que le login de l'utilisateur au serveur
-            path = input("Veuillez entrer le chemin du projet à envoyer : ")
-            path = path.replace('\\', '/')
-            pathServer = path.split('/')[-1]
-            await send_message(writer, pathServer.encode())
-            await send_message(writer, user.encode())
-            await send_dir(path, writer, pathServer) #Pour finir, on appelle la fonction send_dir() pour envoyer le projet au serveur
-            writer.write(b'\x01') #On envoie un 1 pour indiquer qu'il n'y a plus rien à télécharger
+            # elif action == "register":
+            #     writer.write(b'\x01') #On envoie 1 au serveur pour qu'il sache que le client va s'inscrire
+            #     await register(writer, reader)
+                
+            # elif action == "up_project":
+            #     writer.write(b'\x02') #On envoie un zéro au serveur pour indiquer qu'il va recevoir les informations d'un projet
 
-        elif action == "telecharger":
-            writer.write(b'\x01') #On envoie un 1 au serveur pour lui signifier qu'il doit envoyer un projet au client
-            idProjet = input("Veuillez entrer l'id du projet à télécharger : ")
-            idProjet = int(idProjet)
-            writer.write(idProjet.to_bytes(1, 'big')) #On envoie au serveur le chemin du projet à télécharger
-            while True:
-                #On vérifie à chaque tour si il y a encore un fichier à télécharger ou non. Si oui, on appelle receive_file()
-                print("Downloading project...")
-                downloading = await reader.read(1)
-                downloading = int.from_bytes(downloading, 'big')
-                print("\033[33mDownloading = ", downloading, "\033[0m")
-                if downloading:
-                    await receive_file(reader)
-                else:
-                    break
-            print("Project successfully downloaded")
+            #     #On envoie au serveur le nom du projet choisit par l'utilisateur. Il nous renvoie une réponse indiquant la disponibilité du nom
+            #     projectName = input("Veuillez donner un nom à votre projet : ")
+            #     await send_message(writer, projectName.encode())
+            #     response = await reader.read(1)
+            #     while int.from_bytes(response, 'big') == 0: #Si le nom n'est pas disponible, on renvoie un nouveau nom jusqu'à ce qu'il soit disponible
+            #         print("Ce nom est déjà pris.")
+            #         projectName = input("Veuillez donner un nom à votre projet : ")
+            #         await send_message(writer, projectName.encode())
+            #         response = await reader.read(1)
 
-        elif action == "infos":
-            writer.write(b'\x03')
-            idProjet = input("Entrez l'id du projet dont vous voulez les infos : ")
-            await get_info_ProjetValides(int(idProjet), writer, reader)
+            #     #On envoie ensuite le chemin du projet ainsi que le login de l'utilisateur au serveur
+            #     path = input("Veuillez entrer le chemin du projet à envoyer : ")
+            #     path = path.replace('\\', '/')
+            #     pathServer = path.split('/')[-1]
+            #     await send_message(writer, pathServer.encode())
+            #     await send_message(writer, user.encode())
+            #     await send_dir(path, writer, pathServer) #Pour finir, on appelle la fonction send_dir() pour envoyer le projet au serveur
+            #     writer.write(b'\x01') #On envoie un 1 pour indiquer qu'il n'y a plus rien à télécharger
 
-        elif action == "quitter":
-            writer.write(b'\x02')
-            connected = False
-        else:
-            print('Veuillez entrer "envoyer", "telecharger" ou "quitter" svp.')
-        
+            # elif action == "dl_project":
+            #     writer.write(b'\x03') #On envoie un 1 au serveur pour lui signifier qu'il doit envoyer un projet au client
+            #     idProjet = input("Veuillez entrer l'id du projet à télécharger : ")
+            #     idProjet = int(idProjet)
+            #     writer.write(idProjet.to_bytes(1, 'big')) #On envoie au serveur le chemin du projet à télécharger
+            #     while True:
+            #         #On vérifie à chaque tour si il y a encore un fichier à télécharger ou non. Si oui, on appelle receive_file()
+            #         print("Downloading project...")
+            #         downloading = await reader.read(1)
+            #         downloading = int.from_bytes(downloading, 'big')
+            #         print("\033[33mDownloading = ", downloading, "\033[0m")
+            #         if downloading:
+            #             await receive_file(reader)
+            #         else:
+            #             break
+            #     print("Project successfully downloaded")
+
+            # elif action == "infos":
+            #     writer.write(b'\x04')
+            #     idProjet = input("Entrez l'id du projet dont vous voulez les infos : ")
+            #     await get_info_ProjetValides(int(idProjet), writer, reader)
+
+
     print('Close the connection')
     writer.close()
 
-async def connexion(writer, reader): #Fonction qui gère la connection au compte de l'utilisateur
-    action =''
-    while action != 'c':
-        action = input("Voulez-vous vous connecter ou vous inscrire ? (c/i) : ")
-        if action == 'c': #Si l'utilisateur souhaite se connecter, on appelle la fonction login()
-            writer.write(int(0).to_bytes(1, "big")) #On envoie 0 au serveur pour qu'il sache que le client va se connecter
-            user = await login(writer, reader)
-            return user
-        elif action == 'i': #S'il souhaite s'inscrire, on appelle la fonction register
-            writer.write(int(1).to_bytes(1, "big")) #On envoie 1 au serveur pour qu'il sache que le client va s'inscrire
-            await register(writer, reader)
-        else:
-            print("Veuillez entre 'c' pour vous connecter ou 'i' pour vous inscrire")
+# async def connexion(writer, reader): #Fonction qui gère la connection au compte de l'utilisateur
+#     action =''
+#         action = input("Voulez-vous vous connecter ou vous inscrire ? (c/i) : ")
+#         if action == 'c': #Si l'utilisateur souhaite se connecter, on appelle la fonction login()
+#             writer.write(int(0).to_bytes(1, "big")) #On envoie 0 au serveur pour qu'il sache que le client va se connecter
+#             user = await login(writer, reader)
+#             return user
+#         elif action == 'i': #S'il souhaite s'inscrire, on appelle la fonction register
+#             writer.write(int(1).to_bytes(1, "big")) #On envoie 1 au serveur pour qu'il sache que le client va s'inscrire
+#             await register(writer, reader)
+#         else:
+#             print("Veuillez entre 'c' pour vous connecter ou 'i' pour vous inscrire")
 
 asyncio.run(main())
