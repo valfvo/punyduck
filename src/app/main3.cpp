@@ -2,27 +2,6 @@
 
 #include <litequarks/litequarks.hpp>
 
-#define LQwu 50.0f
-#define LQhu 50.0f
-
-namespace LQUnit {
-    constexpr GLfloat operator "" _wu(long double unit) {
-        return unit * LQwu;
-    }
-
-    constexpr GLfloat operator "" _wu(unsigned long long unit) {
-        return unit * LQwu;
-    }
-
-    constexpr GLfloat operator "" _hu(long double unit) {
-        return unit * LQhu;
-    }
-
-    constexpr GLfloat operator "" _hu(unsigned long long unit) {
-        return unit * LQhu;
-    }
-}
-
 using namespace LQUnit;
 
 int SCREEN_WIDTH = 19_wu;

@@ -16,3 +16,24 @@ using LQGetterPtr = TMember (TQuark::*)();
 
 template<class TQuark, class TMember>
 using LQSetterPtr = void (TQuark::*)(TMember);
+
+#define LQwu 50.0f
+#define LQhu 50.0f
+
+namespace LQUnit {
+    constexpr float operator "" _wu(long double unit) {
+        return unit * LQwu;
+    }
+
+    constexpr float operator "" _wu(unsigned long long unit) {
+        return unit * LQwu;
+    }
+
+    constexpr float operator "" _hu(long double unit) {
+        return unit * LQhu;
+    }
+
+    constexpr float operator "" _hu(unsigned long long unit) {
+        return unit * LQhu;
+    }
+}
