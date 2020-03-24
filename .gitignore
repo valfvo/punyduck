@@ -32,5 +32,5 @@
 *.app
 
 # Test files
-tests
-src/litequarks/obj
+tests/*
+src/litequarks/obj/
