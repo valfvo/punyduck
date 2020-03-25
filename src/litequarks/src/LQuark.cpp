@@ -61,11 +61,3 @@ LQuark const* LQuark::nthSibling(LQindex nth) const {
 LQsize LQuark::childrenCount() const {
     return m_childrenCount;
 }
-
-LQuark& LQuark::subTree() {
-    return *m_lastChild;
-}
-
-LQuark& LQuark::superTree() {
-    return *m_parent;
-}

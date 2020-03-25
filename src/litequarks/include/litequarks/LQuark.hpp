@@ -15,12 +15,7 @@ public:
     LQuark const* nthSibling(LQindex nth) const;
     LQsize  childrenCount() const;
 
-    LQuark& subTree();
-    LQuark& superTree();
-
     // LQGreenCharge
-    template<class TQuark, class ...Args>
-    inline LQuark& append(Args ...args);
     LQuark& appendChild(LQuark* child);
     LQuark& appendChild(LQuark& child);
     LQuark& insertChild(LQindex index, LQuark& child);
@@ -50,5 +45,3 @@ protected:
 
     friend class LQSurface;
 };
-
-#include "LQGreenCharge.ipp"

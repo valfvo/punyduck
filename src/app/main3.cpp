@@ -1,5 +1,4 @@
 #include <iostream>
-
 #include <litequarks/litequarks.hpp>
 
 using namespace LQUnit;
