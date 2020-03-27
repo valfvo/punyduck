@@ -83,6 +83,11 @@ LQShader* LQSurface::getShader()
     return m_shader;
 }
 
+void LQSurface::setShader(LQShader* shader) {
+    delete m_shader;
+    m_shader = shader;
+}
+
 void LQSurface::setClearColor(LQColor const& color) {
     m_clearColor = color;
 }
@@ -117,26 +122,28 @@ void LQSurface::setClearColor(GLint r, GLint g, GLint b, GLint a) {
 //     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 // }
 
-// void LQSurface::blit(LQTexture const& texture, GLfloat x, GLfloat y)
-// {
-//     glm::mat4 model = glm::translate(glm::mat4(1.0f), glm::vec3(x, y, 0.0f));
-//     model = glm::scale(model, glm::vec3(texture.m_width, texture.m_height, 1.0f));
+void LQSurface::blit(
+    const LQTexture& texture, GLfloat x, GLfloat y, GLuint VAO)
+{
+    glm::mat4 model = glm::translate(glm::mat4(1.0f), glm::vec3(x, y, 0.0f));
+    model = glm::scale(model, glm::vec3(texture.m_width, texture.m_height, 1.0f));
 
-//     m_shader->use();
-//     m_shader->set("model", model);
-//     m_shader->set("projection", glm::ortho(0.0f, m_width, m_height, 0.0f, -1.0f, 0.0f));
-//     m_shader->set("texture0", 0);
+    m_shader->use();
+    m_shader->set("model", model);
+    m_shader->set("projection", glm::ortho(0.0f, m_width, m_height, 0.0f, -1.0f, 0.0f));
+    m_shader->set("texture0", 0);
 
-//     glBindFramebuffer(GL_FRAMEBUFFER, m_FBO);
-//     glActiveTexture(GL_TEXTURE0);
-//     glBindTexture(GL_TEXTURE_2D, texture.m_id);
-//     glBindVertexArray(m_VAO);
-//     glDrawArrays(GL_TRIANGLES, 0, 6);
+    glViewport(0, 0, m_width, m_height);
+    glBindFramebuffer(GL_FRAMEBUFFER, m_FBO);
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, texture.m_id);
+    glBindVertexArray(VAO);
+    glDrawArrays(GL_TRIANGLES, 0, 6);
 
-//     glBindTexture(GL_TEXTURE_2D, 0);
-//     glBindVertexArray(0);
-//     glBindFramebuffer(GL_FRAMEBUFFER, 0);
-// }
+    glBindTexture(GL_TEXTURE_2D, 0);
+    glBindVertexArray(0);
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+}
 
 void LQSurface::drawChildren() {
     for (

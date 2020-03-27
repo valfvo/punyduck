@@ -20,6 +20,7 @@ public:
 
     GLuint getVAO() const;
     LQShader* getShader();
+    void setShader(LQShader* shader);
     void setClearColor(LQColor const& color);
     void setClearColor(GLfloat r, GLfloat g, GLfloat b, GLfloat a=1.0f);
     void setClearColor(GLint r, GLint g, GLint b, GLint a=255);
@@ -27,7 +28,7 @@ public:
     //méthodes
     void drawChildren();
     // void blit(LQTexture const& texture, GLfloat x, GLfloat y, GLfloat width, GLfloat height);
-    // void blit(LQTexture const& texture, GLfloat x, GLfloat y);
+    void blit(LQTexture const& texture, GLfloat x, GLfloat y, GLuint VAO);
     void blit(const LQSurface& surface);
     void fill(GLfloat r, GLfloat g, GLfloat b, GLfloat a=1.0f);
     void fill(LQColor const& color);

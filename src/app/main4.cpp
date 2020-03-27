@@ -28,18 +28,8 @@ LQColor BLUE  (0x0000ff);
 #define BACKGROUND_SECONDARY 0x2f3136
 #define BACKGROUND_TERNARY   0x202225
 
-#define LQ_PARSE_MODEL(name)\
-    static_cast<name##Model*>(lq_modelData.parse(#name))
-
-#define LQ_CREATE_VIEW(models...)\
-    lqCreateView(#models, [](LQModelData lq_modelData)
-
-#define LQ_CREATE_MODEL(name)\
-    lqCreateModel(#name, [](LQRawData data) -> void*
-
 // using LQImage = LQViewable;
 using LQView = LQViewable;
-using LQViewConstructor = LQView (*)(LQModelData data);
 // class LQText;
 
 struct ProjectModel {
@@ -55,43 +45,88 @@ struct ProfileModel {
     int   age;
 };
 
-class LQRawData {
+// class BarreProjet : public LQViewable {
+// public:
+//     BarreProjet(const ProjetData& projet, BarreProjet* prevBarre)
+//     : LQViewable()
+//     {
+//         LQViewable *parent, *prev;
+//         createTree(*this, parent, prev)
+//         .add<LQImage>(0.0f, 0.0f, parent->height(), parent->height(), projet.image)
+//         .add<LQText>(projet.titre, prev->right()+1_wu, 0.0f)
+//         .add<LQText>(projet.desc, prev->right()+2_wu, 0.0f);
 
-};
+//         if (prevBarre == nullptr) {
+//             GLfloat width = 0.0f;
+//             for (auto child = m_firstChild; child; child = child->nextSibling()) {
+//                 // width += static_cast<LQViewable*>(child)->width();
+//             }
+//             resizeWidth(width);
+//         }
+//         else {
+//             // moveTo(prevBarre->left(), prevBarre->bottom()+1_hu);
+//             // resize(prevBarre->width(), prevBarre->height());
+//         }
+//     }
+// };
 
-void lqCreateModel(std::string name, void* (*constructor)(LQRawData data)) {
-    // LQModelData data;
-    // return constructor(data);
-}
+// class ListeProjets : public LQViewable {
+// public:
+//     ListeProjets(ProjetData* projets, GLfloat x, GLfloat y)
+//     : LQViewable(x, y, 0.0f, 0.0f)
+//     {
+//         appendChild(new BarreProjet(projets[0], nullptr));
+//         auto barre = static_cast<BarreProjet*>(m_lastChild);
+//         // resizeWidth(barre->width());
 
+//         int nBarres = 0;
+//         for (LQindex projet = 0; projet; ++projet) {
+//             appendChild(new BarreProjet(projets[projet], static_cast<BarreProjet*>(m_lastChild)));
+//             ++nBarres;
+//         }
+//         // resizeHeight((barre->height() + 1_hu - 1) * nBarres);
+//     }
+// };
+
+// LQView createView(std::string name, LQView (*constructor)(void* data)) {
+//     return constructor(nullptr);
+// }
 
 class LQModelData {
-public:
-    void* parse(std::string name) {
 
-    }
 };
 
-LQView lqCreateView(std::string models, LQViewConstructor constructor) {
+// LQView createView(std::string name, const char* models[], LQView (*constructor)(void* data)) {
+LQView createView(std::string name, std::vector<std::string> models,
+                  LQView (*constructor)(LQModelData data)) {
     LQModelData data;
     return constructor(data);
 }
 
+// LQViewable lamb() {
+//     LQViewable accueil(0.0f, 0.0f, SCREEN_WIDTH, SCREEN_HEIGHT);
+//     LQViewable *parent, *prev;
+
+//     createTree(accueil, parent, prev)
+//     .add<ListeProjets>(nullptr, 1_wu, 4_hu);
+//     // .add<BoutonTrie>(parent->firstChild());
+
+//     return accueil;
+// }
+
 int main2() {
-    LQ_CREATE_MODEL(Project) {
-        return new ProjectModel;
-    });
+    // const char* models[] = {
+    //     "oui",
+    //     "non"
+    // };
 
-    LQView Accueil = LQ_CREATE_VIEW(Project, Profile) {
-        auto profile = LQ_PARSE_MODEL(Profile);
-        LQViewable accueil;
-        return accueil;
-    });
-
-    // LQViewable Accueil = createView("accueil", Project, Profile)
-    //         LQViewable accueil;
-    //         return accueil;
-    //     });
+    LQViewable Accueil = createView("accueil",
+        {"project", "profile"},
+        [](LQModelData data) {
+            // data.parse("profile");
+            LQViewable accueil;
+            return accueil;
+        });
 }
 
 int main() {

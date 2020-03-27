@@ -21,7 +21,7 @@ LQTreeCreator<TQuark>::
 template<class TQuark>
 LQTreeCreator<TQuark>&
 LQTreeCreator<TQuark>::
-subTree()
+sub()
 {
     if (m_quark->lastChild()) {
         m_quark = m_quark->lastChild();
@@ -34,7 +34,7 @@ subTree()
 template<class TQuark>
 LQTreeCreator<TQuark>&
 LQTreeCreator<TQuark>::
-superTree()
+super()
 {
     if (m_quark != m_root) {
         m_quark = m_quark->parent();
@@ -45,10 +45,10 @@ superTree()
 }
 
 template<class TQuark>
-template<class TSubQuark, class ...Args>
+template<class TSubQuark, class ...TArgs>
 LQTreeCreator<TQuark>&
 LQTreeCreator<TQuark>::
-append(Args ...args) {
+add(TArgs ...args) {
     m_quark->appendChild(new TSubQuark(args...));
     *m_currentPrevSibling = static_cast<TQuark*>(m_quark->lastChild());
     return *this;

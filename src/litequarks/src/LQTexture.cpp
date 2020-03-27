@@ -29,6 +29,27 @@ LQTexture::LQTexture(GLuint width, GLuint height)
     glBindTexture(GL_TEXTURE_2D, 0);
 }
 
+LQTexture::LQTexture(
+    LQsize width, LQsize height,
+    GLubyte* data, GLenum format, GLint mipmapLevel, GLint internalFormat,
+    GLenum wrapS, GLenum wrapT, GLenum minFilter, GLenum magFilter)
+: m_id(0), m_width(width), m_height(height), m_format(internalFormat),
+  m_wrapS(wrapS), m_wrapT(wrapT),
+  m_minFilter(minFilter), m_magFilter(magFilter)
+{
+    glGenTextures(1, &m_id);
+    glBindTexture(GL_TEXTURE_2D, m_id);
+
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, m_wrapS);	
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, m_wrapT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, m_minFilter);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, m_magFilter);
+
+    glTexImage2D(GL_TEXTURE_2D, 0, m_format, m_width, m_height, 0,
+                 format, GL_UNSIGNED_BYTE, data);
+    glBindTexture(GL_TEXTURE_2D, 0);
+}
+
 // LQTexture::LQTexture(LQTexture const& texture)
 // : m_id(0), m_width(texture.m_width), m_height(texture.m_height),
 //   m_format(texture.m_format),

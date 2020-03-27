@@ -3,10 +3,19 @@
 #include <string>
 #include <glad/glad.h>
 
+#include "LQDeclaration.hpp"
+
 class LQTexture {
 public:
     LQTexture();
     LQTexture(GLuint width, GLuint height);
+
+    LQTexture(LQsize width, LQsize height,
+              GLubyte* data, GLenum format=GL_RGBA,
+              GLint mipmapLevel=0, GLint internalFormat=GL_RGBA,
+              GLenum wrapS=GL_REPEAT, GLenum wrapT=GL_REPEAT,
+              GLenum minFilter=GL_LINEAR, GLenum magFilter=GL_LINEAR);
+
     // LQTexture(LQTexture const& texture);
     LQTexture(std::string const& path);
     // void save(std::string const& path) const;

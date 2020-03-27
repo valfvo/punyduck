@@ -29,7 +29,7 @@ LQWindow::LQWindow(int width, int height, char const* title)
         std::clog << "failed to initialize GLAD" << std::endl;
         glfwTerminate();
     }
-    glEnable(GL_MULTISAMPLE);
+    // glEnable(GL_MULTISAMPLE);
     m_shader = new LQShader("shaderVertex.txt", "shaderFragment.txt");
     m_width = width;
     m_height = height;

@@ -12,7 +12,7 @@ LQ_OBJ_PREFIXLESS := $(patsubst src/%.cpp,obj/%.o,$(LQ_SRC:$(LQ_DIR)/%=%))
 LQ_OBJ := $(addprefix $(LQ_DIR)/,$(LQ_OBJ_PREFIXLESS))
 
 LIBS_PATH = -I$(INCLUDE_DIR) -I$(LQ_DIR)/include -L$(LIB_DIR)
-LIBS = -lglfw3 -lopengl32 -lgdi32
+LIBS = -lglfw3 -lopengl32 -lgdi32 -lfreetype
 LIBS_FLAGS = $(LIBS_PATH) $(LIBS)
 
 OBJ = main.o $(LQ_OBJ) $(SRC_DIR)/glad.o

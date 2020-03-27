@@ -9,14 +9,14 @@ public:
     ~LQTreeCreator();
 
     LQTreeCreator<TQuark>&
-    subTree();
+    sub();
 
     LQTreeCreator<TQuark>&
-    superTree();
+    super();
 
-    template<class TSubQuark, class ...Args>
+    template<class TSubQuark, class ...TArgs>
     LQTreeCreator<TQuark>&
-    append(Args ...args);
+    add(TArgs ...args);
 
 private:
     LQuark*  m_root;
