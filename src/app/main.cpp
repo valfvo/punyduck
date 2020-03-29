@@ -34,8 +34,12 @@ LQColor BLUE  (0x0000ff);
 #define LQ_CREATE_VIEW(models...)\
     lqCreateView(#models, [](LQModelData lq_modelData)
 
-#define LQ_CREATE_MODEL(name)\
-    lqCreateModel(#name, [](LQRawData data) -> void*
+class LQModelData {
+public:
+    void* parse(std::string name) {
+        return nullptr;
+    }
+};
 
 // using LQImage = LQViewable;
 using LQView = LQViewable;
@@ -55,22 +59,14 @@ struct ProfileModel {
     int   age;
 };
 
-class LQRawData {
+// class LQRawData {
 
-};
+// };
 
 void lqCreateModel(std::string name, void* (*constructor)(LQRawData data)) {
     // LQModelData data;
     // return constructor(data);
 }
-
-
-class LQModelData {
-public:
-    void* parse(std::string name) {
-
-    }
-};
 
 LQView lqCreateView(std::string models, LQViewConstructor constructor) {
     LQModelData data;
@@ -79,11 +75,14 @@ LQView lqCreateView(std::string models, LQViewConstructor constructor) {
 
 int main2() {
     LQ_CREATE_MODEL(Project) {
-        return new ProjectModel;
+        return new ProjectModel{
+            LQ_PARSE(char*),
+            LQ_PARSE(char*),
+            LQ_PARSE(char*)};
     });
 
     LQView Accueil = LQ_CREATE_VIEW(Project, Profile) {
-        auto profile = LQ_PARSE_MODEL(Profile);
+        // auto profile = LQ_PARSE_MODEL(Profile);
         LQViewable accueil;
         return accueil;
     });
@@ -92,6 +91,7 @@ int main2() {
     //         LQViewable accueil;
     //         return accueil;
     //     });
+    return 0;
 }
 
 int main() {
@@ -144,14 +144,27 @@ int main() {
     LQSurface text = font.renderText(U"éèsêà", FVO_TEXT);
     app.appendChild(text);
 
-    app.drawChildren();
+    // app.drawChildren();
+    auto s = "ca marche\n\0plutot bien";
+    char* data = new char[27];
+    int a = 123456789;
 
-    while (window.alive())  {
-        window.clear(); 
-        window.blit(app);
-        // window.blit(text);
-        window.update();
-    }
+    memcpy(data, &a, 4);
+    memcpy(&data[4], s, 23);
+
+    LQRawData lq_rawData(data, 27);
+    auto n   = LQ_PARSE(int);
+    auto oui = LQ_PARSE(char*);
+    auto non = LQ_PARSE(char*);
+
+    std::cout << n << '\n' << oui << non << std::endl;
+
+    // while (window.alive())  {
+    //     window.clear(); 
+    //     window.blit(app);
+    //     // window.blit(text);
+    //     window.update();
+    // }
 
     return EXIT_SUCCESS;
 }

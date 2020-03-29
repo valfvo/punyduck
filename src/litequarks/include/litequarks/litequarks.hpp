@@ -6,3 +6,5 @@
 #include <litequarks/LQColor.hpp>
 #include <litequarks/LQTreeCreator.hpp>
 #include <litequarks/LQFont.hpp>
+#include <litequarks/LQRawData.hpp>
+#include <litequarks/LQAppModel.hpp>

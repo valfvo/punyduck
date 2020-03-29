@@ -5,17 +5,60 @@
 int SCREEN_WIDTH  = 1280;
 int SCREEN_HEIGHT = 720;
 
+// #define LQ_TREE_INIT(root)\
+//     LQViewable *parent, *prev;\
+//     auto tree = createTree(root, parent, prev)
+
+// #define LQ_TREE_INIT(root)\
+//     LQTreeCreator((LQViewable*)&root, (LQViewable**)nullptr, (LQViewable**)nullptr);\
+//     LQViewable *parent, *prev;\
+//     // auto tree = createTree(root, parent, prev)
+
+// #define LQ_TREE_INIT_WITH_FIRST(root, args...)\
+//     LQViewable* parent;\
+//     LQViewable* prev = new LQViewable(args);\
+//     auto tree = createTree(root, parent, prev)
+
+// #define LQ_TREE_PREV_LEFT_BOTTOM_WIDTH_HEIGHT\
+//     prev->left(), prev->bottom(), prev->width(), prev->height()
+
+// #define LQ_TREE_PREV_L_B_W_H LQ_TREE_PREV_LEFT_BOTTOM_WIDTH_HEIGHT
+
+// #define LQ_MODEL_LIST(name)\
+//     std::forward_list<name##Model*> name##s
+
+// #define LQ_FOR_EACH(item)\
+//     for (auto item : item##s)
+
+// #define LQ_VIEWABLE_PARAMS\
+//     GLfloat x=0.0f, GLfloat y=0.f,\
+//     GLfloat width=0.0f, GLfloat height=0.0f,\
+//     GLint color=0x000000
+
+// #define LQ_VIEWABLE_ARGS\
+//     x, y, width, height, color
+
+// #define LQ_MODEL(name)\
+//     name##Model* name
+
+// using LQImage = LQViewable;
+// using LQView = LQViewable;
 class LQText;
 
-class LQAny { };
-class LQString : public LQAny { };
-class LQNumber : public LQAny { };
+struct ProjectModel;
 
-class ProjectModel {
-    LQString titre;
-    LQString desc;
-    LQString image;
-};
+// struct ProjectModel {
+//     char* titre;
+//     char* desc;
+//     char* image;
+// };
+
+// struct ProfileModel {
+//     int   n;
+//     char* name;
+//     char* bio;
+//     int   age;
+// };
 
 // class LI_Project : public LQViewable {
 // public:
@@ -65,28 +108,36 @@ void lqInitForEach(std::string model, LQViewable* viewable) {
 class UL_Project : public LQViewable {
 public:
     UL_Project(GLfloat x, GLfloat y)
+    : LQViewable(x, y, 0.0f, 0.0f)
     // : LQViewable(x, y)
     {
-        // lqInitForEach("Project", this);
-        lqForEach<Project>(this, addProject);
-        lqOn("click", this, addProject);
+        lqInitForEach("Project", this);
         // listen("click") {
         //     AppController::eventToCallbacks.push_back(this, LQViewable::onclick);
         // };
     }
 
     // void forEach(void* model) override {
-    // void forEach(void* model) {
-    //     addProject(static_cast<ProjectModel*>(model));
-    // }
+    void forEach(void* model) {
+        addProject(static_cast<ProjectModel*>(model));
+    }
 
-    void addProject(Project* project) {
-        using namespace std::placeholders;
-        auto f = std::bind(addProject, this, _1);
+    void addProject(ProjectModel* project) {
         // tree.add<LI_Project>(project, LQ_TREE_PREV_L_B_W_H);
         // extendToChildrenDimensions();
     }
 };
+
+// class ProjectModel {
+//     LQString titre;
+//     LQString desc;
+//     LQString image;
+//     LQNumber
+// };
+
+// class ProfileModel {
+//     LQString bio;
+// };
 
 // LQString {
 //     LQViewable** refs;

@@ -200,6 +200,8 @@ async def main():
             await task
             if action == b'0':
                 connected = False
+            elif action[0] == 1:
+                
             elif action.tobytes()[0] == 49:
                 result = await reader.read(1)
                 print("result : ", result)
