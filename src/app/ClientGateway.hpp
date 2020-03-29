@@ -10,7 +10,7 @@ public:
 
     void operator()();
     char* pollRequest();
-    void transmitResponse(char* data);
+    void transmitResponse(const char* data, int size);
 
 private:
     std::vector<char*>& m_requests;

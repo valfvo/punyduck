@@ -4,6 +4,7 @@
 #include <Python.h>
 #include "ClientGateway.hpp"
 #include <iostream>
+#include <typeinfo>
 
 PyObject* PyInit_litequarks(void);
 

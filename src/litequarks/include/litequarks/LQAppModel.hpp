@@ -17,7 +17,7 @@ public:
     createModel(char* data, LQsize size);
 
     static void
-    dataQuery(std::vector<std::string> models);
+    dataQuery(std::string models);
 
 private:
     static std::unordered_map<std::string, LQModelCreator>

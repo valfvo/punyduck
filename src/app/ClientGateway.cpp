@@ -1,4 +1,5 @@
 #include "litequarks.hpp"
+#include <cstring>
 
 ClientGateway::ClientGateway(
     std::vector<char*>& requests,
@@ -11,9 +12,9 @@ void ClientGateway::operator()() {
     PyImport_AppendInittab("litequarks", &PyInit_litequarks);
     Py_Initialize();
 
-    FILE* fp = _Py_fopen("client.py", "rb");
+    FILE* fp = _Py_fopen("../server/client.py", "rb");
     if (fp) {
-        PyRun_SimpleFile(fp, "..\\..\\Serveur\\client.py");
+        PyRun_SimpleFile(fp, "../server/client.py");
     }
     else {
         printf("invalid file\n");
@@ -34,7 +35,15 @@ char* ClientGateway::pollRequest() {
     }
 }
 
-void ClientGateway::transmitResponse(char* data) {
+void ClientGateway::transmitResponse(const char* data, int size) {
     std::lock_guard<std::mutex> lock(m_mutex);
-    m_responses.push_back(data);
+    std::cout << "oui mais bof" << std::endl;
+    char* response = new char[size+4];
+    char* p_size = ((char*)&size);
+    memcpy(response, p_size, 4);
+    std::cout << "oui mais bof 0.5 " << size << ", " << data << std::endl;
+    memcpy(&response[4], data, size);
+    std::cout << "oui mais bof 2" << std::endl;
+    m_responses.push_back(response);
+    std::cout << "ClientGateway response transmitted : " << response << std::endl;
 }

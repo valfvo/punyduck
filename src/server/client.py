@@ -175,17 +175,6 @@ async def send_dir(pathDir, writer, oDir):
     else:
         print("Veuillez entrer un chemin valide")
 
-async def get_info_ProjetValides(idProjet, writer, reader):
-    writer.write(idProjet.to_bytes(1, 'big'))
-    valide = int.from_bytes(await reader.read(1), 'big')
-    if valide:
-        idLog = int.from_bytes(await reader.read(1), 'big')
-        nom = (await receive_message(reader)).decode()
-        tags = (await receive_message(reader)).decode()
-        idBio = int.from_bytes(await reader.read(1), 'big')
-        idImage = int.from_bytes(await reader.read(1), 'big')
-        print(idLog, nom, tags, idBio, idImage, sep=" ")
-
 
 async def main():
     """Fonction principale, appelée au début du programme. Après avoir établi la connexion avec le serveur, elle appelle la fonction connexion
@@ -200,15 +189,19 @@ async def main():
             await task
             if action == b'0':
                 connected = False
-            elif action[0] == 1:
+
+            elif action.tobytes()[0] == 1:
+                task = asyncio.create_task(send_message(writer, action))
+                await task
+                infos= bytes(await receive_message(reader))
+                lq.transmit_response(infos)
                 
+
             elif action.tobytes()[0] == 49:
                 result = await reader.read(1)
                 print("result : ", result)
                 while result == b'\x00':
-                    print("111111111111111111")
-                    lq.transmit_response(b'\x30')
-                    print("222222222222222222")
+                    lq.transmit_response(b'\x00')
                     action = None
                     while True:
                         action = lq.poll_request()
@@ -218,8 +211,14 @@ async def main():
                     task = asyncio.create_task(send_message(writer, action))
                     await task
                     result = await reader.read(1)
-                lq.transmit_response(b'')
-                
+                print("caca")
+                lq.transmit_response(b'\x01')
+            
+            elif action.tobytes()[0] == 53:
+                infos = bytes(await receive_message(reader))
+                print("infos = ", infos, ", type : ", type(infos), ", len : ", len(infos))
+                lq.transmit_response(infos)#, len(infos))
+                print("-----JJJJJJJJJJJJJJJJJJJJ-------")
 
             # await asyncio.sleep(1000)
 

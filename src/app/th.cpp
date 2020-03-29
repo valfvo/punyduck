@@ -13,6 +13,7 @@ std::mutex app_mutex;
 
 char* pollResponses(std::vector<char*>& responses) {
     std::lock_guard<std::mutex> lock(app_mutex);
+    // std::cout << "pas vraiment" << std::endl;
     if (!responses.empty()) {
         std::cout << "Response of py = " << responses[0] << std::endl;
         char* save = responses[0];
@@ -22,9 +23,29 @@ char* pollResponses(std::vector<char*>& responses) {
     return NULL;
 }
 
+struct Img {
+    char* bin;
+    int size;
+};
+
+struct Projet {
+    std::string title;
+    std::string descr;
+    Img image;
+    std::string date;
+};
+
+std::vector<(*lambda)(reader)> array;
+std::vector<std::string> index_array;
+
+void createModel(std::string name, Projet (*lambda)(reader)) {
+    array.push_back(lambda);
+    index_array.push_back(name);
+}
+
 std::string Qregister() {
     std::string login, password, email, query;
-    std::cout << "Entrez un login :";
+    std::cout << "Entrez un login : ";
     std::cin >> login;
     std::cout << "Entrez un password :";
     std::cin >> password;
@@ -47,7 +68,7 @@ int main(int argc, char* argv[])
     std::vector<char*> responses;
     ClientGateway gateway(requests, responses);
     std::thread gatewayThread(std::ref(gateway));
-    
+
     std::string query;
     char* c_query;
     bool connected = true;
@@ -69,19 +90,63 @@ int main(int argc, char* argv[])
             c_query = new char[query.length() + 1];
             strcpy(c_query, query.c_str());
             requests.push_back(c_query);
-            while (responses.empty());
-            std::cout << "Response of client : " << responses[0] << ", type : " << typeid(responses[0]).name() << std::endl;
-            while(strcmp(responses[0], "0") == 0)
+            char* rep = pollResponses(responses);
+            while(rep == NULL) {
+                rep = pollResponses(responses);
+            }
+            while((int)rep[0] == 0)
             {
-                responses.erase(responses.begin());
                 query = Qregister();
                 c_query = new char[query.length() + 1];
                 strcpy(c_query, query.c_str());
                 requests.push_back(c_query);
-                while (responses.empty());
-                std::cout << "Response of client : " << responses[0] << ", type : " << typeid(responses[0]).name() << std::endl;
+                rep = pollResponses(responses);
+                while(rep == NULL) {
+                    rep = pollResponses(responses);
+                }
             }
-            responses.erase(responses.begin());
+        }
+
+        if (query == "infos") {
+            std::cout << "Infos : " << std::endl;
+            int n = 32, nread = 0;
+            query = '5'+std::to_string(n)+'|'+std::to_string(nread);
+            c_query = new char[query.length() + 1];
+            strcpy(c_query, query.c_str());
+
+            app_mutex.lock();
+            requests.push_back(c_query);
+            std::cout << "Requête envoyée 2" << std::endl;
+            app_mutex.unlock();
+
+            char* rep = nullptr;
+            while (rep == nullptr) {
+                // std::cout << "attente" << std::endl;
+                rep = pollResponses(responses);
+            }
+            std::cout << "=========XXXXXXXXXXXXXXXXXXXXXXXX======" << std::endl;
+
+            // rep = "resp"+len(titre)+len(descr)+len(img)+titre+descr+img...    
+            int i = 8;
+            int size = (int)*rep;
+            std::cout << size << std::endl;
+            while(i < size) {
+                int sizeTitle = rep[i];
+                int sizeDesc = (rep[i+1] << 8) + rep[i+2];
+                int sizeImg = (rep[i+3] << 16) + (rep[i+4] << 8) + rep[i+5];
+
+                std::string title(&rep[i+6], sizeTitle);
+                std::string descr(&rep[i+6+sizeTitle], sizeDesc);
+                std::string img(&rep[i+6+sizeTitle+sizeDesc], sizeImg);
+                i += 6+sizeTitle+sizeDesc+sizeImg;
+
+                std::cout
+                    << "Response of client : \nTitre : " << title
+                    << "\nDescr : " << descr
+                    << "\nImg : " << img
+                    << std::endl;
+                
+            }
         }
 
     }
@@ -90,3 +155,4 @@ int main(int argc, char* argv[])
     std::cout << "End of session" << std::endl;
     return EXIT_SUCCESS;
 }
+

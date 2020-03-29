@@ -18,13 +18,9 @@ void LQAppModel::createModel(char* data, LQsize size) {
     s_models[model].emplace_front(s_creators[model](rawData));
 }
 
-void LQAppModel::dataQuery(std::vector<std::string> models) {
+void LQAppModel::dataQuery(std::string models) {
     LQDataQueryEvent event("dataQuery", "SELECT * FROM ");
-    for (auto model : models) {
-        event.query += model + ",";
-    }
-    event.query.pop_back();
-    event.query += ';';
+    event.query += model + ';';
 
     AppController::s_eventQueue.push_back(event);
 }

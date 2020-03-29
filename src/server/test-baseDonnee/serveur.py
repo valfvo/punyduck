@@ -117,24 +117,22 @@ async def send_dir(pathDir, writer, oDir):
     else:
         print("Veuillez entrer un chemin valide")
 
-async def send_info_ProjetValides(writer, reader):
-    idProjet = await reader.read(1)
-    idProjet = int.from_bytes(idProjet, 'big')
-    cur.execute("SELECT valide FROM Projet WHERE idProjet = %s;", (idProjet,))
-    valide = cur.fetchone()[0]
-    print(valide)
-    if valide:
-        writer.write(b'\x01')
-        cur.execute("SELECT idLog, nom, tags, idBio, idImage FROM Projet WHERE idProjet = %s;", (idProjet,))
-        data = cur.fetchone()
+async def send_info_ProjetValides(writer, reader, n, nread):
+    cur.execute("SELECT idLog, nom, tag, Descr, pathImage FROM Projet LIMIT %s OFFSET %s;", (n, nread))
+    datas = cur.fetchall()
+    infos = "resp".encode()
+    for data in datas:
         print(data)
-        writer.write(data[0].to_bytes(1, 'big'))
-        await send_message(writer, data[1].encode())
-        await send_message(writer, data[2].encode())
-        writer.write(data[3].to_bytes(1, 'big'))
-        writer.write(data[4].to_bytes(1, 'big'))
-    else:
-        writer.write(b'\x00')
+        nom = data[1]
+        descr = data[3]
+        with open(data[4], 'rb') as file:
+            # img = file.read()
+            img = "none".encode()
+            infos += (len(nom).to_bytes(1, 'big')
+                    + len(descr).to_bytes(2, 'big')
+                    + len(img).to_bytes(3, 'big')
+                    + nom.encode() + descr.encode() + img)
+    await send_message(writer, infos)
 
 async def register(writer, reader, infos):
     """Fonction appelée en premier lors de la connexion avec un client. Celle-ci gère la connexion du client à son compte,
@@ -149,13 +147,14 @@ async def register(writer, reader, infos):
     print("login = ", login)
     print("password = ", password)
     print("email = ", email)
-    query = "INSERT INTO UserInfo (login, password, email, admin, idImage, idBio) VALUES('%s', '%s', '%s', FALSE, 1, 1)" % (login, ph.hash(password), email)
+    query = "INSERT INTO UserInfo (login, password, email, admin, descr, pathImage) VALUES('%s', '%s', '%s', FALSE, 'Cette page na pas de description', 'Images/defaultpp.png')" % (login, ph.hash(password), email)
     
     try:
         cur.execute(query)
         print("Pas d'erreur")
         return True
-    except:
+    except Exception as e:
+        print(e)
         print("Login invalide")
         return False
 
@@ -172,7 +171,6 @@ async def login(writer, reader):
         print("data = ", data)
         try:
             ph.verify(data[0], password) #On vérifie que le mot de passe saisie corresponde à celui récupéré (qui est hashé)
-            connecting = False
             print("Bienvenue, ", login)
             await send_message(writer, login.encode()) #On envoie au client le login pour lui indiquer qu'il s'est connecté
             incorrectLog = False
@@ -189,6 +187,41 @@ def delete_account(login): #Fonction appelée pour supprimer un compte
         cur.execute("DELETE FROM UserInfo WHERE login = %s", (login,))
         conn.commit()
 
+async def SQL(writer, query):
+    cur.execute(query)
+    datas = cur.fetchall()
+    hasPath = False
+    infos = "response".encode()
+    if "Projet" in query or "UserInfo" in query:
+        if '*' in query:
+            pathImage = 5
+            hasPath = True
+        elif 'path' in query:
+            match = re.search(r'^SELECT (.*) FROM .*;', query)
+            row = match.group(1).split(', ')
+            for i in range(len(row)):
+                if 'path' in row[i]:
+                    pathImage = i
+                    hasPath = True
+
+    for data in datas:
+        for row in range(len(data)):
+            if hasPath and row == pathImage:
+                infos += os.path.getsize(data[row]).to_bytes(3, 'big')
+            else:
+                infos += len(data[row]).to_bytes(3, 'big')
+
+    for data in datas:
+        for row in range(len(data)):
+            if hasPath and row == pathImage:
+                with open(data[row], 'rb') as file:
+                    infos += file.read()
+            else:
+                infos += data[row].encode()
+
+    print("infos = ", infos)
+    await send_message(writer, infos)
+
 async def handle_echo(reader, writer):
     """Fonction principale du serveur, appelée lors de la connexion avec un client. Après avoir exécuté la fonction log(), elle
     envoie ou récupère un projet selon les demandes de l'utilisateur"""
@@ -201,6 +234,10 @@ async def handle_echo(reader, writer):
         # await asyncio.sleep(1000)
         if action == '0':
             connexion = False
+
+        elif action[0] == 1:
+            query = action[1:].decode()
+            await SQL(writer, query)
         
         elif action[0] == '0':
             await login(writer, reader)
@@ -216,6 +253,11 @@ async def handle_echo(reader, writer):
                 result = await register(writer, reader, action)
                 # task = asyncio.create_task(register(writer, reader, action))
             writer.write(b'\x01')
+
+        elif action[0] == '5':
+            n = 32
+            nread = 0
+            await send_info_ProjetValides(writer, reader, n, nread)
 
 
         # elif action == 2: #S'il souhaite envoyer un projet
