@@ -2,10 +2,9 @@
 
 #include <string>
 #include <unordered_map>
-#include <forward_list>
+#include <vector>
 
 #include "LQDeclaration.hpp"
-#include "LQAppController.hpp"
 #include "LQRawData.hpp"
 
 class LQAppModel {
@@ -17,14 +16,14 @@ public:
     createModel(char* data, LQsize size);
 
     static void
-    dataQuery(std::string models);
+    dataQuery(std::string query);
+
+    static std::unordered_map<const char*, std::vector<void*>>
+    s_items;
 
 private:
     static std::unordered_map<std::string, LQModelCreator>
     s_creators;
-
-    static std::unordered_map<std::string, std::forward_list<void*>>
-    s_models;
 };
 
 // void lqCreateModel(const char* name, LQModelCreator creator) {

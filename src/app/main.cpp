@@ -28,72 +28,6 @@ LQColor BLUE  (0x0000ff);
 #define BACKGROUND_SECONDARY 0x2f3136
 #define BACKGROUND_TERNARY   0x202225
 
-#define LQ_PARSE_MODEL(name)\
-    static_cast<name##Model*>(lq_modelData.parse(#name))
-
-#define LQ_CREATE_VIEW(models...)\
-    lqCreateView(#models, [](LQModelData lq_modelData)
-
-class LQModelData {
-public:
-    void* parse(std::string name) {
-        return nullptr;
-    }
-};
-
-// using LQImage = LQViewable;
-using LQView = LQViewable;
-using LQViewConstructor = LQView (*)(LQModelData data);
-// class LQText;
-
-struct ProjectModel {
-    char* titre;
-    char* desc;
-    char* image;
-};
-
-struct ProfileModel {
-    int   n;
-    char* name;
-    char* bio;
-    int   age;
-};
-
-// class LQRawData {
-
-// };
-
-void lqCreateModel(std::string name, void* (*constructor)(LQRawData data)) {
-    // LQModelData data;
-    // return constructor(data);
-}
-
-LQView lqCreateView(std::string models, LQViewConstructor constructor) {
-    LQModelData data;
-    return constructor(data);
-}
-
-int main2() {
-    LQ_CREATE_MODEL(Project) {
-        return new ProjectModel{
-            LQ_PARSE(char*),
-            LQ_PARSE(char*),
-            LQ_PARSE(char*)};
-    });
-
-    LQView Accueil = LQ_CREATE_VIEW(Project, Profile) {
-        // auto profile = LQ_PARSE_MODEL(Profile);
-        LQViewable accueil;
-        return accueil;
-    });
-
-    // LQViewable Accueil = createView("accueil", Project, Profile)
-    //         LQViewable accueil;
-    //         return accueil;
-    //     });
-    return 0;
-}
-
 int main() {
     glfwInit();
     LQWindow window(SCREEN_WIDTH, SCREEN_HEIGHT, "Punyduck");
@@ -145,19 +79,19 @@ int main() {
     app.appendChild(text);
 
     // app.drawChildren();
-    auto s = "ca marche\n\0plutot bien";
-    char* data = new char[27];
-    int a = 123456789;
+    // auto s = "ca marche\n\0plutot bien";
+    // char* data = new char[27];
+    // int a = 123456789;
 
-    memcpy(data, &a, 4);
-    memcpy(&data[4], s, 23);
+    // memcpy(data, &a, 4);
+    // memcpy(&data[4], s, 23);
 
-    LQRawData lq_rawData(data, 27);
-    auto n   = LQ_PARSE(int);
-    auto oui = LQ_PARSE(char*);
-    auto non = LQ_PARSE(char*);
+    // LQRawData lq_rawData(data, 27);
+    // auto n   = LQ_PARSE(int);
+    // auto oui = LQ_PARSE(char*);
+    // auto non = LQ_PARSE(char*);
 
-    std::cout << n << '\n' << oui << non << std::endl;
+    // std::cout << n << '\n' << oui << non << std::endl;
 
     // while (window.alive())  {
     //     window.clear(); 
