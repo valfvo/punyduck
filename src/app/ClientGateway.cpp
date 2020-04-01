@@ -37,13 +37,9 @@ char* ClientGateway::pollRequest() {
 
 void ClientGateway::transmitResponse(const char* data, int size) {
     std::lock_guard<std::mutex> lock(m_mutex);
-    std::cout << "oui mais bof" << std::endl;
     char* response = new char[size+4];
     char* p_size = ((char*)&size);
     memcpy(response, p_size, 4);
-    std::cout << "oui mais bof 0.5 " << size << ", " << data << std::endl;
     memcpy(&response[4], data, size);
-    std::cout << "oui mais bof 2" << std::endl;
     m_responses.push_back(response);
-    std::cout << "ClientGateway response transmitted : " << response << std::endl;
 }

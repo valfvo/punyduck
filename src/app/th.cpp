@@ -1,4 +1,5 @@
 #include "litequarks.hpp"
+#include "include/litequarks/LQRawData.hpp"
 
 #include <iostream>
 #include <cstring>
@@ -8,19 +9,47 @@
 #include <mutex>
 #include <functional>
 #include <typeinfo>
+#include <utility>
 
 std::mutex app_mutex;
+std::vector<char*> requests;
+std::vector<char*> responses;
 
 char* pollResponses(std::vector<char*>& responses) {
     std::lock_guard<std::mutex> lock(app_mutex);
-    // std::cout << "pas vraiment" << std::endl;
     if (!responses.empty()) {
         std::cout << "Response of py = " << responses[0] << std::endl;
         char* save = responses[0];
         responses.erase(responses.begin());
+        int size = (int*)save;
+        LQRawData rawData(save, size);
+        std::string head(rawData.parse<char*>());
+        if(head == "response") {
+            head.assign(rawData.parse<char*>());
+            int nItem = rawData.parse<int>();
+            LQDataReceiveEvent event("dataReceive", rawData, size, head, nItem);
+            LQAppController::s_eventQueue.push_back(event);
+        }
         return save;
     }
-    return NULL;
+    return nullptr;
+}
+
+void LQDataQueryEventCB(LQDataQueryEvent event) {
+    event.query = 1 + event.query
+    requests.push_back(event.query);
+}
+
+void LQDataReceiveEventCB(LQDataReceiveEvent event) {
+    std::vector<std::pair<const char*, LQindex>> infos;
+    infos.push_back(std::make_pair(event.model, LQAppModel::s_items[event.model].size()));
+
+    for(int i = 0; i < event.nItems; i++) {
+        LQAppModel::createItem(event.model, event.rawData);
+    }
+
+    LQModelUpdateEvent eventMU(infos);
+    LQAppController::s_eventQueue.push_back(eventMU);
 }
 
 struct Img {
@@ -64,17 +93,17 @@ std::string Qregister() {
 
 int main(int argc, char* argv[])
 {
-    std::vector<char*> requests;
-    std::vector<char*> responses;
     ClientGateway gateway(requests, responses);
     std::thread gatewayThread(std::ref(gateway));
 
     std::string query;
     char* c_query;
     bool connected = true;
+    char* rep;
     while(connected) {
         std::cout << "Requête : ";
         std::cin >> query;
+
 
         if(query == "exit")
         {

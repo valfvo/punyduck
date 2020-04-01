@@ -6,15 +6,13 @@ LQAppModel::s_creators;
 std::unordered_map<const char*, std::vector<void*>>
 LQAppModel::s_items;
 
-void LQAppModel::addModelCreator(
+void LQAppModel::addModel(
     const std::string& name, LQModelCreator creator)
 {
     s_creators.insert({name, creator});
 }
 
-void LQAppModel::createModel(char* data, LQsize size) {
-    std::string model(data);
-    LQRawData rawData(data + model.length() + 1, size - model.length() - 1);
+void LQAppModel::createItem(std::string model, LQRawData& rawData) {
     s_items[model.c_str()].push_back(s_creators[model](rawData));
 }
 

@@ -24,7 +24,7 @@ template<class TQuark, class TMember>
 using LQSetterPtr = void (TQuark::*)(TMember);
 
 class LQRawData;
-using LQModelCreator = void* (*)(LQRawData);
+using LQModelCreator = void* (*)(LQRawData&);
 
 class LQViewable;
 class LQModelData;

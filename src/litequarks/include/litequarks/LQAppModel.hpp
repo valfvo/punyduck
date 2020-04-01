@@ -10,10 +10,10 @@
 class LQAppModel {
 public:
     static void
-    addModelCreator(const std::string& name, LQModelCreator creator);
+    addModel(const std::string& name, LQModelCreator creator);
 
     static void
-    createModel(char* data, LQsize size);
+    createItem(std::string model, LQRawData& rawData);
 
     static void
     dataQuery(std::string query);
