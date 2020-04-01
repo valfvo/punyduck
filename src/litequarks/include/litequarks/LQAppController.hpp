@@ -9,18 +9,55 @@
 #include "LQAppModel.hpp"
 #include "LQEvent.hpp"
 
+// button list mode
+// lqOn("click", button, UL_Project*, displayList, false)
+// lqOn("click", button2, UL_Project*, displayMosaique, false)
+
+// viewable: ["event"] -> std::vector* {invoke, observer}
+// event.observers -------------^
+
+// [{event, target}]
+//     {{invoke(void* observer, void* event), void* observer}, ...}
+
+enum LQEventType {
+    click,
+    modelUpdate
+};
+
+"click" -> LQMouseClickEvent
+"model-update" -> LQModelUpdateEvent
+lqOn<LQMouseClickEvent, UL_Project, UL_Project::addProject>(&button, &ul);
+
+template<class TEvent, class TObserver, void (TObserver::*callback)(TEvent&)>
+void lqOn(std::string nom, void* target, TObserver* observer, bool capture)
+{
+    LQAppController::s_eventDispatcher[std::make_pair(nom, target)]
+        .push_back(std::make_pair(&lqInvokeCallback<TObserver, TEvent, callback>, observer));
+}
+
+lqOn<constexpr
+
 class LQAppController {
 public:
     LQAppController() {
-        // listen('modelupdate', this);
+        // lqOn("model-update", modelUpdateCallback);
     }
 
+    std::unordered_map<std::pair<std::string, void*>,
+        std::vector<std::pair<std::function<void(void*, void*)>, void*>>>
+    s_eventDispatcher;
+    // [{event, target}]
+    //     {{invoke(void* observer, void* event), void* observer}, ...}
+
     static void pollEvents() {
+        // lqOn(string nom, target, observer, callback, bool capture)
+        //
         while (!LQAppController::s_eventQueue.empty()) {
-            // auto event = LQAppController::s_eventQueue.pop();
-            // for (callback : callbacks[event.name]) {
-            //     viewable->callback(event);
-            // }
+            auto event = LQAppController::s_eventQueue.front();
+            for (auto& pair : event.observers) {
+                (pair.first)(pair.second, *event);
+            }
+            LQAppController::s_eventQueue.pop();
         }
     }
 
@@ -30,7 +67,7 @@ public:
             auto& observers = LQAppController::s_modelObservers[info.first];
             auto it = items.cbegin() + info.second;
 
-            for (auto pair : observers) {
+            for (auto& pair : observers) {
                 for (auto item = it; item != items.cend(); ++item) {
                     (pair.first)(pair.second, *item);
                 }
@@ -38,11 +75,12 @@ public:
         }
     }
 
-    static std::queue<LQEvent> s_eventQueue;
+    static std::queue<LQEvent*> s_eventQueue;
     static std::unordered_map<const char*,
         std::vector<std::pair<std::function<void(void*, void*)>, void*>>>
     s_modelObservers;
     // [model]{{void invoke(void* observer, void* item), void* observer}, ...}
+    
 };
 
 std::unordered_map<const char*,

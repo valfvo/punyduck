@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cstddef>
+#include <string>
 
 using LQindex = std::ptrdiff_t;
 using LQsize  = std::ptrdiff_t;

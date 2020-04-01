@@ -35,16 +35,18 @@ char* pollResponses(std::vector<char*>& responses) {
     return nullptr;
 }
 
-void LQDataQueryEventCB(LQDataQueryEvent event) {
-    event.query = 1 + event.query
-    requests.push_back(event.query);
+void LQDataQueryCallback(LQDataQueryEvent event) {
+    event.query = 1 + event.query;
+    char* c_query = new char[query.length() + 1];
+    strcpy(c_query, query.c_str());
+    requests.push_back(c_query);
 }
 
-void LQDataReceiveEventCB(LQDataReceiveEvent event) {
+void LQDataReceiveCallback(LQDataReceiveEvent event) {
     std::vector<std::pair<const char*, LQindex>> infos;
     infos.push_back(std::make_pair(event.model, LQAppModel::s_items[event.model].size()));
 
-    for(int i = 0; i < event.nItems; i++) {
+    for(int i = 0; i < event.nItems; ++i) {
         LQAppModel::createItem(event.model, event.rawData);
     }
 

@@ -13,3 +13,16 @@ public:
 struct LQModelUpdateEvent {
     const std::vector<std::pair<const char*, LQindex>> infos;
 };
+
+struct LQDataReceiveEvent {
+    std::string nom;
+    LQRawData rawData;
+    int size;
+    std::string model;
+    int nItem;
+};
+
+struct LQDataQueryEvent {
+    std::string nom;
+    std::string query;
+};
