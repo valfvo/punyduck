@@ -1,5 +1,6 @@
 #include <iostream>
 
+#include <litequarks/LQAppController.hpp>
 #include <litequarks/LQWindow.hpp>
 
 void LQWindowFBSizeCallback(GLFWwindow* window, int width, int height);
@@ -29,15 +30,29 @@ LQWindow::LQWindow(int width, int height, char const* title)
         std::clog << "failed to initialize GLAD" << std::endl;
         glfwTerminate();
     }
-    // glEnable(GL_MULTISAMPLE);
+    glEnable(GL_MULTISAMPLE);
+    glEnable(GL_BLEND);
+    glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA,
+                        GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
+    glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
     m_shader = new LQShader("shaderVertex.txt", "shaderFragment.txt");
     m_width = width;
     m_height = height;
 }
 
+void LQWindow::run() {
+    while (alive()) {
+        clear(); 
+        drawChildren();
+        update();
+    }
+}
+
 void LQWindow::update() {
     glfwSwapBuffers(m_window);
     glfwPollEvents();
+    LQAppController::pollResponses();
+    LQAppController::pollEvents();
     processInput(m_window);
 }
 

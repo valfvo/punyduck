@@ -7,4 +7,6 @@
 #include <litequarks/LQTreeCreator.hpp>
 #include <litequarks/LQFont.hpp>
 #include <litequarks/LQRawData.hpp>
+
+#include <litequarks/LQAppController.hpp>
 #include <litequarks/LQAppModel.hpp>

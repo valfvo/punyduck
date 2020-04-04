@@ -1,7 +1,6 @@
 #pragma once
 
 #include <cstddef>
-#include <string>
 
 using LQindex = std::ptrdiff_t;
 using LQsize  = std::ptrdiff_t;
@@ -25,7 +24,7 @@ template<class TQuark, class TMember>
 using LQSetterPtr = void (TQuark::*)(TMember);
 
 class LQRawData;
-using LQModelCreator = void* (*)(LQRawData&);
+using LQItemCreator = void* (*)(LQRawData&);
 
 class LQViewable;
 class LQModelData;

@@ -3,9 +3,7 @@
 #define PY_SSIZE_T_CLEAN
 #include <Python.h>
 #include "ClientGateway.hpp"
-#include <iostream>
-#include <typeinfo>
 
-PyObject* PyInit_litequarks(void);
+PyObject* PyInit_gateway(void);
 
 void initGateway(ClientGateway* gateway);

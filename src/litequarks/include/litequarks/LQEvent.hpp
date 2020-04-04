@@ -1,28 +1,44 @@
 #pragma once
 
-#include <utility>
+#include <string>
+#include <typeindex>
 #include <vector>
 
 #include "LQDeclaration.hpp"
+#include "LQRawData.hpp"
 
 class LQEvent {
 public:
     virtual ~LQEvent();
+
+    const std::type_index type;
+    const void* target;
+
+protected:
+    LQEvent(const std::type_info& type, void* target);
 };
 
-struct LQModelUpdateEvent {
-    const std::vector<std::pair<const char*, LQindex>> infos;
+class LQDataQueryEvent : public LQEvent {
+public:
+    LQDataQueryEvent(void* target, const std::string& query);
+
+    const std::string query;
 };
 
-struct LQDataReceiveEvent {
-    std::string nom;
+class LQDataReceivedEvent : public LQEvent {
+public:
+    LQDataReceivedEvent(const std::string& model, LQsize itemCount,
+                        LQRawData rawData);
+
+    const std::string model;
+    const LQsize itemCount;
+
     LQRawData rawData;
-    int size;
-    std::string model;
-    int nItem;
 };
 
-struct LQDataQueryEvent {
-    std::string nom;
-    std::string query;
+class LQModelUpdateEvent : public LQEvent {
+public:
+    LQModelUpdateEvent(std::vector<std::pair<std::string, LQindex>>&& infos);
+
+    const std::vector<std::pair<std::string, LQindex>> infos;
 };

@@ -4,7 +4,10 @@
 
 class LQRawData {
 public:
+    LQRawData(char* data);
     LQRawData(char* data, LQsize size);
+
+    void seek(LQsize offset, int whence=1);
 
     template<class TData>
     TData parse();

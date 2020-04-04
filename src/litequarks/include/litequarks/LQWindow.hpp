@@ -5,14 +5,14 @@
 
 #include "LQSurface.hpp"
 
-class LQWindow : public LQSurface 
-{
-    public:
-    LQWindow(int width, int height, char const* title);
+class LQWindow : public LQSurface {
+public:
+    LQWindow(int width, int height, const char* title);
+    void run();
     void update();
     bool alive() const;
 
-    private:
+private:
     void framebufferSizeCallback(GLFWwindow* window, int width, int height);
     void processInput(GLFWwindow* window);
 

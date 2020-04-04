@@ -5,27 +5,36 @@
 #include <vector>
 
 #include "LQDeclaration.hpp"
+#include "LQEvent.hpp"
 #include "LQRawData.hpp"
 
 class LQAppModel {
 public:
-    static void
-    addModel(const std::string& name, LQModelCreator creator);
+    static std::vector<void*>&
+    get(const std::string& model);
+
+    static void*
+    getFirst(const std::string& model);
+
+    static void*
+    getNth(const std::string& model, LQindex nth);
 
     static void
-    createItem(std::string model, LQRawData& rawData);
+    createModel(const std::string& name, LQItemCreator creator);
+
+    static void
+    createItem(const std::string& model, LQRawData& rawData);
 
     static void
     dataQuery(std::string query);
 
-    static std::unordered_map<const char*, std::vector<void*>>
+    static void
+    dataReceivedCallback(LQDataReceivedEvent& event);
+
+protected:
+    static std::unordered_map<std::string, LQItemCreator>
+    s_itemCreators;
+
+    static std::unordered_map<std::string, std::vector<void*>>
     s_items;
-
-private:
-    static std::unordered_map<std::string, LQModelCreator>
-    s_creators;
 };
-
-// void lqCreateModel(const char* name, LQModelCreator creator) {
-//     // add model to appmodel
-// }
