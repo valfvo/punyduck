@@ -9,8 +9,8 @@ void lqInvokeCallback(void* t, void* arg)
 template<class TItem, class T, void (T::*callback)(TItem*)>
 void lqForEach(T* t)
 {
-    // LQAppController::s_modelObservers[typeid(TItem).name()]
-    //     .push_back(std::make_pair(&lqInvokeCallback<T, TItem, callback>, t));
+    LQAppController::addObserver(
+        typeid(TItem).name(), t, &lqInvokeCallback<T, TItem, callback>);
 }
 
 template<class TEvent>
@@ -34,7 +34,7 @@ void lqOn(void (*callback)())
 template<class TEvent, class TTarget>
 void lqOn(TTarget* target, void (TTarget::*callback)(TEvent&))
 {
-    LQAppController::addDispatcher(std::type_index(typeid(TEvent)), nullptr,
+    LQAppController::addDispatcher(std::type_index(typeid(TEvent)), target,
         [=](LQEvent* event) {
             (target->*callback)(*static_cast<TEvent*>(event));
         });
@@ -43,7 +43,7 @@ void lqOn(TTarget* target, void (TTarget::*callback)(TEvent&))
 template<class TEvent, class TTarget>
 void lqOn(TTarget* target, void (TTarget::*callback)())
 {
-    LQAppController::addDispatcher(std::type_index(typeid(TEvent)), nullptr,
+    LQAppController::addDispatcher(std::type_index(typeid(TEvent)), target,
         [=](LQEvent* event) {
             (target->*callback)();
         });

@@ -88,7 +88,7 @@ async def receive_message(reader): #Fonction pour récupérer un message envoyé
     sizeBuffer_received = decodeBuffer(await reader.read(4)) #On lit la taille du message à recevoir
     data = bytearray(sizeBuffer_received)
     packetsize = 1024
-    total_read = 0
+    total_read = 0  
     while True: #On lit le message kilo par kilo, jusqu'à ce que celui-ci devienne plus petit qu'un kilo-octet
         packetsize = min(sizeBuffer_received-total_read, packetsize)
         if packetsize <= 0:
@@ -200,15 +200,18 @@ async def SQL(writer, query):
         for data in datas:
             for row in range(len(data)):
                 if row == 1 or row == 6:
-                    infos += os.path.getsize(data[row]).to_bytes(4, 'big')
-                    with open(data[row], 'rb') as file:
-                        infos += file.read()
-                elif row == 0 or row == 7:
+                    infos += int(10).to_bytes(4, 'big')
+                    infos += "1234567890".encode()
+                    # infos += os.path.getsize(data[row]).to_bytes(4, 'big')
+                    # with open(data[row], 'rb') as file:
+                        # infos += file.read()
+                elif row == 0 or row == 7 or row == 2:
                     infos += data[row].to_bytes(4, 'big')
                 else:
                     infos += data[row].encode() + b'\0'
             nItems += 1
-        infos = "response".encode() + b'\0' + "Projet".encode() + b'\0' + nItems.to_bytes(4, 'big')
+        infos = "Project".encode() + b'\0' + nItems.to_bytes(4, 'big') + infos
+        # infos = "Project".encode() + b'\0' + nItems.to_bytes(4, 'big') + infos
 
     elif "UserInfo" in query:
         for data in datas:
@@ -222,7 +225,7 @@ async def SQL(writer, query):
                 else:
                     infos += data[row].encode() + b'\0'
             nItems += 1
-        infos = "response".encode() + b'\0' + "UserInfo".encode() + b'\0' + nItems.to_bytes(4, 'big')
+        infos = "response".encode() + b'\0' + "UserInfo".encode() + b'\0' + nItems.to_bytes(4, 'big') + infos
 
     #Infos = "response" + model + nItems + n(data[0]..data[-1])
     print("infos = ", infos)
@@ -235,13 +238,14 @@ async def handle_echo(reader, writer):
     while connexion:
         # action = await receive_message(reader) #Variable pour savoir ce que l'utilisateur veut faire
         action = await receive_message(reader)
+        # action = action.decode()
         print("action = ", action)
-        action = action.decode()
         # await asyncio.sleep(1000)
-        if action == '0':
+        if action == '0': #Se déconnecter
             connexion = False
 
         elif action[0] == 1:
+            print("Requête demandée")
             query = action[1:].decode()
             await SQL(writer, query)
         

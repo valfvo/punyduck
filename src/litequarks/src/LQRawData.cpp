@@ -3,9 +3,10 @@
 #include <algorithm>  // std::min, std::max
 
 LQRawData::LQRawData(char* data)
-: LQRawData(data, *data)
+: LQRawData(data, *(int*)data)
 {
-    seek(sizeof(LQsize));
+    // seek(sizeof(LQsize));
+    seek(sizeof(int));
 }
 
 LQRawData::LQRawData(char* data, LQsize size)
@@ -18,10 +19,10 @@ void LQRawData::seek(LQsize offset, int whence) {
         m_offset = std::min(std::max(offset, LQsize(0)), m_size - 1);
         break;
     case 1:
-        m_offset = std::min(std::max(m_offset + offset, LQsize(0)), m_size);
+        m_offset = std::min(std::max(m_offset + offset, LQsize(0)), m_size - 1);
         break;
     case 2:
-        m_offset = std::min(std::max(m_size - 1 - offset, LQsize(0)), m_size);
+        m_offset = std::min(std::max(m_size - 1 - offset, LQsize(0)), m_size - 1);
         break;
     default:
         break;
@@ -38,3 +39,4 @@ char* LQRawData::parse<char*>() {
 
     return data;
 }
+

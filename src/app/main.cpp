@@ -6,16 +6,6 @@
 #include <unordered_map>
 #include <litequarks/litequarks.hpp>
 
-// #include <iostream>
-// #include <cstring>
-// #include <string>
-// #include <thread>
-// #include <vector>
-// #include <mutex>
-// #include <functional>
-// #include <typeinfo>
-// #include <utility>
-
 // using namespace LQUnit;
 
 int SCREEN_WIDTH  = 1280;
@@ -42,6 +32,19 @@ int SCREEN_HEIGHT = 720;
 #define BACKGROUND_SECONDARY 0x2f3136
 #define BACKGROUND_TERNARY   0x202225
 
+class TestAffiche {
+public:
+    TestAffiche() {
+        LQ_FOR_EACH(Project, afficheProject);
+    }
+
+    void afficheProject(Project* project) {
+        std::cout << "nous allons afficher:\nnom: "
+                  << project->name << " tag: " << project->tag << " desc: "
+                  << project->desc << "\n\n";
+    }
+};
+
 std::string Qregister() {
     std::string login, password, email, query;
     std::cout << "Entrez un login : ";
@@ -63,95 +66,119 @@ std::string Qregister() {
 }
 
 int main() {
-    LQAppController::init();
+    // std::string query;
+    // char* c_query;
+    // bool connected = true;
+    // // char* rep;
+    // while (connected) {
+    //     std::cout << "Requete : ";
+    //     std::cin >> query;
 
-    std::string query;
-    char* c_query;
-    bool connected = true;
-    // char* rep;
-    while (connected) {
-        std::cout << "Requete : ";
-        std::cin >> query;
+    //     // TODO controller transmit request
+    //     if (query == "exit") {
+    //         std::cout << "Exit..." << std::endl;
+    //         char* c = new char[1];
+    //         c[0] = '0';
+    //         LQAppController::pushQuery(c);
+    //         connected = false;
+    //     }
 
-        // TODO controller transmit request
-        if (query == "exit") {
-            std::cout << "Exit..." << std::endl;
-            char* c = new char[1];
-            c[0] = '0';
-            LQAppController::pushQuery(c);
-            connected = false;
-        }
+    //     else if (query == "register") {
+    //         std::cout << "Register : " << std::endl;
+    //         query = Qregister();
+    //         c_query = new char[query.length() + 1];
+    //         strcpy(c_query, query.c_str());
+    //         LQAppController::pushQuery(c_query);
+    //         char* rep = nullptr;
+    //         while (rep == nullptr) {
+    //             // rep = LQAppController::pollResponses();
+    //         }
+    //         while((int)rep[0] == 0) {
+    //             query = Qregister();
+    //             c_query = new char[query.length() + 1];
+    //             strcpy(c_query, query.c_str());
+    //             LQAppController::pushQuery(c_query);
+    //             // rep = pollResponses(responses);
+    //             // while(rep == NULL) {
+    //             //     rep = pollResponses(responses);
+    //             // }
+    //         }
+    //     }
 
-        else if (query == "register") {
-            std::cout << "Register : " << std::endl;
-            query = Qregister();
-            c_query = new char[query.length() + 1];
-            strcpy(c_query, query.c_str());
-            LQAppController::pushQuery(c_query);
-            char* rep = nullptr;
-            while (rep == nullptr) {
-                // rep = LQAppController::pollResponses();
-            }
-            while((int)rep[0] == 0) {
-                query = Qregister();
-                c_query = new char[query.length() + 1];
-                strcpy(c_query, query.c_str());
-                LQAppController::pushQuery(c_query);
-                // rep = pollResponses(responses);
-                // while(rep == NULL) {
-                //     rep = pollResponses(responses);
-                // }
-            }
-        }
+    //     else if (query == "infos") {
+    //         std::cout << "Infos : " << std::endl;
+    //         int n = 32, nread = 0;
+    //         query = '5'+std::to_string(n)+'|'+std::to_string(nread);
+    //         c_query = new char[query.length() + 1];
+    //         strcpy(c_query, query.c_str());
 
-        else if (query == "infos") {
-            std::cout << "Infos : " << std::endl;
-            int n = 32, nread = 0;
-            query = '5'+std::to_string(n)+'|'+std::to_string(nread);
-            c_query = new char[query.length() + 1];
-            strcpy(c_query, query.c_str());
+    //         LQAppController::pushQuery(c_query);
+    //         std::cout << "Requête envoyée 2" << std::endl;
 
-            LQAppController::pushQuery(c_query);
-            std::cout << "Requête envoyée 2" << std::endl;
+    //         char* rep = nullptr;
+    //         while (rep == nullptr) {
+    //             // std::cout << "attente" << std::endl;
+    //             // rep = pollResponses(responses);
+    //         }
+    //         std::cout << "=========XXXXXXXXXXXXXXXXXXXXXXXX======" << std::endl;
 
-            char* rep = nullptr;
-            while (rep == nullptr) {
-                // std::cout << "attente" << std::endl;
-                // rep = pollResponses(responses);
-            }
-            std::cout << "=========XXXXXXXXXXXXXXXXXXXXXXXX======" << std::endl;
+    //         // rep = "resp"+len(titre)+len(descr)+len(img)+titre+descr+img...    
+    //         int i = 8;
+    //         int size = (int)*rep;
+    //         std::cout << size << std::endl;
+    //         while(i < size) {
+    //             int sizeTitle = rep[i];
+    //             int sizeDesc = (rep[i+1] << 8) + rep[i+2];
+    //             int sizeImg = (rep[i+3] << 16) + (rep[i+4] << 8) + rep[i+5];
 
-            // rep = "resp"+len(titre)+len(descr)+len(img)+titre+descr+img...    
-            int i = 8;
-            int size = (int)*rep;
-            std::cout << size << std::endl;
-            while(i < size) {
-                int sizeTitle = rep[i];
-                int sizeDesc = (rep[i+1] << 8) + rep[i+2];
-                int sizeImg = (rep[i+3] << 16) + (rep[i+4] << 8) + rep[i+5];
+    //             std::string title(&rep[i+6], sizeTitle);
+    //             std::string descr(&rep[i+6+sizeTitle], sizeDesc);
+    //             std::string img(&rep[i+6+sizeTitle+sizeDesc], sizeImg);
+    //             i += 6+sizeTitle+sizeDesc+sizeImg;
 
-                std::string title(&rep[i+6], sizeTitle);
-                std::string descr(&rep[i+6+sizeTitle], sizeDesc);
-                std::string img(&rep[i+6+sizeTitle+sizeDesc], sizeImg);
-                i += 6+sizeTitle+sizeDesc+sizeImg;
+    //             std::cout
+    //                 << "Response of client : \nTitre : " << title
+    //                 << "\nDescr : " << descr
+    //                 << "\nImg : " << img
+    //                 << std::endl;
+    //         }
+    //     }
+    // }
 
-                std::cout
-                    << "Response of client : \nTitre : " << title
-                    << "\nDescr : " << descr
-                    << "\nImg : " << img
-                    << std::endl;
-            }
-        }
-    }
     // TODO lqInit();
     glfwInit();
     LQAppController::init();
+    LQAppModel::init();
+
+    LQAppModel::createModel(typeid(Project).name(),
+        [](LQRawData& data) -> void* {
+            data.parse<int>();  // id
+            data.seek(data.parse<int>()); // path
+            data.parse<int>(); // valide
+
+            auto p_project = new Project{
+                data.parse<char*>(), data.parse<char*>(),  // nom tag
+                data.parse<char*>(), LQBinData{0, nullptr}};  // desc
+
+            data.seek(data.parse<int>());  // img path
+            data.parse<int>();  // id log
+
+            return p_project;
+        });
 
     LQWindow window(SCREEN_WIDTH, SCREEN_HEIGHT, "Punyduck");
-    window.run();
 
-    std::cout << "window closed" << std::endl;
-    LQAppController::finalize();
+    TestAffiche test;
+
+    LQAppModel::dataQuery("SELECT * FROM Projet;");
+
+    while (window.alive()) {
+        window.clear();
+        window.drawChildren();
+        window.update();
+    }
+
+   LQAppController::finalize();
     glfwTerminate();
     // TODO lqFinalize();
 

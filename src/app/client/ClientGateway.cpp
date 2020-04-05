@@ -39,7 +39,7 @@ void ClientGateway::transmitResponse(const char* data, int size) {
     std::lock_guard<std::mutex> lock(m_mutex);
     char* response = new char[size+4];
     char* p_size = ((char*)&size);
-    memcpy(response, p_size, 4);
+    memcpy(response, &size, 4);
     memcpy(&response[4], data, size);
     m_responses.push(response);
 }

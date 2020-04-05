@@ -35,14 +35,14 @@ LQWindow::LQWindow(int width, int height, char const* title)
     glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA,
                         GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
     glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-    m_shader = new LQShader("shaderVertex.txt", "shaderFragment.txt");
+    m_shader = new LQShader("shaders/shaderVertex.txt", "shaders/shaderFragment.txt");
     m_width = width;
     m_height = height;
 }
 
 void LQWindow::run() {
     while (alive()) {
-        clear(); 
+        clear();
         drawChildren();
         update();
     }

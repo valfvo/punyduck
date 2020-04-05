@@ -3,7 +3,7 @@ import asyncio
 import os
 import re
 import sys
-import litequarks as lq
+import gateway as gw
 from argon2 import *
 
 ph = PasswordHasher()
@@ -38,7 +38,7 @@ async def register(writer, reader): #Fonction appelée pour inscrire un nouvel u
         loginValide = await reader.read(1)
 
     print("Vous vous êtes correctement inscrit")
-    lq.transmit_response(b'\x01')
+    gw.transmit_response(b'\x01')
 
 async def login(writer, reader): #Fonction appelée quand un utilisateur souhaite se connecter
     #On envoie un login et un mot de passe au serveur
@@ -51,7 +51,7 @@ async def login(writer, reader): #Fonction appelée quand un utilisateur souhait
     response = await receive_message(reader)
     response = response.decode()
     print("response = ", response)
-    lq.transmit_response(login.encode())
+    gw.transmit_response(login.encode())
     while response == "False": #Tant que les identifiants sont incorrects, on en envoie de nouveaux au serveur pour les tester
         print("\033[31mLe nom d'utilisateur ou mot de passe est incorrect\033[0m")
         login = input("Login : ")
@@ -182,29 +182,27 @@ async def main():
     reader, writer = await asyncio.open_connection('127.0.0.1', 50002)
     connected = True
     while connected: #Tant qu'on est connecté au serveur, on demande si l'utilisateur veut envoyer ou recevoir un projet
-        action = lq.poll_request()
+        action = gw.poll_request()
         if action:
             task = asyncio.create_task(send_message(writer, action))
             print("action : ", action, " action.tobytes() : ", action.tobytes())
             await task
-            if action == b'0':
+            if action == b'0': #Se déconnecter
                 connected = False
 
-            elif action.tobytes()[0] == 1:
-                task = asyncio.create_task(send_message(writer, action))
-                await task
+            elif action.tobytes()[0] == 1: #DataQuery
                 infos= bytes(await receive_message(reader))
-                lq.transmit_response(infos)
-                
+                gw.transmit_response(infos)
+                print("-----JJJJJJJJJJJJJJJJJJJ-------")
 
             elif action.tobytes()[0] == 49:
                 result = await reader.read(1)
                 print("result : ", result)
                 while result == b'\x00':
-                    lq.transmit_response(b'\x00')
+                    gw.transmit_response(b'\x00')
                     action = None
                     while True:
-                        action = lq.poll_request()
+                        action = gw.poll_request()
                         if action != None:
                             print("action : ", action.tobytes())
                             break
@@ -212,12 +210,12 @@ async def main():
                     await task
                     result = await reader.read(1)
                 print("caca")
-                lq.transmit_response(b'\x01')
+                gw.transmit_response(b'\x01')
             
             elif action.tobytes()[0] == 53:
                 infos = bytes(await receive_message(reader))
                 print("infos = ", infos, ", type : ", type(infos), ", len : ", len(infos))
-                lq.transmit_response(infos)#, len(infos))
+                gw.transmit_response(infos)#, len(infos))
                 print("-----JJJJJJJJJJJJJJJJJJJJ-------")
 
             # await asyncio.sleep(1000)

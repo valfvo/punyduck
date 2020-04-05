@@ -1,7 +1,6 @@
 #include <litequarks/LQAppController.hpp>
 #include <litequarks/LQAppModel.hpp>
 #include <litequarks/LQRawData.hpp>
-
 std::queue<LQEvent*>
 LQAppController::s_eventQueue;
 
@@ -29,13 +28,14 @@ std::thread*
 LQAppController::s_gatewayThread = nullptr;
 
 void LQAppController::init() {
+    lqOn<LQDataQueryEvent>(dataQueryCallback);
     lqOn<LQModelUpdateEvent>(modelUpdateCallback);
     s_gateway = new ClientGateway(s_queries, s_responses);
     s_gatewayThread = new std::thread(std::ref(*s_gateway));
 }
 
 void LQAppController::finalize() {
-    // TODO : undo lqON (here) & send request to close gateway (not here)
+    // TODO : undo lqON (here)
     s_gatewayThread->join();
     delete s_gatewayThread;
     delete s_gateway;
@@ -57,6 +57,12 @@ void LQAppController::addDispatcher(
     s_eventDispatcher[std::make_pair(eventType, target)] = dispatcher;
 }
 
+void LQAppController::addObserver(
+    const std::string& model, void* observer, void (*callback)(void*, void*))
+{
+    s_modelObservers[model].push_back(std::make_pair(callback, observer));
+}
+
 void LQAppController::pollEvents() {
     while (!s_eventQueue.empty()) {
         auto event = s_eventQueue.front();
@@ -71,9 +77,11 @@ void LQAppController::pollResponses() {
     std::lock_guard<std::mutex> lock(s_mutex);
     while (!s_responses.empty()) {
         LQRawData data(s_responses.front());
+        char* p = data.parse<char*>();
+        int count = data.parse<int>();
         LQAppController::pushEvent(new LQDataReceivedEvent(
-            data.parse<char*>(), data.parse<int>(), data));
-        //  model name           item count         item data
+            typeid(Project).name(), count, data));
+        //  model name              item count         item data
         s_responses.pop();
     }
 }

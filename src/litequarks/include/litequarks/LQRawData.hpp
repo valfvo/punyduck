@@ -9,6 +9,9 @@ public:
 
     void seek(LQsize offset, int whence=1);
 
+    // template<class TData>
+    // void seek(int whence=1);
+
     template<class TData>
     TData parse();
 

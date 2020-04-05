@@ -1,12 +1,12 @@
 CXX = g++
 CXXFLAGS = -Wall -Wfatal-errors -MMD
 
-LIBS_DIR = C:/Users/valfv/libs
+LIBS_DIR = D:/Travail/Projets/libs
 INCLUDE_DIR = $(LIBS_DIR)/include
 LIB_DIR = $(LIBS_DIR)/lib
 SRC_DIR = $(LIBS_DIR)/src
 
-PYTHON_PATH = C:/Users/valfv/AppData/Local/Programs/Python/Python38
+PYTHON_PATH = C:/Users/paulb/AppData/Local/Programs/Python/Python38
 PYTHON_INCLUDE = $(PYTHON_PATH)/include
 PYTHON_LIBS = $(PYTHON_PATH)/libs
 

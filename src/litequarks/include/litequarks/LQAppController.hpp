@@ -10,8 +10,19 @@
 
 #include "LQEvent.hpp"
 #include "LQHash.hpp"
-
 #include <client/ClientGateway.hpp>
+
+struct LQBinData {
+    int   size;
+    char* data;
+};
+
+struct Project {
+    const std::string name;
+    const std::string tag;
+    const std::string desc;
+    LQBinData img;
+};
 
 class LQAppController {
 public:
@@ -25,6 +36,9 @@ public:
 
     static void addDispatcher(std::type_index&& eventType, void* target,
         std::function<void(LQEvent*)> dispatcher);
+
+    static void addObserver(const std::string& model, void* observer,
+        void (*callback)(void*, void*));
 
     static void pollEvents();
 

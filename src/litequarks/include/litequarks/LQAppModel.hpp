@@ -10,6 +10,9 @@
 
 class LQAppModel {
 public:
+    static void
+    init();
+
     static std::vector<void*>&
     get(const std::string& model);
 
@@ -26,7 +29,7 @@ public:
     createItem(const std::string& model, LQRawData& rawData);
 
     static void
-    dataQuery(std::string query);
+    dataQuery(const std::string& query);
 
     static void
     dataReceivedCallback(LQDataReceivedEvent& event);

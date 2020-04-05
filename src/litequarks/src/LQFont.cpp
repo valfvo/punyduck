@@ -98,7 +98,7 @@ LQSurface LQFont::renderText(std::u32string text, GLuint color) {
     renderedText.setClearColor(c.r(), c.g(), c.b(), 0.0f);
     // renderedText.setClearColor(0.0f, 0.0f, 0.0f, 0.0f);
     renderedText.clear();
-    renderedText.setShader(new LQShader("font.vert", "font.frag"));
+    renderedText.setShader(new LQShader("shaders/font.vert", "shaders/font.frag"));
 
     GLfloat x = 0;
     const LQGlyph* p_glyph = nullptr;

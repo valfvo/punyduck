@@ -2,12 +2,17 @@
 
 #include <litequarks/LQAppController.hpp>
 #include <litequarks/LQAppModel.hpp>
+#include <iostream>
 
 std::unordered_map<std::string, LQItemCreator>
 LQAppModel::s_itemCreators;
 
 std::unordered_map<std::string, std::vector<void*>>
 LQAppModel::s_items;
+
+void LQAppModel::init() {
+    lqOn<LQDataReceivedEvent>(dataReceivedCallback);
+}
 
 std::vector<void*>& LQAppModel::get(const std::string& model) {
     return s_items[model];
@@ -36,11 +41,8 @@ void LQAppModel::createItem(const std::string& model, LQRawData& rawData) {
     s_items[model].push_back(s_itemCreators[model](rawData));
 }
 
-void LQAppModel::dataQuery(std::string models) {
-    // LQDataQueryEvent event("dataQuery", "SELECT * FROM ");
-    // event.query += model + ';';
-
-    // AppController::s_eventQueue.push_back(event);
+void LQAppModel::dataQuery(const std::string& query) {
+    LQAppController::pushEvent(new LQDataQueryEvent(nullptr, query));
 }
 
 void LQAppModel::dataReceivedCallback(LQDataReceivedEvent& event) {

@@ -27,7 +27,7 @@ LQSurface::LQSurface()
 LQSurface::LQSurface(GLfloat x, GLfloat y, GLfloat width, GLfloat height)
 // : LQTexture(), m_VBO(0), m_VAO(0), m_FBO(0), m_shader(s_default_shader),
 : LQuark(), LQTexture((int)width, (int)height), m_VBO(0), m_VAO(0), m_FBO(0),
-  m_shader(new LQShader("shaderVertex.txt", "shaderFragment.txt")),
+  m_shader(new LQShader("shaders/shaderVertex.txt", "shaders/shaderFragment.txt")),
   m_x(x), m_y(y), m_width(width), m_height(height),
   m_shapeMap(nullptr), m_clearColor()
 {
