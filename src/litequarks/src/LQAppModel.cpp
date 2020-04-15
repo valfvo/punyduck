@@ -2,7 +2,6 @@
 
 #include <litequarks/LQAppController.hpp>
 #include <litequarks/LQAppModel.hpp>
-#include <iostream>
 
 std::unordered_map<std::string, LQItemCreator>
 LQAppModel::s_itemCreators;

@@ -1,3 +1,5 @@
+#include <litequarks/LQDeclaration.hpp>
+
 #include <litequarks/LQuark.hpp>
 #include <litequarks/LQSurface.hpp>
 #include <litequarks/LQViewable.hpp>

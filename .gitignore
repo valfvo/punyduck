@@ -34,3 +34,4 @@
 # Test files
 tests/*
 src/litequarks/obj/
+src/app/Makefile

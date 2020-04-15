@@ -17,7 +17,7 @@ void ClientGateway::operator()() {
         PyRun_SimpleFileExFlags(fp, "client/client.py", 1, NULL);
     }
     else {
-        printf("invalid file\n");  // TODO message plus parlant
+        printf("PnClientError: Can not start client\n");
     }
 
     Py_Finalize();
@@ -38,7 +38,6 @@ char* ClientGateway::pollRequests() {
 void ClientGateway::transmitResponse(const char* data, int size) {
     std::lock_guard<std::mutex> lock(m_mutex);
     char* response = new char[size+4];
-    char* p_size = ((char*)&size);
     memcpy(response, &size, 4);
     memcpy(&response[4], data, size);
     m_responses.push(response);

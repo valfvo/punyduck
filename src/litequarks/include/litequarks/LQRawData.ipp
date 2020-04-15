@@ -7,7 +7,6 @@ static bool hostIsLittleEndian = (*(char *)&num == 1);
 template<class TData>
 TData LQRawData::parse() {
     LQsize dataSize = sizeof(TData);
-    std::cout << "dataSize: " << dataSize << ' ' << m_offset << std::endl;
     TData data;
 
     if (m_offset + dataSize <= m_size) {
