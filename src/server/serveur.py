@@ -5,6 +5,7 @@ import re
 import psycopg2
 from argon2 import *
 import sys
+from PIL import Image
 
 #Création du connecteur à la base de donnée, de son curseur et du hasher de mot de passe
 conn = psycopg2.connect("dbname=paulbunel user=paulbunel")
@@ -187,47 +188,95 @@ def delete_account(login): #Fonction appelée pour supprimer un compte
         cur.execute("DELETE FROM UserInfo WHERE login = %s", (login,))
         conn.commit()
 
+idColonne = {
+    "idProjet": 0,
+    "chemin": 1,
+    "valide": 2,
+    "nom": 3,
+    "tag": 4,
+    "pDescr": 5,
+    "pPathImage": 6,
+    "pIdLog": 7,
+    "idLog": 8,
+    "login": 9,
+    "password": 10,
+    "email": 11,
+    "admin": 12,
+    "uPathImage": 13,
+    "uDescr": 14
+}
+
+GL_RGB = b'\x00\x00\x19\x07'
+GL_RGBA = b'\x00\x00\x19\x08'
+
+
 async def SQL(writer, query):
+    model = re.search(r'(.*)SELECT', query).group(1)
     cur.execute(query)
     datas = cur.fetchall()
-    hasPath = False
     match = re.search(r'^SELECT (.*) FROM .*;', query)
     rows = match.group(1).split(', ')
 
     infos = b''
     nItems = 0
-    if "Projet" in query:
+
+    if "*" in rows:
+        if "Projet" in query:
+            for data in datas:
+                for row in range(len(data)):
+                    if row == 1 or row == 6:
+                        # infos += int(10).to_bytes(4, 'big')
+                        # infos += "1234567890".encode()
+                        #img = width + height + format + len(data) + data
+                        img = Image.open(data[row])
+                        infos += img.width.to_bytes(4, 'big')
+                        infos += img.height.to_bytes(4, 'big')
+                        infos += GL_RGBA if img.mode == "RGBA" else GL_RGB
+                        infos += len(img.tobytes()).to_bytes(4, 'big')
+                        infos += img.to_bytes()
+                    elif row == 0 or row == 7 or row == 2:
+                        infos += data[row].to_bytes(4, 'big')
+                    else:
+                        infos += data[row].encode() + b'\0'
+                nItems += 1
+            infos = "Project".encode() + b'\0' + nItems.to_bytes(4, 'big') + infos
+            # infos = "Project".encode() + b'\0' + nItems.to_bytes(4, 'big') + infos
+
+        elif "UserInfo" in query:
+            for data in datas:
+                for row in range(len(data)):
+                    if row == 5:
+                        #img = width + height + format + len(data) + data
+                        img = Image.open(data[row])
+                        infos += img.width.to_bytes(4, 'big')
+                        infos += img.height.to_bytes(4, 'big')
+                        infos += GL_RGBA if img.mode == "RGBA" else GL_RGB
+                        infos += len(img.tobytes()).to_bytes(4, 'big')
+                        infos += img.to_bytes()
+                    elif row == 0:
+                        infos += data[row].to_bytes(4, 'big')
+                    else:
+                        infos += data[row].encode() + b'\0'
+                nItems += 1
+            infos = "response".encode() + b'\0' + "UserInfo".encode() + b'\0' + nItems.to_bytes(4, 'big') + infos
+    
+    else:
         for data in datas:
-            for row in range(len(data)):
-                if row == 1 or row == 6:
-                    infos += int(10).to_bytes(4, 'big')
-                    infos += "1234567890".encode()
-                    # infos += os.path.getsize(data[row]).to_bytes(4, 'big')
-                    # with open(data[row], 'rb') as file:
-                        # infos += file.read()
-                elif row == 0 or row == 7 or row == 2:
+            for row in data:
+                if idColonne[rows[row]] == 0 or idColonne[rows[row]] == 2 or idColonne[rows[row]] == 7 or idColonne[rows[row]] == 8:
                     infos += data[row].to_bytes(4, 'big')
+                elif idColonne[rows[row]] == 6 or idColonne[rows[row]] == 13:
+                    #img = width + height + format + len(data) + data
+                    img = Image.open(data[row])
+                    infos += img.width.to_bytes(4, 'big')
+                    infos += img.height.to_bytes(4, 'big')
+                    infos += GL_RGBA if img.mode == "RGBA" else GL_RGB
+                    infos += len(img.tobytes()).to_bytes(4, 'big')
+                    infos += img.to_bytes()
                 else:
                     infos += data[row].encode() + b'\0'
-            nItems += 1
-        infos = "Project".encode() + b'\0' + nItems.to_bytes(4, 'big') + infos
-        # infos = "Project".encode() + b'\0' + nItems.to_bytes(4, 'big') + infos
 
-    elif "UserInfo" in query:
-        for data in datas:
-            for row in range(len(data)):
-                if row == 5:
-                    infos += os.path.getsize(data[row]).to_bytes(4, 'big')
-                    with open(data[row], 'rb') as file:
-                        infos += file.read()
-                elif row == 0:
-                    infos += data[row].to_bytes(4, 'big')
-                else:
-                    infos += data[row].encode() + b'\0'
-            nItems += 1
-        infos = "response".encode() + b'\0' + "UserInfo".encode() + b'\0' + nItems.to_bytes(4, 'big') + infos
-
-    #Infos = "response" + model + nItems + n(data[0]..data[-1])
+    # Infos = "response" + model + nItems + n(data[0]..data[-1])
     print("infos = ", infos)
     await send_message(writer, infos)
 
