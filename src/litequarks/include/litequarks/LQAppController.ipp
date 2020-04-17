@@ -10,7 +10,8 @@ template<class TItem, class T, void (T::*callback)(TItem*)>
 void lqForEach(T* t)
 {
     LQAppController::addObserver(
-        typeid(TItem).name(), t, &lqInvokeCallback<T, TItem, callback>);
+        LQAppModel::getModelName(typeid(TItem)),
+        t, &lqInvokeCallback<T, TItem, callback>);
 }
 
 template<class TEvent>

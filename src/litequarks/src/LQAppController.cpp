@@ -77,10 +77,7 @@ void LQAppController::pollResponses() {
     std::lock_guard<std::mutex> lock(s_mutex);
     while (!s_responses.empty()) {
         LQRawData data(s_responses.front());
-        data.parse<char*>();  // TODO: seek<T>();
-        LQAppController::pushEvent(new LQDataReceivedEvent(
-            typeid(Project).name(), data.parse<int>(), data));
-        //  model name              item count         item data
+        LQAppController::pushEvent(new LQDataReceivedEvent(data));
         s_responses.pop();
     }
 }

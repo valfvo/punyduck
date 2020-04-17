@@ -188,7 +188,7 @@ def delete_account(login): #Fonction appelée pour supprimer un compte
         cur.execute("DELETE FROM UserInfo WHERE login = %s", (login,))
         conn.commit()
 
-idColonne = {
+idColonnes = {
     "idProjet": 0,
     "chemin": 1,
     "valide": 2,
@@ -209,18 +209,46 @@ idColonne = {
 GL_RGB = b'\x00\x00\x19\x07'
 GL_RGBA = b'\x00\x00\x19\x08'
 
+def fusion(T1, T2, T):
+    i1 = 0
+    i2 = 0
+    for i in range(len(T)):
+        if i1 >= len(T1):
+            T[i] = T2[i2]
+            i2 += 1
+        elif i2 >= len(T2):
+            T[i] = T1[i1]
+            i1 += 1
+        elif idColonnes[T1[i1]] < idColonnes[T2[i2]]:
+            T[i] = T1[i1]
+            i1 += 1
+        else:
+            T[i] = T2[i2]
+            i2 += 1
+
+def triFusion(T):
+    if len(T) > 1:
+        T1 = T[:int(len(T)/2)]
+        triFusion(T1)
+        T2 = T[int(len(T)/2):]
+        triFusion(T2)
+        
+        fusion(T1, T2, T)
+
+nAttributes = int(15).to_bytes(1, 'big')
 
 async def SQL(writer, query):
     model = re.search(r'(.*)SELECT', query).group(1)
-    cur.execute(query)
-    datas = cur.fetchall()
-    match = re.search(r'^SELECT (.*) FROM .*;', query)
-    rows = match.group(1).split(', ')
+    query = re.search(r'(SELECT.*)', query).group(1)
 
     infos = b''
     nItems = 0
 
-    if "*" in rows:
+    if "*" in query:
+        cur.execute(query)
+        datas = cur.fetchall()
+
+        ordreIndice = int(0).to_bytes(4, 'big')
         if "Projet" in query:
             for data in datas:
                 for row in range(len(data)):
@@ -239,8 +267,6 @@ async def SQL(writer, query):
                     else:
                         infos += data[row].encode() + b'\0'
                 nItems += 1
-            infos = "Project".encode() + b'\0' + nItems.to_bytes(4, 'big') + infos
-            # infos = "Project".encode() + b'\0' + nItems.to_bytes(4, 'big') + infos
 
         elif "UserInfo" in query:
             for data in datas:
@@ -258,14 +284,29 @@ async def SQL(writer, query):
                     else:
                         infos += data[row].encode() + b'\0'
                 nItems += 1
-            infos = "response".encode() + b'\0' + "UserInfo".encode() + b'\0' + nItems.to_bytes(4, 'big') + infos
     
     else:
+        match = re.search(r'^SELECT (.*) FROM .*;', query)
+        rows = match.group(1).split(', ')
+        endQuery = re.search(r'(FROM.*)', query).group(1)
+        triFusion(rows)
+        query = "SELECT "
+        for row in rows[:-1]:
+            query += row + ", "
+        query += rows[-1] + " " + endQuery
+
+        ordreIndice = len(rows).to_bytes(4, 'big')
+        for row in rows:
+            ordreIndice += idColonnes[row].to_bytes(4, 'big')
+
+        cur.execute(query)
+        datas = cur.fetchall()
+
         for data in datas:
             for row in data:
-                if idColonne[rows[row]] == 0 or idColonne[rows[row]] == 2 or idColonne[rows[row]] == 7 or idColonne[rows[row]] == 8:
+                if idColonnes[rows[row]] == 0 or idColonnes[rows[row]] == 2 or idColonnes[rows[row]] == 7 or idColonnes[rows[row]] == 8:
                     infos += data[row].to_bytes(4, 'big')
-                elif idColonne[rows[row]] == 6 or idColonne[rows[row]] == 13:
+                elif idColonnes[rows[row]] == 6 or idColonnes[rows[row]] == 13:
                     #img = width + height + format + len(data) + data
                     img = Image.open(data[row])
                     infos += img.width.to_bytes(4, 'big')
@@ -275,8 +316,9 @@ async def SQL(writer, query):
                     infos += img.to_bytes()
                 else:
                     infos += data[row].encode() + b'\0'
+            nItems += 1
 
-    # Infos = "response" + model + nItems + n(data[0]..data[-1])
+    infos = model + nItems.to_bytes(4, 'big') + nAttributes + ordreIndice + infos
     print("infos = ", infos)
     await send_message(writer, infos)
 

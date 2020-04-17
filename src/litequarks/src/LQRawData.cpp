@@ -1,5 +1,6 @@
 #include <litequarks/LQRawData.hpp>
 
+#include <cstdint>
 #include <algorithm>  // std::min, std::max
 
 LQRawData::LQRawData(char* data)
@@ -40,3 +41,22 @@ char* LQRawData::parse<char*>() {
     return data;
 }
 
+template<>
+LQImageData LQRawData::parse<LQImageData>() {
+    LQImageData image{
+        parse<int32_t>(),
+        parse<int32_t>(),
+        parse<int16_t>(),
+        nullptr
+    };
+
+    int dataSize = parse<int32_t>();
+    auto pixels = new unsigned char[dataSize];
+
+    memcpy(pixels, &m_data[m_offset], dataSize);
+    m_offset += dataSize;
+
+    image.pixels = pixels;
+
+    return image;
+}

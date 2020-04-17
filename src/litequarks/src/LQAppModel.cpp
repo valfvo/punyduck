@@ -1,4 +1,5 @@
 #include <utility>  // std::move
+#include <typeindex>
 
 #include <litequarks/LQAppController.hpp>
 #include <litequarks/LQAppModel.hpp>
@@ -8,6 +9,9 @@ LQAppModel::s_itemCreators;
 
 std::unordered_map<std::string, std::vector<void*>>
 LQAppModel::s_items;
+
+std::unordered_map<std::type_index, std::string>
+s_modelNames;
 
 void LQAppModel::init() {
     lqOn<LQDataReceivedEvent>(dataReceivedCallback);
@@ -32,12 +36,22 @@ void* LQAppModel::getNth(const std::string& model, LQindex nth) {
     }
 }
 
-void LQAppModel::createModel(const std::string& name, LQItemCreator creator) {
+const std::string& LQAppModel::getModelName(const std::type_info& type) {
+    return s_modelNames[std::type_index(type)];
+}
+
+void LQAppModel::createModel(
+    const std::string& name, const std::type_info& type,
+    LQItemCreator creator)
+{
+    s_modelNames.insert({std::type_index(type), name});
     s_itemCreators.insert({name, creator});
 }
 
-void LQAppModel::createItem(const std::string& model, LQRawData& rawData) {
-    s_items[model].push_back(s_itemCreators[model](rawData));
+void LQAppModel::createItem(const std::string& model, LQRawData& rawData,
+                            const bool* attributes)
+{
+    s_items[model].push_back(s_itemCreators[model](rawData, attributes));
 }
 
 void LQAppModel::dataQuery(const std::string& query) {
@@ -49,7 +63,7 @@ void LQAppModel::dataReceivedCallback(LQDataReceivedEvent& event) {
     infos.push_back({event.model, get(event.model).size()});
 
     for (LQindex i = 0; i < event.itemCount; ++i) {
-        LQAppModel::createItem(event.model, event.rawData);
+        LQAppModel::createItem(event.model, event.rawData, event.attributes);
     }
 
     LQAppController::pushEvent(new LQModelUpdateEvent(std::move(infos)));

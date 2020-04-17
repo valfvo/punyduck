@@ -26,3 +26,6 @@ TData LQRawData::parse() {
 
 template<>
 char* LQRawData::parse<char*>();
+
+template<>
+LQImageData LQRawData::parse<LQImageData>();

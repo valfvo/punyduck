@@ -2,7 +2,7 @@ INSERT INTO UserInfo(login, password, email, admin, uPathImage, uDescr) VALUES
 ('Polo', 'password', 'paulbunel34@gmail.com', true, 'D:/pathImage', 'test'),
 ('Test', 'password', 'test@test.com', true, 'D:/pathImage', 'test');
 
-INSERT INTO Projet(chemin, valide, nom, tag, pDescr, pPathImage, pIdLog) VALUES
+INSERT INTO Projet(chemin, valide, nom, tag, pDescr, pPathImage, pdLog) VALUES
 ('D:/path0', true, 'Projet0', 'jeu', 'Ceci est le projet0', 'D:/pathImage', 2),
 ('D:/path1', true, 'Projet1', 'jeu', 'Ceci est le projet1', 'D:/pathImage', 1),
 ('D:/path2', true, 'Projet2', 'logiciel', 'Ceci est le projet2', 'D:/pathImage', 1),

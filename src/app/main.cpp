@@ -5,6 +5,7 @@
 #include <functional>
 #include <unordered_map>
 #include <litequarks/litequarks.hpp>
+#include <model.hpp>
 
 // using namespace LQUnit;
 
@@ -40,8 +41,7 @@ public:
 
     void afficheProject(Project* project) {
         std::cout << "nous allons afficher:\nnom: "
-                  << project->name << " tag: " << project->tag << " desc: "
-                  << project->desc << "\n\n";
+                  << project->nom << " desc: " << project->desc << std::endl;
     }
 };
 
@@ -150,27 +150,11 @@ int main() {
     LQAppController::init();
     LQAppModel::init();
 
-    LQAppModel::createModel(typeid(Project).name(),
-        [](LQRawData& data) -> void* {
-            data.parse<int>();  // id
-            data.seek(data.parse<int>()); // path
-            data.parse<int>(); // valide
-
-            auto p_project = new Project{
-                data.parse<char*>(), data.parse<char*>(),  // nom tag
-                data.parse<char*>(), LQBinData{0, nullptr}};  // desc
-
-            data.seek(data.parse<int>());  // img path
-            data.parse<int>();  // id log
-
-            return p_project;
-        });
-
     LQWindow window(SCREEN_WIDTH, SCREEN_HEIGHT, "Punyduck");
 
     TestAffiche test;
 
-    LQAppModel::dataQuery("SELECT * FROM Projet;");
+    LQAppModel::dataQuery("projectSELECT nom, tag note, pDescr, pPathImage, login FROM Projet, UserInfo WHERE pIdLog = idLog;");
 
     while (window.alive()) {
         window.clear();

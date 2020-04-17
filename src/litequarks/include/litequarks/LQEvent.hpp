@@ -27,11 +27,12 @@ public:
 
 class LQDataReceivedEvent : public LQEvent {
 public:
-    LQDataReceivedEvent(const std::string& model, LQsize itemCount,
-                        LQRawData rawData);
+    LQDataReceivedEvent(LQRawData& data);
+    ~LQDataReceivedEvent() override;
 
     const std::string model;
     const LQsize itemCount;
+    const bool* attributes;
 
     LQRawData rawData;
 };

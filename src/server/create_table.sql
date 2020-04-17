@@ -16,6 +16,8 @@ CREATE TABLE Projet
     valide boolean,
     nom varchar(64),
     tag varchar(16),
+    -- note int(10),
+    -- nbNote int,
     pDescr varchar(512),
     pPathImage varchar(64),
     pIdLog INT REFERENCES UserInfo (idLog)

@@ -10,19 +10,21 @@
 
 #include "LQEvent.hpp"
 #include "LQHash.hpp"
+#include "LQAppModel.hpp"
+
 #include <client/ClientGateway.hpp>
 
-struct LQBinData {
-    int   size;
-    char* data;
-};
+// struct LQBinData {
+//     int   size;
+//     char* data;
+// };
 
-struct Project {
-    const std::string name;
-    const std::string tag;
-    const std::string desc;
-    LQBinData img;
-};
+// struct Project {
+//     const std::string name;
+//     const std::string tag;
+//     const std::string desc;
+//     LQBinData img;
+// };
 
 class LQAppController {
 public:
@@ -58,7 +60,7 @@ protected:
     // [{event type, target}] -> lambda (which call the callback)
 
     static std::unordered_map<std::string,
-        std::vector<std::pair<std::function<void(void*, void*)>, void*>>>
+        std::vector<std::pair<std::function<void(void*, LQitem*)>, void*>>>
     s_modelObservers;
     // [model] -> {{invoke(void* observer, void* item), void* observer}, ...}
 
