@@ -187,7 +187,7 @@ async def main():
             task = asyncio.create_task(send_message(writer, action))
             print("action : ", action, " action.tobytes() : ", action.tobytes())
             await task
-            if action == b'0': #Se déconnecter
+            if action == b'\x00': #Se déconnecter
                 connected = False
 
             elif action.tobytes()[0] == 1: #DataQuery
@@ -195,11 +195,12 @@ async def main():
                 gw.transmit_response(infos)
                 print("-----JJJJJJJJJJJJJJJJJJJ-------")
 
-            elif action.tobytes()[0] == 49:
+            elif action.tobytes()[0] == 2: #Login
                 result = await reader.read(1)
                 print("result : ", result)
                 while result == b'\x00':
-                    gw.transmit_response(b'\x00')
+                    gw.transmit_response("register".encode()+b'\0'+int(0).to_bytes(1, 'big'))
+                    print("Mauvais login")
                     action = None
                     while True:
                         action = gw.poll_request()
@@ -209,14 +210,34 @@ async def main():
                     task = asyncio.create_task(send_message(writer, action))
                     await task
                     result = await reader.read(1)
-                print("caca")
-                gw.transmit_response(b'\x01')
+                rep = "register".encode()+b'\0'+int(1).to_bytes(1, 'big')
+                print('rep = ', rep)
+                gw.transmit_response(rep)
+
+            elif action.tobytes()[0] == 3: #Register
+                result = await reader.read(1)
+                print("result : ", result)
+                while result == b'\x00':
+                    gw.transmit_response("register".encode()+b'\0'+int(0).to_bytes(1, 'big'))
+                    print("Mauvais login")
+                    action = None
+                    while True:
+                        action = gw.poll_request()
+                        if action != None:
+                            print("action : ", action.tobytes())
+                            break
+                    task = asyncio.create_task(send_message(writer, action))
+                    await task
+                    result = await reader.read(1)
+                rep = "register".encode()+b'\0'+int(1).to_bytes(1, 'big')
+                print('rep = ', rep)
+                gw.transmit_response(rep)
             
-            elif action.tobytes()[0] == 53:
-                infos = bytes(await receive_message(reader))
-                print("infos = ", infos, ", type : ", type(infos), ", len : ", len(infos))
-                gw.transmit_response(infos)#, len(infos))
-                print("-----JJJJJJJJJJJJJJJJJJJJ-------")
+            # elif action.tobytes()[0] == 53:
+            #     infos = bytes(await receive_message(reader))
+            #     print("infos = ", infos, ", type : ", type(infos), ", len : ", len(infos))
+            #     gw.transmit_response(infos)#, len(infos))
+            #     print("-----JJJJJJJJJJJJJJJJJJJJ-------")
 
             # await asyncio.sleep(1000)
 

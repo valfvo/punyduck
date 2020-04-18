@@ -118,22 +118,22 @@ async def send_dir(pathDir, writer, oDir):
     else:
         print("Veuillez entrer un chemin valide")
 
-async def send_info_ProjetValides(writer, reader, n, nread):
-    cur.execute("SELECT idLog, nom, tag, Descr, pathImage FROM Projet LIMIT %s OFFSET %s;", (n, nread))
-    datas = cur.fetchall()
-    infos = "resp".encode()
-    for data in datas:
-        print(data)
-        nom = data[1]
-        descr = data[3]
-        with open(data[4], 'rb') as file:
-            # img = file.read()
-            img = "none".encode()
-            infos += (len(nom).to_bytes(1, 'big')
-                    + len(descr).to_bytes(2, 'big')
-                    + len(img).to_bytes(3, 'big')
-                    + nom.encode() + descr.encode() + img)
-    await send_message(writer, infos)
+# async def send_info_ProjetValides(writer, reader, n, nread):
+#     cur.execute("SELECT idLog, nom, tag, Descr, pathImage FROM Projet LIMIT %s OFFSET %s;", (n, nread))
+#     datas = cur.fetchall()
+#     infos = "resp".encode()
+#     for data in datas:
+#         print(data)
+#         nom = data[1]
+#         descr = data[3]
+#         with open(data[4], 'rb') as file:
+#             # img = file.read()
+#             img = "none".encode()
+#             infos += (len(nom).to_bytes(1, 'big')
+#                     + len(descr).to_bytes(2, 'big')
+#                     + len(img).to_bytes(3, 'big')
+#                     + nom.encode() + descr.encode() + img)
+#     await send_message(writer, infos)
 
 async def register(writer, reader, infos):
     """Fonction appelée en premier lors de la connexion avec un client. Celle-ci gère la connexion du client à son compte,
@@ -141,14 +141,16 @@ async def register(writer, reader, infos):
     pour indiquer s'il souhaite se connecter ou s'inscrire, ainsi que le writer et le reader."""
     #On récupère le login et le mot de passe saisis par le client
     print("Inscription en cours")
-    matchInfos = re.match(r'\d+(.*)\|(.*)\|(.*)', infos)
+    infos = infos[1:].decode()
+    print("Infos = ", infos)
+    matchInfos = re.match(r'(.*)\|(.*)\|(.*)', infos)
     login = matchInfos.group(1)
     password = matchInfos.group(2)
     email = matchInfos.group(3)
     print("login = ", login)
     print("password = ", password)
     print("email = ", email)
-    query = "INSERT INTO UserInfo (login, password, email, admin, descr, pathImage) VALUES('%s', '%s', '%s', FALSE, 'Cette page na pas de description', 'Images/defaultpp.png')" % (login, ph.hash(password), email)
+    query = "INSERT INTO UserInfo (login, password, email, admin, uPathImage, uDescr) VALUES('%s', '%s', '%s', FALSE, 'Images/defaultpp.png', 'Cette page na pas de description')" % (login, ph.hash(password), email)
     
     try:
         cur.execute(query)
@@ -160,7 +162,7 @@ async def register(writer, reader, infos):
         return False
 
 
-async def login(writer, reader):
+async def login(writer, reader, action):
     login = await receive_message(reader)
     login = login.decode()
     password = await receive_message(reader)
@@ -256,12 +258,12 @@ async def SQL(writer, query):
                         # infos += int(10).to_bytes(4, 'big')
                         # infos += "1234567890".encode()
                         #img = width + height + format + len(data) + data
-                        img = Image.open(data[row])
+                        img = Image.open(data[row].replace("\\\\", "\\"))
                         infos += img.width.to_bytes(4, 'big')
                         infos += img.height.to_bytes(4, 'big')
                         infos += GL_RGBA if img.mode == "RGBA" else GL_RGB
                         infos += len(img.tobytes()).to_bytes(4, 'big')
-                        infos += img.to_bytes()
+                        infos += img.tobytes()
                     elif row == 0 or row == 7 or row == 2:
                         infos += data[row].to_bytes(4, 'big')
                     else:
@@ -278,7 +280,7 @@ async def SQL(writer, query):
                         infos += img.height.to_bytes(4, 'big')
                         infos += GL_RGBA if img.mode == "RGBA" else GL_RGB
                         infos += len(img.tobytes()).to_bytes(4, 'big')
-                        infos += img.to_bytes()
+                        infos += img.tobytes()
                     elif row == 0:
                         infos += data[row].to_bytes(4, 'big')
                     else:
@@ -303,22 +305,24 @@ async def SQL(writer, query):
         datas = cur.fetchall()
 
         for data in datas:
-            for row in data:
+            for row in range(len(data)):
                 if idColonnes[rows[row]] == 0 or idColonnes[rows[row]] == 2 or idColonnes[rows[row]] == 7 or idColonnes[rows[row]] == 8:
                     infos += data[row].to_bytes(4, 'big')
                 elif idColonnes[rows[row]] == 6 or idColonnes[rows[row]] == 13:
                     #img = width + height + format + len(data) + data
-                    img = Image.open(data[row])
+                    fp = open(data[row], 'rb')
+                    img = Image.open(fp)
                     infos += img.width.to_bytes(4, 'big')
                     infos += img.height.to_bytes(4, 'big')
                     infos += GL_RGBA if img.mode == "RGBA" else GL_RGB
                     infos += len(img.tobytes()).to_bytes(4, 'big')
-                    infos += img.to_bytes()
+                    # infos += img.tobytes()
+                    infos += "donneebinaireimage".encode()
                 else:
                     infos += data[row].encode() + b'\0'
             nItems += 1
 
-    infos = model + nItems.to_bytes(4, 'big') + nAttributes + ordreIndice + infos
+    infos = "dataReceive".encode() + b'\0' + model.encode() + nItems.to_bytes(4, 'big') + nAttributes + ordreIndice + infos
     print("infos = ", infos)
     await send_message(writer, infos)
 
@@ -332,7 +336,7 @@ async def handle_echo(reader, writer):
         # action = action.decode()
         print("action = ", action)
         # await asyncio.sleep(1000)
-        if action == '0': #Se déconnecter
+        if action == 0: #Se déconnecter
             connexion = False
 
         elif action[0] == 1:
@@ -340,25 +344,20 @@ async def handle_echo(reader, writer):
             query = action[1:].decode()
             await SQL(writer, query)
         
-        elif action[0] == '0':
-            await login(writer, reader)
+        elif action[0] == 2:
+            await login(writer, reader, action)
 
-        elif action[0] == '1':
+        elif action[0] == 3:
             # task = asyncio.create_task(register(writer, reader, action))
             result = await register(writer, reader, action)
             print("result : ", result)
             while not result:
                 writer.write(b'\x00')
                 action = await receive_message(reader)
-                action = action.decode()
                 result = await register(writer, reader, action)
                 # task = asyncio.create_task(register(writer, reader, action))
             writer.write(b'\x01')
 
-        elif action[0] == '5':
-            n = 32
-            nread = 0
-            await send_info_ProjetValides(writer, reader, n, nread)
 
 
         # elif action == 2: #S'il souhaite envoyer un projet

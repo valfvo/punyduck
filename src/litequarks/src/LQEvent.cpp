@@ -36,3 +36,10 @@ LQModelUpdateEvent::LQModelUpdateEvent(
     std::vector<std::pair<std::string, LQindex>>&& _infos)
 : LQEvent(typeid(LQModelUpdateEvent), nullptr), infos(_infos)
 { }
+
+LQLoginEvent::LQLoginEvent(std::string login, std::string password)
+: LQEvent(typeid(LQLoginEvent), nullptr), infos(login+'|'+password)
+{ }
+LQRegisterEvent::LQRegisterEvent(std::string login, std::string password, std::string email)
+: LQEvent(typeid(LQRegisterEvent), nullptr), infos(login+'|'+password+'|'+email)
+{ }

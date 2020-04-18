@@ -11,7 +11,7 @@ std::unordered_map<std::string, std::vector<void*>>
 LQAppModel::s_items;
 
 std::unordered_map<std::type_index, std::string>
-s_modelNames;
+LQAppModel::s_modelNames;
 
 void LQAppModel::init() {
     lqOn<LQDataReceivedEvent>(dataReceivedCallback);

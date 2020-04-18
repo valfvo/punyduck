@@ -43,3 +43,17 @@ public:
 
     const std::vector<std::pair<std::string, LQindex>> infos;
 };
+
+class LQLoginEvent : public LQEvent {
+public:
+    LQLoginEvent(std::string login, std::string password);
+
+    const std::string infos;
+};
+
+class LQRegisterEvent : public LQEvent {
+public:
+    LQRegisterEvent(std::string login, std::string password, std::string email);
+
+    const std::string infos;
+};

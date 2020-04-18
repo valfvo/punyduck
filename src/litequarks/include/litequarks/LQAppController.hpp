@@ -7,6 +7,7 @@
 #include <unordered_map>
 #include <utility>  // std::pair
 #include <vector>
+#include <cstdint>
 
 #include "LQEvent.hpp"
 #include "LQHash.hpp"
@@ -49,6 +50,10 @@ public:
     static void dataQueryCallback(LQDataQueryEvent& event);
 
     static void modelUpdateCallback(LQModelUpdateEvent& event);
+
+    static void loginCallback(LQLoginEvent& event);
+
+    static void registerCallback(LQRegisterEvent& event);
 
 protected:
     static std::queue<LQEvent*>

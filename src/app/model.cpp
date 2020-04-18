@@ -1,6 +1,6 @@
 #include "model.hpp"
 
-int initModelsConstructors() {
+void initModelsConstructors() {
     //Project constructor  std::type_index&& eventType
     LQAppModel::createModel("project", typeid(Project),
         [](LQRawData& data, const bool* attr) -> LQitem* {

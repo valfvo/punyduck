@@ -154,7 +154,19 @@ int main() {
 
     TestAffiche test;
 
-    LQAppModel::dataQuery("projectSELECT nom, tag note, pDescr, pPathImage, login FROM Projet, UserInfo WHERE pIdLog = idLog;");
+    // LQAppModel::dataQuery("projectSELECT nom, tag, pDescr, pPathImage, login FROM Projet, UserInfo WHERE pIdLog = idLog;");
+
+    // Callback demande login :
+    std::string login, password, email;
+    std::cout << "Entrez login, password, email : " << std::endl;
+    std::cin >> login >> password; // >> email;
+
+    lqOn<LQRegisterEvent>(LQAppController::registerCallback); // Dans la class bouton register
+    // LQAppController::pushEvent(new LQRegisterEvent(login, password, email)); // Dans la class bouton register
+
+    lqOn<LQLoginEvent>(LQAppController::loginCallback); // Dans la class bouton login
+    LQAppController::pushEvent(new LQLoginEvent(login, password)); // Dans la class bouton register
+
 
     while (window.alive()) {
         window.clear();
@@ -162,7 +174,7 @@ int main() {
         window.update();
     }
 
-   LQAppController::finalize();
+    LQAppController::finalize();
     glfwTerminate();
     // TODO lqFinalize();
 

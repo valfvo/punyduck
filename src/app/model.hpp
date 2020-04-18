@@ -27,4 +27,4 @@ struct User {
     LQImageData boutonOnline;
 };
 
-int initModelsConstructors();
+void initModelsConstructors();

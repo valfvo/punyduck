@@ -1,11 +1,8 @@
 #include <cstring>
 #include "LQRawData.hpp"
 
-static int num = 1;
-static bool hostIsLittleEndian = (*(char *)&num == 1);
-
 template<class TData>
-TData LQRawData::parse() {
+TData LQRawData::basicParse() {
     LQsize dataSize = sizeof(TData);
     TData data;
 
@@ -17,12 +14,19 @@ TData LQRawData::parse() {
         return TData();
     }
 
-    if (hostIsLittleEndian) {
-        data = __builtin_bswap32(data);
-    }
-
     return data;
 }
+
+template<class TData>
+TData LQRawData::parse() {
+    return basicParse<TData>();
+}
+
+template<>
+int16_t LQRawData::parse<int16_t>();
+
+template<>
+int32_t LQRawData::parse<int32_t>();
 
 template<>
 char* LQRawData::parse<char*>();

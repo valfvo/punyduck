@@ -1,6 +1,8 @@
 #include <litequarks/LQAppController.hpp>
 #include <litequarks/LQAppModel.hpp>
 #include <litequarks/LQRawData.hpp>
+#include <iostream>
+
 std::queue<LQEvent*>
 LQAppController::s_eventQueue;
 
@@ -77,7 +79,22 @@ void LQAppController::pollResponses() {
     std::lock_guard<std::mutex> lock(s_mutex);
     while (!s_responses.empty()) {
         LQRawData data(s_responses.front());
-        LQAppController::pushEvent(new LQDataReceivedEvent(data));
+        std::string type = data.parse<char*>();
+        if(type == "dataReceive") {
+            LQAppController::pushEvent(new LQDataReceivedEvent(data));
+        }
+        if(type == "login") {
+            int rep = data.parse<int8_t>();
+            if(rep == 0) {
+                std::cout << "Login ou Password. Entrez login, password : " << std::endl;
+                std::string login, password, email;
+                std::cin >> login >> password; // >> email;
+                LQAppController::pushEvent(new LQRegisterEvent(login, password, email)); // <- Ici event pour demander un login (Vue)
+            }
+            else {
+                std::cout << "Vous etes correctement connecte" << std::endl;
+            }
+        }
         s_responses.pop();
     }
 }
@@ -102,4 +119,20 @@ void LQAppController::modelUpdateCallback(LQModelUpdateEvent& event) {
             }
         }
     }
+}
+
+void LQAppController::loginCallback(LQLoginEvent& event) {
+    std::lock_guard<std::mutex> lock(s_mutex);
+    char* query = new char[event.infos.length() + 2];
+    query[0] = 2;
+    strcpy(&query[1], event.infos.c_str());
+    s_queries.push(query);
+}
+
+void LQAppController::registerCallback(LQRegisterEvent& event) {
+    std::lock_guard<std::mutex> lock(s_mutex);
+    char* query = new char[event.infos.length() + 2];
+    query[0] = 3;
+    strcpy(&query[1], event.infos.c_str());
+    s_queries.push(query);
 }
