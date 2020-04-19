@@ -40,6 +40,15 @@ LQModelUpdateEvent::LQModelUpdateEvent(
 LQLoginEvent::LQLoginEvent(std::string login, std::string password)
 : LQEvent(typeid(LQLoginEvent), nullptr), infos(login+'|'+password)
 { }
+
 LQRegisterEvent::LQRegisterEvent(std::string login, std::string password, std::string email)
 : LQEvent(typeid(LQRegisterEvent), nullptr), infos(login+'|'+password+'|'+email)
+{ }
+
+LQUpProjectEvent::LQUpProjectEvent(std::string nom, std::string chemin)
+: LQEvent(typeid(LQUpProjectEvent), nullptr), infos(nom+'|'+chemin)
+{ }
+
+LQTempActionEvent::LQTempActionEvent(int _action)
+: LQEvent(typeid(LQTempActionEvent), nullptr), action(_action)
 { }

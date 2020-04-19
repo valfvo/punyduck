@@ -51,14 +51,14 @@ async def send_file(path, writer, oDir): #Fonction envoyant un fichier au serveu
         data = "Erreur ! Le fichier n'a pas pu être ouvert".encode()
         await send_message(writer, data)
 
-async def receive_file(reader): #Fonction appelée pour recevoir un fichier envoyé par la fonction "send_file()" du serveur
+async def receive_file(reader, nomProjet): #Fonction appelée pour recevoir un fichier envoyé par la fonction "send_file()" du serveur
     path = await receive_message(reader) #On récupère d'abord le chemin du fichier
     data = await receive_message(reader) #On récupère ensuite les données binaires du fichier
     path = path.decode()
     path = path.split('/')
     #Dans le chemin du fichier, on sépare le nom du fichier du reste du chemin
     nameFile = path[-1]
-    path2 = ""
+    path2 = nomProjet + '/'
     for i in path[0:-1]:
         path2 += i + '/'
     try:
@@ -162,27 +162,47 @@ async def register(writer, reader, infos):
         return False
 
 
-async def login(writer, reader, action):
-    login = await receive_message(reader)
-    login = login.decode()
-    password = await receive_message(reader)
-    password = password.decode()
-    incorrectLog = True
-    while incorrectLog: #Tant que les identifiants sont incorrects
-        cur.execute("SELECT password FROM UserInfo WHERE login = %s", (login,)) #On récupère le mot de passe correspondant au login
-        data = cur.fetchone()
-        print("data = ", data)
-        try:
-            ph.verify(data[0], password) #On vérifie que le mot de passe saisie corresponde à celui récupéré (qui est hashé)
-            print("Bienvenue, ", login)
-            await send_message(writer, login.encode()) #On envoie au client le login pour lui indiquer qu'il s'est connecté
-            incorrectLog = False
-        except (TypeError, exceptions.VerifyMismatchError): #Si les identifiants sont incorrects, on en reçoit de nouveaux
-            await send_message(writer, "False".encode()) #On envoie "False" pour signifier au client que les identifiants sont incorrects
-            login = await receive_message(reader)
-            login = login.decode()
-            password = await receive_message(reader)
-            password = password.decode()        
+async def login(writer, reader, infos):
+    print("Connexion en cours")
+    infos = infos[1:].decode()
+    print("Infos = ", infos)
+    matchInfos = re.match(r'(.*)\|(.*)', infos)
+    login = matchInfos.group(1)
+    password = matchInfos.group(2)
+    
+    cur.execute("SELECT password FROM UserInfo WHERE login = %s", (login,)) #On récupère le mot de passe correspondant au login
+    data = cur.fetchone()
+    
+    try:
+        ph.verify(data[0], password) #On vérifie que le mot de passe saisie corresponde à celui récupéré (qui est hashé)
+        print("Bienvenue, ", login)
+        cur.execute("SELECT idLog FROM UserInfo WHERE login = %s", (login,))
+        idLog = cur.fetchone()[0]
+        writer.write(idLog.to_bytes(2, 'big')) #On envoie au client le login pour lui indiquer qu'il s'est connecté
+        return True
+    except (TypeError, exceptions.VerifyMismatchError): #Si les identifiants sont incorrects, on en reçoit de nouveaux
+        writer.write(b'\x00\x00') #On envoie "False" pour signifier au client que les identifiants sont incorrects
+        return False
+
+
+def checkProjectName(nom):
+    print("Vérification du nom de projet")
+    cur.execute("SELECT nom FROM Projet WHERE nom = %s", (nom,))
+    return not cur.fetchone() != None
+
+async def getProject(writer, reader, nomProjet):
+    print("Réception d'un projet client")
+    downloading = await reader.read(1) # Variable pour savoir s'il reste des fichiers à recevoir
+    downloading = int.from_bytes(downloading, "big")
+    ddl = False
+    while downloading == 0:
+        await receive_file(reader, nomProjet)
+        downloading = await reader.read(1)
+        downloading = int.from_bytes(downloading, "big")
+        print("Downloading = ", downloading)
+        ddl = True
+    print("Project downloaded")
+    return ddl
 
 def delete_account(login): #Fonction appelée pour supprimer un compte
     action = input("Êtes-vous sûr de vouloir supprimer votre compte ? (y/n)")
@@ -208,8 +228,8 @@ idColonnes = {
     "uDescr": 14
 }
 
-GL_RGB = b'\x00\x00\x19\x07'
-GL_RGBA = b'\x00\x00\x19\x08'
+GL_RGB = b'\x19\x07'
+GL_RGBA = b'\x19\x08'
 
 def fusion(T1, T2, T):
     i1 = 0
@@ -326,6 +346,8 @@ async def SQL(writer, query):
     print("infos = ", infos)
     await send_message(writer, infos)
 
+
+
 async def handle_echo(reader, writer):
     """Fonction principale du serveur, appelée lors de la connexion avec un client. Après avoir exécuté la fonction log(), elle
     envoie ou récupère un projet selon les demandes de l'utilisateur"""
@@ -345,68 +367,47 @@ async def handle_echo(reader, writer):
             await SQL(writer, query)
         
         elif action[0] == 2:
-            await login(writer, reader, action)
+            result = await login(writer, reader, action)
+            if not result:
+                print("Identifiants incorrects")
+                action = await receive_message(reader)
+                result = await login(writer, reader, action)
 
         elif action[0] == 3:
-            # task = asyncio.create_task(register(writer, reader, action))
             result = await register(writer, reader, action)
             print("result : ", result)
-            while not result:
+            if not result:
                 writer.write(b'\x00')
-                action = await receive_message(reader)
-                result = await register(writer, reader, action)
-                # task = asyncio.create_task(register(writer, reader, action))
-            writer.write(b'\x01')
+            else:
+                writer.write(b'\x01')
 
+        elif action[0] == 4:
+            #On vérifie d'abord que le nom du projet est disponible
+            infos = action[1:].decode()
+            matchInfos = re.match(r'(.*)\|(.*)', infos)
+            nom = matchInfos.group(1)
+            path = matchInfos.group(2)
+            checkName = checkProjectName(nom)
+            if not checkName:
+                writer.write(b'\x00') #On envoie 0 pour dire que le nom n'est pas disponible
+                print("Ce nom est déjà pris.")
+            else:
+                writer.write(b'\x01') #On envoie 1 pour dire que le nom est disponible
 
-
-        # elif action == 2: #S'il souhaite envoyer un projet
-        #     projectName = await receive_message(reader)
-        #     projectName = projectName.decode()
-
-        #     #On vérifie d'abord que le nom du projet est disponible
-        #     cur.execute("SELECT nom FROM projet WHERE nom = %s", (projectName,))
-        #     projectName_invalid = cur.fetchone() != None
-        #     while projectName_invalid:
-        #         writer.write(b'\x00') #On envoie 0 pour dire que le nom n'est pas disponible
-        #         print("Ce nom est déjà pris.")
-        #         projectName = await receive_message(reader)
-        #         projectName = projectName.decode()
-        #         cur.execute("SELECT nom FROM projet WHERE nom = %s", (projectName,))
-        #         projectName_invalid = cur.fetchone() != None
-        #     writer.write(b'\x01') #On envoie 1 pour dire que le nom est disponible
-
-        #     #Ensuite, on incrémente de 1 le dernier id enregistré dans la base pour créer un nouvel id
-        #     cur.execute("SELECT MAX(idProjet) FROM Projet;")
-        #     data = cur.fetchone()
-        #     if data[0] == None:
-        #         new_id = 1
-        #     else:
-        #         new_id = data[0]+1
+                ddl = await getProject(writer, reader, nom)
+                    
+                #On récupère ensuite le chemin du projet ainsi que le login de l'utilisateur
+                idLog = await reader.read(2)
+                print("Project saved by idLog : ", idLog)
+                idLog = int.from_bytes(idLog, 'big')
                 
-        #     #On récupère ensuite le chemin du projet ainsi que le login de l'utilisateur
-        #     pathServer = await receive_message(reader)
-        #     pathServer = pathServer.decode()
-        #     user = await receive_message(reader)
-        #     user = user.decode()
-            
-        #     cur.execute("SELECT idLog FROM UserInfo WHERE login = %s;", (user,)) #On récupère l'id de l'utilisateur
-        #     idlog = cur.fetchone()[0]
+                #Enfin, on insère dans la table Projet une nouvelle ligne, avec les informations du nouveau projet
+                if ddl:
+                    print("Adding project to database...")
+                    cur.execute("INSERT INTO Projet (chemin, valide, nom, tag, pDescr, pPathImage, pIdLog)\
+                    VALUES(%s, FALSE, %s, 'None', 'None', 'Images/defaultpp.png', %s);", (nom, nom, idLog))
+                conn.commit()
 
-        #     #Enfin, on insère dans la table Projet une nouvelle ligne, avec les informations du nouveau projet
-        #     cur.execute("INSERT INTO Projet VALUES(%s, %s, %s, FALSE, %s, 'None', 1, 1);", (new_id, pathServer, idlog, projectName))
-
-        #     #Pour finir, on récupère le projet en lui-même
-        #     print("Réception d'un fichier client")
-        #     downloading = await reader.read(1) #Variable pour savoir s'il reste des fichiers à recevoir
-        #     downloading = int.from_bytes(downloading, "big")
-        #     while downloading == 0:
-        #         await receive_file(reader)
-        #         downloading = await reader.read(1)
-        #         downloading = int.from_bytes(downloading, "big")
-        #         print("Downloading = ", downloading)
-        #     print("Project downloaded")
-        #     conn.commit()
 
         # elif action == 3: #Si l'utilisateur souhaite télécharger un projet
         #     print("Envoi d'un fichier au client")

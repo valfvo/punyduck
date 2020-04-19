@@ -45,25 +45,25 @@ public:
     }
 };
 
-std::string Qregister() {
-    std::string login, password, email, query;
-    std::cout << "Entrez un login : ";
-    std::cin >> login;
-    std::cout << "Entrez un password :";
-    std::cin >> password;
-    while(password.length() < 8) {
-        std::cout << "Mot de passe trop court (< 8 characteres),"
-                     "veuillez en choisir un autre : ";
-        std::cin >> password;
-    }
-    std::cout << "Entrez un email :";
-    std::cin >> email;
+// std::string Qregister() {
+//     std::string login, password, email, query;
+//     std::cout << "Entrez un login : ";
+//     std::cin >> login;
+//     std::cout << "Entrez un password :";
+//     std::cin >> password;
+//     while(password.length() < 8) {
+//         std::cout << "Mot de passe trop court (< 8 characteres),"
+//                      "veuillez en choisir un autre : ";
+//         std::cin >> password;
+//     }
+//     std::cout << "Entrez un email :";
+//     std::cin >> email;
 
-    query = '1'+login+'|'+password+'|'+email;
-    std::cout << "Query = " << query << std::endl;
+//     query = '1'+login+'|'+password+'|'+email;
+//     std::cout << "Query = " << query << std::endl;
 
-    return query;
-}
+//     return query;
+// }
 
 int main() {
     // std::string query;
@@ -155,18 +155,10 @@ int main() {
     TestAffiche test;
 
     // LQAppModel::dataQuery("projectSELECT nom, tag, pDescr, pPathImage, login FROM Projet, UserInfo WHERE pIdLog = idLog;");
-
-    // Callback demande login :
-    std::string login, password, email;
-    std::cout << "Entrez login, password, email : " << std::endl;
-    std::cin >> login >> password; // >> email;
-
-    lqOn<LQRegisterEvent>(LQAppController::registerCallback); // Dans la class bouton register
-    // LQAppController::pushEvent(new LQRegisterEvent(login, password, email)); // Dans la class bouton register
-
-    lqOn<LQLoginEvent>(LQAppController::loginCallback); // Dans la class bouton login
-    LQAppController::pushEvent(new LQLoginEvent(login, password)); // Dans la class bouton register
-
+    int action;
+    std::cout << "Choissisez une action (1 login 2 register 3 upProjet)" << std::endl;
+    std::cin >> action;
+    LQAppController::pushEvent(new LQTempActionEvent(action));
 
     while (window.alive()) {
         window.clear();

@@ -57,3 +57,17 @@ public:
 
     const std::string infos;
 };
+
+class LQUpProjectEvent : public LQEvent {
+public:
+    LQUpProjectEvent(std::string nom, std::string chemin);
+
+    const std::string infos;
+};
+
+class LQTempActionEvent : public LQEvent {
+public:
+    LQTempActionEvent(int _action);
+
+    const int action;
+};

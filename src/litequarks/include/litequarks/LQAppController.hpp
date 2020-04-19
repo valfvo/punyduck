@@ -55,6 +55,10 @@ public:
 
     static void registerCallback(LQRegisterEvent& event);
 
+    static void upProjectCallback(LQUpProjectEvent& event);
+
+    static void tempActionCallback(LQTempActionEvent& event);
+
 protected:
     static std::queue<LQEvent*>
     s_eventQueue;

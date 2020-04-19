@@ -1,4 +1,5 @@
 #include <cstring>
+#include <cstdint>
 #include "LQRawData.hpp"
 
 template<class TData>
