@@ -3,6 +3,7 @@
 
 
 struct Project {
+    int id;
     std::string nom;
     std::string tag;
     std::string desc;

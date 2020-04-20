@@ -51,13 +51,15 @@ public:
 
     static void modelUpdateCallback(LQModelUpdateEvent& event);
 
-    static void loginCallback(LQLoginEvent& event);
+    static void loginCallback(loginEvent& event);
 
-    static void registerCallback(LQRegisterEvent& event);
+    static void registerCallback(registerEvent& event);
 
-    static void upProjectCallback(LQUpProjectEvent& event);
+    static void upProjectCallback(upProjectEvent& event);
 
-    static void tempActionCallback(LQTempActionEvent& event);
+    static void dlProjectCallback(dlProjectEvent& event);
+
+    static void tempActionCallback(tempActionEvent& event);
 
 protected:
     static std::queue<LQEvent*>

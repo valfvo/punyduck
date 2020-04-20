@@ -26,7 +26,7 @@ def decodeBuffer(buffer): #Fonction qui décode un nombre encodé en binaire (ap
     return sizeBuffer_received
 
 async def send_file(path, writer, oDir): #Fonction envoyant un fichier au serveur. On passe en paramètre le chemin du fichier, le writer, et le dossier originel du projet
-    writer.write(b'\x01') #On écrit un pour dire au client qu'il va recevoir un fichier
+    writer.write(b'\x00') #On écrit un pour dire au client qu'il va recevoir un fichier
     try:
         with open(path, "rb") as file:
             """On crée un string "pathServer" qui stockera le chemin à partir du dossier originel. Cela sera utile dans les cas où
@@ -75,7 +75,7 @@ async def send_message(writer, message): #Fonction pouvant envoyer un message au
     await writer.drain()
     if len(message) > 1024:
         i = 0
-        while i < len(message)/1024: #On envoie le message kilo par kilo si celui-ci est suffisament grand
+        while i < len(message)/1024: #On envoie le message ko par ko si celui-ci est suffisament grand
             writer.write(message[i*1024:(i+1)*1024])
             i += 1
             if i % 10 == 0:
@@ -101,39 +101,20 @@ async def receive_message(reader): #Fonction pour récupérer un message envoyé
 async def send_dir(pathDir, writer, oDir):
     """Fonction envoyant les fichiers d'un dossier de manière récursive. On lui passe en paramètre le chemin pour accéder au dossier originel,
     le writer, et le nom du dossier originel."""
+    print("send dir : ", pathDir, "oDir : ", oDir)
     if os.path.isdir(pathDir):
         print(pathDir, "est un dossier")
         tree = os.listdir(pathDir)
         for fileordir in tree: #Pour chaque fichier/dossier du dossier originel :
-            if os.path.isdir(pathDir+'/'+fileordir): #Si c'est un dossier, on appelle récursivement la fonction send_dir() sur ce dossier
-                print("dir : ", pathDir+'/'+fileordir)
-                await send_dir(pathDir+'/'+fileordir, writer, oDir)
-            else: #Sinon, si c'est un fichier, on appelle la fonction send_file() sur ce fichier
-                print("file : ", pathDir+'/'+fileordir)
-                await send_file(pathDir+'/'+fileordir, writer, oDir)
-                await writer.drain()
+            print("dir : ", pathDir+'/'+fileordir)
+            await send_dir(pathDir+'/'+fileordir, writer, oDir)
+            await writer.drain()
     elif os.path.isfile(pathDir):
         print(pathDir, "est un fichier")
         await send_file(pathDir, writer, oDir)
     else:
         print("Veuillez entrer un chemin valide")
 
-# async def send_info_ProjetValides(writer, reader, n, nread):
-#     cur.execute("SELECT idLog, nom, tag, Descr, pathImage FROM Projet LIMIT %s OFFSET %s;", (n, nread))
-#     datas = cur.fetchall()
-#     infos = "resp".encode()
-#     for data in datas:
-#         print(data)
-#         nom = data[1]
-#         descr = data[3]
-#         with open(data[4], 'rb') as file:
-#             # img = file.read()
-#             img = "none".encode()
-#             infos += (len(nom).to_bytes(1, 'big')
-#                     + len(descr).to_bytes(2, 'big')
-#                     + len(img).to_bytes(3, 'big')
-#                     + nom.encode() + descr.encode() + img)
-#     await send_message(writer, infos)
 
 async def register(writer, reader, infos):
     """Fonction appelée en premier lors de la connexion avec un client. Celle-ci gère la connexion du client à son compte,
@@ -409,27 +390,20 @@ async def handle_echo(reader, writer):
                 conn.commit()
 
 
-        # elif action == 3: #Si l'utilisateur souhaite télécharger un projet
-        #     print("Envoi d'un fichier au client")
-        #     idProjet = await reader.read(1) #On récupère le chemin du fichier qu'il souhaite récupérer
-        #     idProjet = int.from_bytes(idProjet, 'big')
-        #     cur.execute("SELECT nom, chemin FROM Projet WHERE idProjet = %s;", (idProjet,))
-        #     data = cur.fetchone()
-        #     path = data[1]
-        #     print(f"\033[36mClient ask for {data[0]}\033[0m")
-        #     oDir = path.split('/')[-1]
-        #     await send_dir(path, writer, oDir)
-        #     writer.write(b'\x00')
-        #     print('dossier envoye')
+        elif action[0] == 5: #Si l'utilisateur souhaite télécharger un projet
+            print("Send project to client")
+            idProjet = int.from_bytes(action[1:], 'big')
+            print("idProjet : ", idProjet)
+            cur.execute("SELECT chemin FROM Projet WHERE idProjet = %s;", (idProjet,))
+            data = cur.fetchone()
+            path = data[0]
+            oDir = path.split('/')[-1]
+            await send_dir(path, writer, oDir)
+            writer.write(b'\x01')
+            print('projet envoye')
 
-        # elif action == 4:
-        #     await send_info_ProjetValides(writer, reader)
-
-        # elif action == 5:
-        #     connexion = False
-        
-        # else:
-        #     print("Error action.")
+        else:
+            print("Error action.")
 
         await writer.drain()
     print("Close the connection")

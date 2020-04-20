@@ -37,18 +37,22 @@ LQModelUpdateEvent::LQModelUpdateEvent(
 : LQEvent(typeid(LQModelUpdateEvent), nullptr), infos(_infos)
 { }
 
-LQLoginEvent::LQLoginEvent(std::string login, std::string password)
-: LQEvent(typeid(LQLoginEvent), nullptr), infos(login+'|'+password)
+loginEvent::loginEvent(std::string login, std::string password)
+: LQEvent(typeid(loginEvent), nullptr), infos(login+'|'+password)
 { }
 
-LQRegisterEvent::LQRegisterEvent(std::string login, std::string password, std::string email)
-: LQEvent(typeid(LQRegisterEvent), nullptr), infos(login+'|'+password+'|'+email)
+registerEvent::registerEvent(std::string login, std::string password, std::string email)
+: LQEvent(typeid(registerEvent), nullptr), infos(login+'|'+password+'|'+email)
 { }
 
-LQUpProjectEvent::LQUpProjectEvent(std::string nom, std::string chemin)
-: LQEvent(typeid(LQUpProjectEvent), nullptr), infos(nom+'|'+chemin)
+upProjectEvent::upProjectEvent(std::string nom, std::string chemin)
+: LQEvent(typeid(upProjectEvent), nullptr), infos(nom+'|'+chemin)
 { }
 
-LQTempActionEvent::LQTempActionEvent(int _action)
-: LQEvent(typeid(LQTempActionEvent), nullptr), action(_action)
+dlProjectEvent::dlProjectEvent(int _idProject)
+: LQEvent(typeid(dlProjectEvent), nullptr), idProject(_idProject)
+{ }
+
+tempActionEvent::tempActionEvent(int _action)
+: LQEvent(typeid(tempActionEvent), nullptr), action(_action)
 { }

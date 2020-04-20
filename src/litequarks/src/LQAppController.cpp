@@ -33,10 +33,11 @@ LQAppController::s_gatewayThread = nullptr;
 void LQAppController::init() {
     lqOn<LQDataQueryEvent>(dataQueryCallback);
     lqOn<LQModelUpdateEvent>(modelUpdateCallback);
-    lqOn<LQLoginEvent>(loginCallback); // Dans la class bouton login
-    lqOn<LQRegisterEvent>(registerCallback); // Dans la class bouton register
-    lqOn<LQUpProjectEvent>(upProjectCallback); // Dans la class bouton projet
-    lqOn<LQTempActionEvent>(tempActionCallback);
+    lqOn<loginEvent>(loginCallback); // Dans la class bouton login
+    lqOn<registerEvent>(registerCallback); // Dans la class bouton register
+    lqOn<upProjectEvent>(upProjectCallback); // Dans la class bouton projet
+    lqOn<dlProjectEvent>(dlProjectCallback); // Dans la class bouton projet
+    lqOn<tempActionEvent>(tempActionCallback);
     s_gateway = new ClientGateway(s_queries, s_responses);
     s_gatewayThread = new std::thread(std::ref(*s_gateway));
 }
@@ -97,14 +98,14 @@ void LQAppController::pollResponses() {
                 std::cout << "Login ou password incorrect. Entrez login, password : " << std::endl;
                 std::string login, password;
                 std::cin >> login >> password; // >> email;
-                LQAppController::pushEvent(new LQLoginEvent(login, password)); // <- Ici event pour demander un login (Vue)
+                LQAppController::pushEvent(new loginEvent(login, password)); // <- Ici event pour demander un login (Vue)
             }
             else {
                 std::cout << "Vous etes correctement connecte" << std::endl;
                 int action;
-                std::cout << "Choissisez une action (1 login 2 register 3 upProjet)" << std::endl;
+                std::cout << "Choissisez une action (1 login 2 register 3 upProjet 4 dlProject)" << std::endl;
                 std::cin >> action;
-                LQAppController::pushEvent(new LQTempActionEvent(action));
+                LQAppController::pushEvent(new tempActionEvent(action));
             }
         }
         if(type == "register") {
@@ -113,14 +114,14 @@ void LQAppController::pollResponses() {
                 std::cout << "Login deja pris. Entrez login, password email : " << std::endl;
                 std::string login, password, email;
                 std::cin >> login >> password >> email;
-                LQAppController::pushEvent(new LQRegisterEvent(login, password, email)); // <- Ici event pour demander un login (Vue)
+                LQAppController::pushEvent(new registerEvent(login, password, email)); // <- Ici event pour demander un login (Vue)
             }
             else {
                 std::cout << "Vous etes correctement inscrit" << std::endl;
                 int action;
-                std::cout << "Choissisez une action (1 login 2 register 3 upProjet)" << std::endl;
+                std::cout << "Choissisez une action (1 login 2 register 3 upProjet 4 dlProject)" << std::endl;
                 std::cin >> action;
-                LQAppController::pushEvent(new LQTempActionEvent(action));
+                LQAppController::pushEvent(new tempActionEvent(action));
             }
         }
         if(type == "upProject") {
@@ -130,7 +131,7 @@ void LQAppController::pollResponses() {
                 std::string nom, chemin;
                 std::cin >> nom;
                 std::getline(std::cin, chemin);
-                LQAppController::pushEvent(new LQUpProjectEvent(nom, chemin)); // <- Ici event pour demander un nom de projet (Vue)
+                LQAppController::pushEvent(new upProjectEvent(nom, chemin)); // <- Ici event pour demander un nom de projet (Vue)
             }
         }
         if(type == "projectUploaded") {
@@ -141,9 +142,22 @@ void LQAppController::pollResponses() {
             else {
                 std::cout << "Projet mit sur le serveur." << std::endl;
                 int action;
-                std::cout << "Choissisez une action (1 login 2 register 3 upProjet)" << std::endl;
+                std::cout << "Choissisez une action (1 login 2 register 3 upProjet 4 dlProject)" << std::endl;
                 std::cin >> action;
-                LQAppController::pushEvent(new LQTempActionEvent(action));
+                LQAppController::pushEvent(new tempActionEvent(action));
+            }
+        }
+        if(type == "projectDownloaded") {
+            int rep = data.parse<int8_t>();
+            if(rep == 0) {
+                std::cout << "Erreur lors du telechargement du projet. Fin de programme" << std::endl;
+            }
+            else {
+                std::cout << "Projet telecharge." << std::endl;
+                int action;
+                std::cout << "Choissisez une action (1 login 2 register 3 upProjet 4 dlProject)" << std::endl;
+                std::cin >> action;
+                LQAppController::pushEvent(new tempActionEvent(action));
             }
         }
         s_responses.pop();
@@ -172,7 +186,7 @@ void LQAppController::modelUpdateCallback(LQModelUpdateEvent& event) {
     }
 }
 
-void LQAppController::loginCallback(LQLoginEvent& event) {
+void LQAppController::loginCallback(loginEvent& event) {
     std::lock_guard<std::mutex> lock(s_mutex);
     char* query = new char[event.infos.length() + 2];
     query[0] = 2;
@@ -180,7 +194,7 @@ void LQAppController::loginCallback(LQLoginEvent& event) {
     s_queries.push(query);
 }
 
-void LQAppController::registerCallback(LQRegisterEvent& event) {
+void LQAppController::registerCallback(registerEvent& event) {
     std::lock_guard<std::mutex> lock(s_mutex);
     char* query = new char[event.infos.length() + 2];
     query[0] = 3;
@@ -188,7 +202,7 @@ void LQAppController::registerCallback(LQRegisterEvent& event) {
     s_queries.push(query);
 }
 
-void LQAppController::upProjectCallback(LQUpProjectEvent& event) {
+void LQAppController::upProjectCallback(upProjectEvent& event) {
     std::lock_guard<std::mutex> lock(s_mutex);
     char* query = new char[event.infos.length() + 2];
     query[0] = 4;
@@ -196,27 +210,39 @@ void LQAppController::upProjectCallback(LQUpProjectEvent& event) {
     s_queries.push(query);
 }
 
-void LQAppController::tempActionCallback(LQTempActionEvent& event) {
+void LQAppController::dlProjectCallback(dlProjectEvent& event) {
+    std::lock_guard<std::mutex> lock(s_mutex);
+    char* query = new char[5];
+    query[0] = 5;
+    memcpy(&query[1], &event.idProject, 4);
+    s_queries.push(query);
+}
+
+void LQAppController::tempActionCallback(tempActionEvent& event) {
     std::string login, password, email, nom, chemin;
     switch (event.action) {
     case 1:
         std::cout << "Entrez login, password : " << std::endl;
         std::cin >> login >> password;
-        LQAppController::pushEvent(new LQLoginEvent(login, password)); // Dans la class bouton register
+        LQAppController::pushEvent(new loginEvent(login, password)); // Dans la class bouton login
         break;
 
     case 2:
         std::cout << "Entrez login, password, email : " << std::endl;
         std::cin >> login >> password >> email;
-        LQAppController::pushEvent(new LQRegisterEvent(login, password, email)); // Dans la class bouton register
+        LQAppController::pushEvent(new registerEvent(login, password, email)); // Dans la class bouton projet
         break;
 
     case 3:
         std::cout << "Entrez nom, chemin : " << std::endl;
         std::cin >> nom;
         std::getline(std::cin, chemin);
-        LQAppController::pushEvent(new LQUpProjectEvent(nom, chemin)); // Dans la class bouton register
+        LQAppController::pushEvent(new upProjectEvent(nom, chemin)); // Dans la class bouton register
         break;
+    
+    case 4:
+        LQAppController::pushEvent(new dlProjectEvent(29)); // Dans la class bouton projet
+
 
     default:
         break;

@@ -154,11 +154,11 @@ int main() {
 
     TestAffiche test;
 
-    // LQAppModel::dataQuery("projectSELECT nom, tag, pDescr, pPathImage, login FROM Projet, UserInfo WHERE pIdLog = idLog;");
+    // LQAppModel::dataQuery("projectSELECT idProject, nom, tag, pDescr, pPathImage, login FROM Projet, UserInfo WHERE pIdLog = idLog;");
     int action;
-    std::cout << "Choissisez une action (1 login 2 register 3 upProjet)" << std::endl;
+    std::cout << "Choissisez une action (1 login 2 register 3 upProjet 4 dlProject)" << std::endl;
     std::cin >> action;
-    LQAppController::pushEvent(new LQTempActionEvent(action));
+    LQAppController::pushEvent(new tempActionEvent(action));
 
     while (window.alive()) {
         window.clear();

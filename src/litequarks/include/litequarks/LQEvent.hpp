@@ -44,30 +44,37 @@ public:
     const std::vector<std::pair<std::string, LQindex>> infos;
 };
 
-class LQLoginEvent : public LQEvent {
+class loginEvent : public LQEvent {
 public:
-    LQLoginEvent(std::string login, std::string password);
+    loginEvent(std::string login, std::string password);
 
     const std::string infos;
 };
 
-class LQRegisterEvent : public LQEvent {
+class registerEvent : public LQEvent {
 public:
-    LQRegisterEvent(std::string login, std::string password, std::string email);
+    registerEvent(std::string login, std::string password, std::string email);
 
     const std::string infos;
 };
 
-class LQUpProjectEvent : public LQEvent {
+class upProjectEvent : public LQEvent {
 public:
-    LQUpProjectEvent(std::string nom, std::string chemin);
+    upProjectEvent(std::string nom, std::string chemin);
 
     const std::string infos;
 };
 
-class LQTempActionEvent : public LQEvent {
+class dlProjectEvent : public LQEvent {
 public:
-    LQTempActionEvent(int _action);
+    dlProjectEvent(int _idProject);
+
+    const int idProject;
+};
+
+class tempActionEvent : public LQEvent {
+public:
+    tempActionEvent(int _action);
 
     const int action;
 };
