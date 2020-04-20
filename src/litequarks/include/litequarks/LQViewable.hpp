@@ -1,29 +1,21 @@
 #pragma once
 
-#include "LQMetric.hpp"
+// #include "LQNumber.hpp"
 #include "LQSurface.hpp"
+#include "LQAppController.hpp"
 
 class LQViewable : public LQSurface {
 public:
     LQViewable();
-    LQViewable(GLfloat x, GLfloat y, GLfloat width, GLfloat height);
-    LQViewable(GLfloat x, GLfloat y, GLfloat width, GLfloat height, GLint color);
+    LQViewable(LQNumber&& x, LQNumber&& y,
+               LQNumber&& width, LQNumber&& height, GLint color=0x000000);
+    // LQViewable(LQNumber x, LQNumber y, bool flex=true);
+    // LQViewable(LQNumber x, LQNumber y, LQImageData& image);
 
-    LQMetricExpr<LQViewable> left();
-    LQMetricExpr<LQViewable> right();
-    LQMetricExpr<LQViewable> top();
-    LQMetricExpr<LQViewable> bottom();
-
-    LQMetricExpr<LQViewable> width();
-    LQMetricExpr<LQViewable> height();
     // margin
     // padding-top
 
 protected:
-    void linkToLengths();
-
-    LQMetric<LQViewable> m_left;
-    LQMetric<LQViewable> m_top;
-    LQMetric<LQViewable> m_w;
-    LQMetric<LQViewable> m_h;
+    // bool m_flex;
+    // bool m_hidden;
 };

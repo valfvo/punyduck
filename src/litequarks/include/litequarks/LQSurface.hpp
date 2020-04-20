@@ -4,19 +4,28 @@
 #include "LQTexture.hpp"
 #include "LQColor.hpp"
 #include "LQShader.hpp"
+#include "LQNumber.hpp"
 
 class LQSurface : public LQuark, public LQTexture {
 public:
     //constructeurs
     LQSurface();
-    LQSurface(GLfloat x, GLfloat y, GLfloat width, GLfloat height);
-    LQSurface(GLfloat x, GLfloat y, GLfloat width, GLfloat height, GLint color);
+    LQSurface(LQNumber&& x, LQNumber&& y, LQNumber&& width, LQNumber&& height);
+    LQSurface(LQNumber&& x, LQNumber&& y, LQNumber&& width, LQNumber&& height, GLint color);
+
+    void resizeCallback() { };
 
     //accesseurs
-    GLfloat getX() { return m_x; }
-    GLfloat getY() { return m_y; }
-    GLfloat getWidth() { return m_width; }
-    GLfloat getHeight() { return m_height; }
+    LQMathExpr x();
+    LQMathExpr left();
+    LQMathExpr right();
+
+    LQMathExpr y();
+    LQMathExpr top();
+    LQMathExpr bottom();
+
+    LQMathExpr width();
+    LQMathExpr height();
 
     GLuint getVAO() const;
     LQShader* getShader();
@@ -57,16 +66,18 @@ public:
     // void flip(bool xbool, bool ybool);
 
 protected:
+    void linkMetrics();
+
     static GLfloat s_vertices[54];
     static LQShader* s_default_shader;
     GLuint m_VBO;
     GLuint m_VAO;
     GLuint m_FBO;
     LQShader* m_shader;
-    GLfloat m_x;
-    GLfloat m_y;
-    GLfloat m_width;
-    GLfloat m_height;
+    LQNumber m_x;
+    LQNumber m_y;
+    LQNumber m_width;
+    LQNumber m_height;
     LQTexture* m_shapeMap;
     LQColor m_clearColor;
 };

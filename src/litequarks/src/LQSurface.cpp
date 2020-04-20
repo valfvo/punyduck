@@ -1,4 +1,5 @@
 #include <iostream>
+#include <utility>  // std::move
 #include <litequarks/LQSurface.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
@@ -22,15 +23,20 @@ LQSurface::LQSurface()
   m_x(0.0f), m_y(0.0f), m_width(0.0f), m_height(0.0f),
   m_shapeMap(nullptr), m_clearColor()
 {
+    linkMetrics();
 }
 
-LQSurface::LQSurface(GLfloat x, GLfloat y, GLfloat width, GLfloat height)
+LQSurface::LQSurface(LQNumber&& x, LQNumber&& y,
+                     LQNumber&& width, LQNumber&& height)
 // : LQTexture(), m_VBO(0), m_VAO(0), m_FBO(0), m_shader(s_default_shader),
 : LQuark(), LQTexture((int)width, (int)height), m_VBO(0), m_VAO(0), m_FBO(0),
   m_shader(new LQShader("shaders/shaderVertex.txt", "shaders/shaderFragment.txt")),
-  m_x(x), m_y(y), m_width(width), m_height(height),
+  m_x(std::move(x)), m_y(std::move(y)),
+  m_width(std::move(width)), m_height(std::move(height)),
   m_shapeMap(nullptr), m_clearColor()
 {
+    // std::cout << m_x.f() << ' ' << m_y.f() << ' ' << m_width.f() << ' ' << m_height.f() << std::endl;
+    linkMetrics();
     glGenBuffers(1, &m_VBO);
     glGenVertexArrays(1, &m_VAO);
     glGenFramebuffers(1, &m_FBO);
@@ -65,14 +71,47 @@ LQSurface::LQSurface(GLfloat x, GLfloat y, GLfloat width, GLfloat height)
     glBindFramebuffer(GL_FRAMEBUFFER, 0); 
 }
 
-LQSurface::LQSurface(GLfloat x, GLfloat y, GLfloat width, GLfloat height, GLint color)
-: LQSurface(x, y, width, height)
+LQSurface::LQSurface(LQNumber&& x, LQNumber&& y,
+                     LQNumber&& width, LQNumber&& height, GLint color)
+: LQSurface(std::move(x), std::move(y), std::move(width), std::move(height))
 {
+    linkMetrics();
     m_clearColor = LQColor(color);
     clear();
 }
 
-//accesseurs
+LQMathExpr LQSurface::x() {
+    return m_x;
+}
+
+LQMathExpr LQSurface::left() {
+    return m_x;
+}
+
+LQMathExpr LQSurface::right() {
+    return LQMathExpr(m_width) + LQMathExpr(m_x);
+}
+
+LQMathExpr LQSurface::y() {
+    return m_y;
+}
+
+LQMathExpr LQSurface::top() {
+    return m_y;
+}
+
+LQMathExpr LQSurface::bottom() {
+    return LQMathExpr(m_y) + LQMathExpr(m_height);
+}
+
+LQMathExpr LQSurface::width() {
+    return m_width;
+}
+
+LQMathExpr LQSurface::height() {
+    return m_height;
+}
+
 GLuint LQSurface::getVAO() const
 {
     return m_VAO;
@@ -130,7 +169,7 @@ void LQSurface::blit(
 
     m_shader->use();
     m_shader->set("model", model);
-    m_shader->set("projection", glm::ortho(0.0f, m_width, m_height, 0.0f, -1.0f, 0.0f));
+    m_shader->set("projection", glm::ortho(0.0f, m_width.f(), m_height.f(), 0.0f, -1.0f, 0.0f));
     m_shader->set("texture0", 0);
 
     glViewport(0, 0, m_width, m_height);
@@ -157,12 +196,15 @@ void LQSurface::drawChildren() {
 }
 
 void LQSurface::blit(LQSurface const& surface) {
-    glm::mat4 model = glm::translate(glm::mat4(1.0f), glm::vec3(surface.m_x, surface.m_y, 0.0f));
-    model = glm::scale(model, glm::vec3(surface.m_width, surface.m_height, 1.0f));
+    glm::mat4 model = glm::translate(glm::mat4(1.0f),
+        glm::vec3(surface.m_x.f(), surface.m_y.f(), 0.0f));
+    model = glm::scale(model,
+        glm::vec3(surface.m_width.f(), surface.m_height.f(), 1.0f));
 
     m_shader->use();
     m_shader->set("model", model);
-    m_shader->set("projection", glm::ortho(0.0f, m_width, m_height, 0.0f, -1.0f, 0.0f));
+    m_shader->set("projection",
+        glm::ortho(0.0f, m_width.f(), m_height.f(), 0.0f, -1.0f, 0.0f));
     m_shader->set("texture0", 0);
 
     glViewport(0, 0, m_width, m_height);
@@ -199,4 +241,11 @@ void LQSurface::clear()
     glClearColor(m_clearColor.r(), m_clearColor.g(), m_clearColor.b(), m_clearColor.a());
     glClear(GL_COLOR_BUFFER_BIT);
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
+}
+
+void LQSurface::linkMetrics() {
+    m_x.linkQuark<LQSurface, resizeCallback>(*this);
+    m_y.linkQuark<LQSurface, resizeCallback>(*this);
+    m_width.linkQuark<LQSurface, resizeCallback>(*this);
+    m_height.linkQuark<LQSurface, resizeCallback>(*this);
 }

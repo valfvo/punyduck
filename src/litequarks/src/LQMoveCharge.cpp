@@ -1,38 +1,38 @@
 #include <litequarks/LQSurface.hpp>
 #include <glm/vec2.hpp>
 
-void LQSurface::move(GLfloat x, GLfloat y) {
-    m_x += x;
-    m_y += y;
+void LQSurface::move(GLfloat _x, GLfloat _y) {
+    x() += _x;
+    y() += _y;
 }
 
 void LQSurface::move(glm::vec2 distance) {
-    m_x += distance.x;
-    m_y += distance.y;
+    x() += distance.x;
+    y() += distance.y;
 }
 
-void LQSurface::moveX(GLfloat x) {
-    m_x += x;
+void LQSurface::moveX(GLfloat _x) {
+    x() += _x;
 }
 
-void LQSurface::moveY(GLfloat y) {
-    m_y += y;
+void LQSurface::moveY(GLfloat _y) {
+    y() += _y;
 }
 
-void LQSurface::moveTo(GLfloat x, GLfloat y) {
-    m_x = x;
-    m_y = y;
+void LQSurface::moveTo(GLfloat _x, GLfloat _y) {
+    x() = _x;
+    y() = _y;
 }
 
 void LQSurface::moveTo(glm::vec2 position) {
-    m_x = position.x;
-    m_y = position.y;
+    x() = position.x;
+    y() = position.y;
 }
 
-void LQSurface::moveToX(GLfloat x) {
-    m_x = x;
+void LQSurface::moveToX(GLfloat _x) {
+    x() = _x;
 }
 
-void LQSurface::moveToY(GLfloat y) {
-    m_y = y;
+void LQSurface::moveToY(GLfloat _y) {
+    y() = _y;
 }

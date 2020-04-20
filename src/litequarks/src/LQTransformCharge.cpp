@@ -5,12 +5,12 @@ void LQSurface::resize(GLfloat width, GLfloat height) {
     resizeHeight(height);
 }
 
-void LQSurface::resizeWidth(GLfloat width) {
-    m_width = width;
+void LQSurface::resizeWidth(GLfloat _width) {
+    width() = _width;
 }
 
-void LQSurface::resizeHeight(GLfloat height) {
-    m_height = height;
+void LQSurface::resizeHeight(GLfloat _height) {
+    height() = _height;
 }
 
 void LQSurface::scale(GLfloat scaleW, GLfloat scaleH) {
@@ -19,9 +19,9 @@ void LQSurface::scale(GLfloat scaleW, GLfloat scaleH) {
 }
 
 void LQSurface::scaleWidth(GLfloat scaleW) {
-    m_width *= scaleW;
+    width() *= scaleW;
 }
 
 void LQSurface::scaleHeight(GLfloat scaleH) {
-    m_height *= scaleH;
+    height() *= scaleH;
 }

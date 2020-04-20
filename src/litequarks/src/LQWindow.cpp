@@ -5,7 +5,7 @@
 
 void LQWindowFBSizeCallback(GLFWwindow* window, int width, int height);
 
-LQWindow::LQWindow(int width, int height, char const* title)
+LQWindow::LQWindow(int _width, int _height, char const* title)
 : LQSurface(), m_window(nullptr)
 {
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
@@ -16,7 +16,7 @@ LQWindow::LQWindow(int width, int height, char const* title)
         glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
     #endif
 
-    m_window = glfwCreateWindow(width, height, title, nullptr, nullptr);
+    m_window = glfwCreateWindow(_width, _height, title, nullptr, nullptr);
 
     if (m_window == nullptr) {
         std::clog << "failed to create a window" << std::endl;
@@ -36,8 +36,8 @@ LQWindow::LQWindow(int width, int height, char const* title)
                         GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
     glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
     m_shader = new LQShader("shaders/shaderVertex.txt", "shaders/shaderFragment.txt");
-    m_width = width;
-    m_height = height;
+    width() = _width;
+    height() = _height;
 }
 
 void LQWindow::run() {
@@ -66,10 +66,10 @@ void LQWindow::processInput(GLFWwindow* window) {
     }
 }
 
-void LQWindow::framebufferSizeCallback(GLFWwindow* window, int width, int height) {
-    m_width = width;
-    m_height = height;
-    glViewport(0, 0, width, height);
+void LQWindow::framebufferSizeCallback(GLFWwindow* window, int _width, int _height) {
+    width() = _width;
+    height() = _height;
+    glViewport(0, 0, _width, _height);
 }
 
 void LQWindowFBSizeCallback(GLFWwindow* window, int width, int height) {
