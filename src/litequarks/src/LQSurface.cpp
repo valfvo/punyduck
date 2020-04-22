@@ -20,8 +20,7 @@ GLfloat LQSurface::s_vertices[54] = {
 //constructeurs
 LQSurface::LQSurface()
 : LQuark(), LQTexture(), m_VBO(0), m_VAO(0), m_FBO(0), m_shader(nullptr),
-  m_x(0.0f), m_y(0.0f), m_width(0.0f), m_height(0.0f),
-  m_shapeMap(nullptr), m_clearColor()
+  m_x(0.0f), m_y(0.0f), m_width(0.0f), m_height(0.0f), m_clearColor()
 {
     linkMetrics();
 }
@@ -29,11 +28,10 @@ LQSurface::LQSurface()
 LQSurface::LQSurface(LQNumber&& x, LQNumber&& y,
                      LQNumber&& width, LQNumber&& height)
 // : LQTexture(), m_VBO(0), m_VAO(0), m_FBO(0), m_shader(s_default_shader),
-: LQuark(), LQTexture((int)width, (int)height), m_VBO(0), m_VAO(0), m_FBO(0),
+: LQuark(), LQTexture(width, height), m_VBO(0), m_VAO(0), m_FBO(0),
   m_shader(new LQShader("shaders/shaderVertex.txt", "shaders/shaderFragment.txt")),
   m_x(std::move(x)), m_y(std::move(y)),
-  m_width(std::move(width)), m_height(std::move(height)),
-  m_shapeMap(nullptr), m_clearColor()
+  m_width(std::move(width)), m_height(std::move(height)), m_clearColor()
 {
     // std::cout << m_x.f() << ' ' << m_y.f() << ' ' << m_width.f() << ' ' << m_height.f() << std::endl;
     linkMetrics();
@@ -78,6 +76,19 @@ LQSurface::LQSurface(LQNumber&& x, LQNumber&& y,
     linkMetrics();
     m_clearColor = LQColor(color);
     clear();
+}
+
+LQSurface::LQSurface(LQSurface&& other)
+: LQuark(std::move(static_cast<LQuark&>(other))),
+  LQTexture(std::move(static_cast<LQTexture&>(other))),
+  m_VBO(other.m_VBO), m_VAO(other.m_VAO), m_FBO(other.m_FBO),
+  m_shader(other.m_shader),
+  m_x(std::move(other.m_x)), m_y(std::move(other.m_y)),
+  m_width(std::move(other.m_width)), m_height(std::move(m_height)),
+  m_clearColor(other.m_clearColor)
+{
+    other.m_VBO = other.m_VAO = other.m_FBO = 0;
+    other.m_shader = nullptr;
 }
 
 LQMathExpr LQSurface::x() {

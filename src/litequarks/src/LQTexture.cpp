@@ -92,6 +92,14 @@ LQTexture::LQTexture(std::string const& path)
     glBindTexture(GL_TEXTURE_2D, 0);
 }
 
+LQTexture::LQTexture(LQTexture&& other)
+: m_id(other.m_id), m_width(other.m_width), m_height(other.m_height),
+  m_format(other.m_format), m_wrapS(other.m_wrapS), m_wrapT(other.m_wrapT),
+  m_minFilter(other.m_minFilter), m_magFilter(other.m_magFilter)
+{
+    other.m_id = 0;
+}
+
 // void LQTexture::save(const std::string& path) const
 // {
 // }

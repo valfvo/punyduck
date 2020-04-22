@@ -16,7 +16,7 @@ public:
 
     template<class TSubQuark, class ...TArgs>
     LQTreeCreator<TQuark>&
-    add(TArgs ...args);
+    add(TArgs&& ...args);
 
 private:
     LQuark*  m_root;

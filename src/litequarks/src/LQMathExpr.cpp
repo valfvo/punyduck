@@ -7,7 +7,7 @@ LQMathExpr::LQMathExpr()
 : m_first(nullptr), m_last(nullptr), m_constant(0.0f) { }
 
 LQMathExpr::LQMathExpr(LQNumber& number)
-: m_first(new LQMathVar(number)), m_last(nullptr), m_constant()
+: m_first(new LQMathVar(number)), m_last(nullptr), m_constant(0.0f)
 {
     m_last = m_first;
 }

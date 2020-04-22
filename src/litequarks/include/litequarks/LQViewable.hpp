@@ -11,6 +11,7 @@ public:
                LQNumber&& width, LQNumber&& height, GLint color=0x000000);
     // LQViewable(LQNumber x, LQNumber y, bool flex=true);
     // LQViewable(LQNumber x, LQNumber y, LQImageData& image);
+    LQViewable(LQViewable&& other) = default;
 
     // margin
     // padding-top

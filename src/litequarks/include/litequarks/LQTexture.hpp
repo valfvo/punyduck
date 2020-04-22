@@ -18,6 +18,7 @@ public:
 
     // LQTexture(LQTexture const& texture);
     LQTexture(std::string const& path);
+    LQTexture(LQTexture&& other);
     // void save(std::string const& path) const;
 
     //acceseurs

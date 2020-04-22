@@ -5,10 +5,11 @@
 #include <functional>
 #include <unordered_map>
 #include <litequarks/litequarks.hpp>
-#include <model.hpp>
 
+#include <model.hpp>
 #include "Components.hpp"
-// using namespace LQUnit;
+
+using namespace LQUnit;
 
 int SCREEN_WIDTH  = 1280;
 int SCREEN_HEIGHT = 720;
@@ -46,14 +47,37 @@ public:
     }
 };
 
+class NavBar : public LQViewable {
+public:
+    NavBar(LQNumber&& x, LQNumber&& y, LQNumber&& w, LQNumber&& h)
+    : LQViewable(std::move(x), std::move(y), std::move(w), std::move(h), 0x2f3136)
+    {
+        LQViewable *parent, *prev;
+        createTree(*this, parent, prev)
+        .add<LQText>("Accueil", 0.0f, 0.0f, parent->height())
+        .add<LQText>("Projets", prev->right()+5_px, 0.0f, parent->height())
+        .add<LQText>("Collection", prev->right()+5_px, 0.0f, parent->height());
+    }
+};
+
 int main() {
     // TODO lqInit();
     glfwInit();
     LQAppController::init();
     LQAppModel::init();
+    LQFont::init();
+    LQText::init();
 
     LQWindow window(SCREEN_WIDTH, SCREEN_HEIGHT, "Punyduck");
-    window.appendChild(ProjectView(0.0f, 0.0f, window.width(), window.height()));
+
+    LQSurface *parent, *prev;
+    createTree(window, parent, prev)
+    .add<NavBar>(0.0f, 0.0f, parent->width(), 1_wu)
+    .add<ProjectView>(0.0f, prev->height(), parent->width(),
+                      parent->height() - prev->height());
+
+    // window.appendChild(font.renderText(U"c'eSt jgqp Yn tEsTé ~@#êéèàô", 0x93C763));
+
     window.clear();
     window.drawChildren();
 
@@ -71,7 +95,7 @@ int main() {
 
     LQAppController::finalize();
     glfwTerminate();
-    // TODO lqFinalize();
+    // TODO lqFinalize(); & clear child
 
     return EXIT_SUCCESS;
 }

@@ -134,19 +134,16 @@ void UL_Project::toggleListView() {
 //     m_ul->afficheListe();
 // }
 
-LQViewable* ProjectView(LQNumber&& x, LQNumber&& y,
-                        LQNumber&& width, LQNumber&& height, GLint color) {
-    LQViewable* project = new LQViewable(
-        std::move(x), std::move(y), std::move(width), std::move(height), color);
-
-    LQViewable *parent, *prev;
-    createTree(*project, parent, prev)
-    // .add<Trie>(1_wu, 2_hu)
-    // .add<UL_Trie>(prev->right(), prev->top())
-    // .add<SearchBar>(prev->right()+9_wu, prev->top())
-    // .add<ButtonMosaique>(prev->right()+0.5_wu, prev->top()) //link avec UL_Project
-    // .add<ButtonListe>(prev->right()+0.5_wu, prev->top())
-    .add<UL_Project>(1_wu, 4_hu);
-
-    return project;
+ProjectView::ProjectView(LQNumber&& x, LQNumber&& y, LQNumber&& w, LQNumber&& h,
+                         GLint color)
+: LQViewable(std::move(x), std::move(y), std::move(w), std::move(h), color)
+{
+    // LQViewable *parent, *prev;
+    // createTree(*this, parent, prev)
+    // // .add<Trie>(1_wu, 2_hu)
+    // // .add<UL_Trie>(prev->right(), prev->top())
+    // // .add<SearchBar>(prev->right()+9_wu, prev->top())
+    // // .add<ButtonMosaique>(prev->right()+0.5_wu, prev->top()) //link avec UL_Project
+    // // .add<ButtonListe>(prev->right()+0.5_wu, prev->top())
+    // .add<UL_Project>(1_wu, 4_hu);
 };

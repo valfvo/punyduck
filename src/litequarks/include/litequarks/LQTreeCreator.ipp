@@ -1,4 +1,6 @@
+#include <utility>  // std::forward
 #include "LQTreeCreator.hpp"
+
 
 template<class TQuark>
 LQTreeCreator<TQuark>::
@@ -6,7 +8,7 @@ LQTreeCreator(LQuark* root, TQuark** parent, TQuark** prevSibling)
 : m_root(root), m_quark(root),
   m_currentParent(parent), m_currentPrevSibling(prevSibling)
 {
-    *m_currentParent = nullptr;
+    *m_currentParent = static_cast<TQuark*>(root);
     *m_currentPrevSibling = nullptr;
 }
 
@@ -48,8 +50,8 @@ template<class TQuark>
 template<class TSubQuark, class ...TArgs>
 LQTreeCreator<TQuark>&
 LQTreeCreator<TQuark>::
-add(TArgs ...args) {
-    m_quark->appendChild(new TSubQuark(args...));
+add(TArgs&& ...args) {
+    m_quark->appendChild(new TSubQuark(std::forward<TArgs>(args)...));
     *m_currentPrevSibling = static_cast<TQuark*>(m_quark->lastChild());
     return *this;
 }

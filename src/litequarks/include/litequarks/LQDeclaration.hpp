@@ -35,6 +35,9 @@ using LQViewCreator = LQView (*)(LQModelData);
 
 #define LQwu 50.0f
 #define LQhu 50.0f
+#define LQpx  1.0f
+#define LQem (16.0f * LQpx)
+#define LQpt (16.0f / 12.0f * LQpx)
 
 namespace LQUnit {
     constexpr float operator "" _wu(long double unit) {
@@ -51,5 +54,29 @@ namespace LQUnit {
 
     constexpr float operator "" _hu(unsigned long long unit) {
         return unit * LQhu;
+    }
+
+    constexpr float operator "" _px(long double unit) {
+        return unit * LQpx;
+    }
+
+    constexpr float operator "" _px(unsigned long long unit) {
+        return unit * LQpx;
+    }
+
+    constexpr float operator "" _em(long double unit) {
+        return unit * LQem;
+    }
+
+    constexpr float operator "" _em(unsigned long long unit) {
+        return unit * LQem;
+    }
+
+    constexpr float operator "" _pt(long double unit) {
+        return unit * LQpt;
+    }
+
+    constexpr float operator "" _pt(unsigned long long unit) {
+        return unit * LQpt;
     }
 }

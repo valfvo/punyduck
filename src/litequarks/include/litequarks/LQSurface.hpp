@@ -12,6 +12,7 @@ public:
     LQSurface();
     LQSurface(LQNumber&& x, LQNumber&& y, LQNumber&& width, LQNumber&& height);
     LQSurface(LQNumber&& x, LQNumber&& y, LQNumber&& width, LQNumber&& height, GLint color);
+    LQSurface(LQSurface&& other);
 
     void resizeCallback() { };
 
@@ -78,6 +79,5 @@ protected:
     LQNumber m_y;
     LQNumber m_width;
     LQNumber m_height;
-    LQTexture* m_shapeMap;
     LQColor m_clearColor;
 };

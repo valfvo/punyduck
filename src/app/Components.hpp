@@ -71,6 +71,8 @@ public:
 //     void addFriend(Friends* friends);
 // };
 
-LQViewable* ProjectView(LQNumber&& x, LQNumber&& y,
-                        LQNumber&& width, LQNumber&& height,
-                        GLint color=0x36393f);
+class ProjectView : public LQViewable {
+public:
+    ProjectView(LQNumber&& x, LQNumber&& y, LQNumber&& width, LQNumber&& height,
+                GLint color=0x36393f);
+};
