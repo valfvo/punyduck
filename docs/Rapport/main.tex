@@ -69,35 +69,131 @@
 \thispagestyle{empty}
 \end{titlepage}
 
-
+%renommer les chapitres en parties
 \renewcommand{\chaptername}{Partie}
 
-\chapter{Introduction}
-    \section{motivation du projet (pourquoi on l'a choisi)}
-    \section{cahier des charges}
-    \section{def de mot complexes peut etre}
-
-\chapter{Organisation}
-    \section{répartition des tâches}
-    \section{méthode de travail}
-    \section{outils utilisés}
-\chapter{Conception}
-\section{étapes de conception(genre paragraphe qui fait office de sommaire)}
-\section{description de ces étapes}
-
-\chapter{Implémentation}
-Préciser les difficultés rencontrées pour chaques groupes ou parties. ET dire ce qu'on a fait pour les résoudres
 
 
-\chapter{Bilan}
-    \section{Difficulté rencontré (les plus grosses ou celles qui ont touché plusieurs groupes)}
-    \section{Bilan en se reportant sur le cahiers des charges}
-    Qu'est-ce qui a été fait et pas fait. Des modifications? Des Ajouts?
-    
-\chapter{Conclusion}
+%Introduction 1/2 pages
+\chapter{Introduction} %Partie présentation
+Dans le cadre du TER de notre deuxième année à la faculté des sciences de Montpellier nous avons proposé notre propre projet s'intitulant PunyDuck. C'est une plate-forme de distribution des projets des étudiants du département informatique.\\
 
-\chapter{Annexe}
-    \section{diagramme de gantt}
-    \section{copie du code}
+Le groupe de développement est composé de cinq personnes, Valentin \textsc{FONTAINE}, Paul \bsc{BUNEL}, Valentin \bsc{PERON}, Julien \bsc{LEBARON} et Esteban \bsc{BARON}. Nous sommes encadré par Mme Anne-Elisabeth \bsc{BAERT}.
+
+\vspace{1cm}
+\textbf{\huge{}{Motivation}}\\
+
+Le TER est un module qui apporte beaucoup aux étudiants en gestion de projet ainsi qu'en programmation. Seulement une fois terminés les projets ne sont pas valorisés et tombent dans l'oubli. Notre solution est de proposer une application permettant à chaque étudiants de déposer ses projets pour les rendre visibles et téléchargeables par tous.
+
+\vspace{1cm}
+\textbf{\huge{}{Approches}}\\
+
+Les différentes approches faces a notre problématique
+
+\vspace{1cm}
+\textbf{\huge{}{Cahier des charges}}\\
+
+Objectifs : Créer une plateforme de distribution des projets des étudiants de la Faculté des
+sciences de l'Université de Montpellier.\\
+Différentes étapes\\
+\begin{itemize}
+    \item Mise en place d’un serveur qui servira d’intermédiaire entre les utilisateurs et la
+base de données.
+    \item Création d’un framework pour faciliter la réalisation de l’application.
+    \item Conception de l’application graphique à l’aide du framework.
+    \item Connexion entre l’application et le serveur.
+    \item Création d’une base de données pour stocker les comptes des utilisateurs et les
+projets.
+    \item Mise en service d’un site internet permettant le téléchargement de l’application.
+Cahier des charges
+\end{itemize}
+I - Le serveur
+\begin{itemize}
+    \item Fonctionnement asynchrone
+    \item Héberger de manière sécurisée les données des utilisateurs.
+    \item Les utilisateurs pourront télécharger les projets hébergés.
+    \item Doit pouvoir gérer la plupart des erreurs de réseau, comme la coupure de la
+    connexion lors d’un téléchargement.
+\end{itemize}
+II - Le framework
+\begin{itemize}
+    \item Ensemble de classes et fonctions qui serviront de base à la structure d’une nouvelle
+application.
+    \item Son utilisation doit être facile avec assez de fonctionnalités déjà disponibles pour
+    pouvoir réduire les appels de fonctions bas niveau.
+    \item Permettre la plasticité des interfaces
+\end{itemize}
+III - L’application
+\begin{itemize}
+    \item Interface graphique permettant de naviguer facilement entre différents onglets
+Possibilité d'accéder aux informations de son compte et de les modifier :
+pseudonyme, adresse mail, âge, niveau, badges.
+    \item Personnalisation limitée : mode clair / sombre, position de certains éléments de la
+fenêtre, couleur de l’arrière plan.
+\end{itemize}
+IV - La base de données
+\begin{itemize}
+    \item Stocke les données relatives aux comptes des utilisateurs ainsi que les projets.
+Les données seront cryptées.
+\end{itemize}
+V - Le site
+\begin{itemize}
+    \item Une page pour télécharger l’application.
+    \item Design responsive et dynamique
+\end{itemize}
+
+%Partie 2 Partie technologies utilisées 1/2 pages
+\chapter{Technologies utilisées}
+\section{Langages et outils}
+\section{Pourquoi ce choix et quel intérêt ?} %titre peut-être à changer
+
+%Partie 3 Développement logiciel 5/10 pages
+\chapter{Développement logiciel, Conception, Modélisation, Implémentation}
+\section{Présentation du développement}
+\section{Modélisation} %UML
+\section{Fonctionnalités de l'interface}
+
+L'interface graphique se décompose de plusieurs différentes fenêtres chacune spécifique.
+
+\section{Format des données et procédure d'utilisation} % dnnées utilisées ou encore convention, décrire certaines procédures de lecture et de validation
+\section{Statistique} %nombres de classes/scripts/ lignes de code/ nombre de module
+
+%Partie 4 
+\chapter{Algorithmes et Structures de Données}
+\section{Présentation des principales structures de données}
+\section{Présentation des principaux algorithmes}%présentation et description de deux ou un algo très important et intéressant 
+\section{Complexité théorique}
+
+%.Partie 5 1/2 pages
+\chapter{Gestion du Projet}
+\section{Organisation et planification} %gantt et autres document de planification plus présentation de la gestion
+
+\begin{comment} %ça met en commentaire
+\begin{document}
+    \begin{center}
+    \begin{ganttchart}{12}
+        \gantttitle{2013}{12} \\
+        \gantttitlelist{1,...,12}{1} \\
+        \ganttgroup{Group 1}{1}{7} \\
+        \ganttbar{Task 1}{1}{2} \\
+        \ganttlinkedbar{Task 2}{3}{7}
+        \ganttnewline
+        \ganttmilestone{Milestone}{7}
+        \ganttnewline
+        \ganttbar{Final Task}{8}{12}
+        \ganttlink{elem2}{elem3}
+        \ganttlink{elem3}{elem4}
+    \end{ganttchart}
+    \end{center}
+\end{document}
+\end{comment}
+
+\section{Changements majeurs}%ceux effectués en cours de projet (changement d'idée, revoir un algo,...)
+
+%.Partie 6 1 page
+\chapter{Bilan} %bilan et Conclusion, parler en onction du cahier des charges, les perspectives futur du projet et l'apport.
+
+%.Partie 7
+\chapter{Bibliographie et Annexes}
 
 \end{document}
