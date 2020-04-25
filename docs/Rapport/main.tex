@@ -1,0 +1,103 @@
+\documentclass{report}
+
+%\usepackage[latin1]{inputenc}
+\usepackage[utf8x]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[francais]{babel}
+\usepackage[cm]{fullpage}
+\usepackage[pdftex]{graphicx}
+\usepackage{setspace}
+\usepackage{pgfgantt}
+\usepackage{comment} 
+\usepackage{amsmath}
+
+\begin{document}
+
+%page de garde
+\begin{titlepage}
+
+%logo de la fds, de l'UM et des infos
+\includegraphics[scale=0.5]{logoFDS.png}
+\hfill
+\includegraphics[scale=0.2]{logoInfo.jpg}
+\vspace{1cm}
+
+\begin{center}
+%au dessus du titre
+\textsc{\Large{Rapport de projet T.E.R}} \\
+\vspace{1cm}
+\textsc{\Large{Projet Informatique HLIN405}} 
+\vspace{1.5cm}
+
+%titre
+\doublespacing{\textsc{\huge{PunyDuck}}} \\
+\vspace{2cm}
+\includegraphics[scale=0.5]{logoPunyDuck.jpg}
+\vfill
+\end{center}
+
+%noms/prenoms + Encadrante
+\begin{minipage}[t]{8.5cm}
+	\begin{flushleft}
+	    \large{\textbf{Etudiants :}}
+	    \begin{itemize}
+	        \item \large{Valentin \bsc{FONTAINE}}
+	        \item \large{Paul  \bsc{BUNEL}} 
+	        \item \large{Esteban \bsc{BARON}}
+	        \item \large{Valentin \bsc{PERON}}
+	        \item \large{Julien \bsc{LEBARON}}
+	    \end{itemize}
+		\vspace{0.5cm}
+		\large{\textbf{Encadrante :}}
+		\large{Anne-Elisabeth \bsc{BAERT}} \\
+	\end{flushleft}
+\end{minipage}
+\hfill
+%année universitaire
+\begin{minipage}[t]{8cm}
+	\begin{flushright} 
+		\large{\textbf{Année :}} 
+		\large{2019-2020}
+	\end{flushright}
+\end{minipage}
+\end{titlepage}
+
+%Sommaire
+\begin{titlepage}
+\renewcommand{\contentsname}{Sommaire}
+\large{\tableofcontents}
+\thispagestyle{empty}
+\end{titlepage}
+
+
+\renewcommand{\chaptername}{Partie}
+
+\chapter{Introduction}
+    \section{motivation du projet (pourquoi on l'a choisi)}
+    \section{cahier des charges}
+    \section{def de mot complexes peut etre}
+
+\chapter{Organisation}
+    \section{répartition des tâches}
+    \section{méthode de travail}
+    \section{outils utilisés}
+\chapter{Conception}
+\section{étapes de conception(genre paragraphe qui fait office de sommaire)}
+\section{description de ces étapes}
+
+\chapter{Implémentation}
+Préciser les difficultés rencontrées pour chaques groupes ou parties. ET dire ce qu'on a fait pour les résoudres
+
+
+\chapter{Bilan}
+    \section{Difficulté rencontré (les plus grosses ou celles qui ont touché plusieurs groupes)}
+    \section{Bilan en se reportant sur le cahiers des charges}
+    Qu'est-ce qui a été fait et pas fait. Des modifications? Des Ajouts?
+    
+\chapter{Conclusion}
+
+\chapter{Annexe}
+    \section{diagramme de gantt}
+    \section{copie du code}
+
+\end{document}
