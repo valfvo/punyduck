@@ -3,6 +3,7 @@
 
 body, html {
   height: 100%;
+  width: 100%;
   margin: 0;
   scroll-behavior: smooth;
 }
@@ -21,11 +22,11 @@ body, html {
 }
 .parallax2{
     background-image: url("image2.jpg");
-    height: 400px;
+    height: 20%;
 }
 .parallax3{
     background-image: url("image1.jpg");
-    height: 400px;
+    height: 20%;
 }
 
 @media only screen and (max-device-width: 1366px){
@@ -86,7 +87,7 @@ a{
     font-family: Quicksand;
     font-size: 24px;
     text-align: center;
-    text-shadow: 2px 2px 4px #474747;
+    text-shadow: 4px 4px 8px #000000;
     color: rgb(255, 255, 255);
     padding: 20px;
     width: 100%;
@@ -216,6 +217,7 @@ i{margin-right:16px;}
 }
 
 .par{
+    height: auto;
     overflow: auto;
     background-color:rgb(189, 189, 189);
     text-align: center;
@@ -228,14 +230,18 @@ i{margin-right:16px;}
 .par2{
     background-color: rgb(189, 189, 189);
     font-size:36px;
+    display: block;
     text-align: center;
+    margin-left: auto;
+    margin-right: auto;
     padding-top: 5%;
     overflow: auto;
     font-family: Montserrat;
 }
 
 .marj{
-    margin: 24px 0;
+    margin-right: auto;
+    margin-left: auto;
 }
 
 .hs{
@@ -353,11 +359,9 @@ button.card:hover, a.card:hover {
         letter-spacing: 2px;
     }
     .parallax2{
-        background-image: url("index2.jpg");
         height: 200px;
     }
     .parallax3{
-        background-image: url("index1.jpg");
         height: 200px;
     }
 
@@ -371,11 +375,11 @@ button.card:hover, a.card:hover {
 
     .cardbox {
         max-width: 150px;
-        margin-left: 5%;
     }
       
     .titleCard {
         font-size: 10px;
+        margin-left: 5%;
     }
       
     button.card {
@@ -467,11 +471,9 @@ button.card:hover, a.card:hover {
         letter-spacing: 2px;
     }
     .parallax2{
-        background-image: url("index2.jpg");
         height: 150px;
     }
     .parallax3{
-        background-image: url("index1.jpg");
         height: 150px;
     }
 
