@@ -33,7 +33,6 @@ LQSurface::LQSurface(LQNumber&& x, LQNumber&& y,
   m_x(std::move(x)), m_y(std::move(y)),
   m_width(std::move(width)), m_height(std::move(height)), m_clearColor()
 {
-    // std::cout << m_x.f() << ' ' << m_y.f() << ' ' << m_width.f() << ' ' << m_height.f() << std::endl;
     linkMetrics();
     glGenBuffers(1, &m_VBO);
     glGenVertexArrays(1, &m_VAO);
@@ -54,26 +53,16 @@ LQSurface::LQSurface(LQNumber&& x, LQNumber&& y,
     glEnableVertexAttribArray(2);
     glVertexAttribPointer(2, 4, GL_FLOAT, GL_FALSE, 9 * sizeof(float), (void*)(5 * sizeof(float)));
 
-    //framebuffer
-    glBindFramebuffer(GL_FRAMEBUFFER, m_FBO);
-    glFramebufferTexture2D(
-        GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_id, 0
-    );
-    if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
-    {
-        std::cout << "ERROR::FRAMEBUFFER:: Framebuffer is not complete!" << std::endl;
-    }
+    linkFramebuffer();
 
     glBindVertexArray(0);
     glBindBuffer(GL_ARRAY_BUFFER, 0);
-    glBindFramebuffer(GL_FRAMEBUFFER, 0); 
 }
 
 LQSurface::LQSurface(LQNumber&& x, LQNumber&& y,
                      LQNumber&& width, LQNumber&& height, GLint color)
 : LQSurface(std::move(x), std::move(y), std::move(width), std::move(height))
 {
-    linkMetrics();
     m_clearColor = LQColor(color);
     clear();
 }
@@ -150,7 +139,7 @@ void LQSurface::setClearColor(GLint r, GLint g, GLint b, GLint a) {
     m_clearColor = LQColor(r/255.0f, g/255.0f, b/255.0f, a/255.0f);
 }
 
-//méthodes
+// méthodes
 // void LQSurface::blit(LQTexture const& texture, GLfloat x, GLfloat y, GLfloat width, GLfloat height)
 // {
 //     glm::mat4 model = glm::translate(glm::mat4(1.0f), glm::vec3(x, y, 0.0f));
@@ -172,11 +161,26 @@ void LQSurface::setClearColor(GLint r, GLint g, GLint b, GLint a) {
 //     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 // }
 
+void LQSurface::drawChildren() {
+    for (
+        LQSurface* child = static_cast<LQSurface*>(m_firstChild);
+        child != nullptr;
+        child = static_cast<LQSurface*>(child->m_nextSibling)
+    ) {
+        child->drawChildren();
+        blit(*child);
+    }
+}
+
 void LQSurface::blit(
     const LQTexture& texture, GLfloat x, GLfloat y, GLuint VAO)
 {
+    if (!m_id || !texture.m_id) {
+        std::cout << "can't blit texture" << std::endl;
+        return;
+    }
     glm::mat4 model = glm::translate(glm::mat4(1.0f), glm::vec3(x, y, 0.0f));
-    model = glm::scale(model, glm::vec3(texture.m_width, texture.m_height, 1.0f));
+    model = glm::scale(model, glm::vec3(texture.m_texWidth, texture.m_texHeight, 1.0f));
 
     m_shader->use();
     m_shader->set("model", model);
@@ -193,17 +197,6 @@ void LQSurface::blit(
     glBindTexture(GL_TEXTURE_2D, 0);
     glBindVertexArray(0);
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
-}
-
-void LQSurface::drawChildren() {
-    for (
-        LQSurface* child = static_cast<LQSurface*>(m_firstChild);
-        child != nullptr;
-        child = static_cast<LQSurface*>(child->m_nextSibling)
-    ) {
-        child->drawChildren();
-        blit(*child);
-    }
 }
 
 void LQSurface::blit(LQSurface const& surface) {
@@ -252,6 +245,22 @@ void LQSurface::clear()
     glClearColor(m_clearColor.r(), m_clearColor.g(), m_clearColor.b(), m_clearColor.a());
     glClear(GL_COLOR_BUFFER_BIT);
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
+}
+
+void LQSurface::linkFramebuffer() {
+    if (m_id) {  // width >= 1 && height >= 1 -> texture generated
+        glBindFramebuffer(GL_FRAMEBUFFER, m_FBO);
+        glFramebufferTexture2D(
+            GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_id, 0
+        );
+        if (glCheckFramebufferStatus(GL_FRAMEBUFFER) !=
+            GL_FRAMEBUFFER_COMPLETE)
+        {
+            std::cout << "ERROR::FRAMEBUFFER:: Framebuffer is not complete"
+                      << std::endl;
+        }
+        glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    }
 }
 
 void LQSurface::linkMetrics() {

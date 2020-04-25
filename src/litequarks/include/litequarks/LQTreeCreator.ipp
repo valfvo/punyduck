@@ -1,10 +1,9 @@
 #include <utility>  // std::forward
 #include "LQTreeCreator.hpp"
 
-
-template<class TQuark>
-LQTreeCreator<TQuark>::
-LQTreeCreator(LQuark* root, TQuark** parent, TQuark** prevSibling)
+template<class TRoot, class TQuark>
+LQTreeCreator<TRoot, TQuark>::
+LQTreeCreator(TRoot* root, TQuark** parent, TQuark** prevSibling)
 : m_root(root), m_quark(root),
   m_currentParent(parent), m_currentPrevSibling(prevSibling)
 {
@@ -12,17 +11,17 @@ LQTreeCreator(LQuark* root, TQuark** parent, TQuark** prevSibling)
     *m_currentPrevSibling = nullptr;
 }
 
-template<class TQuark>
-LQTreeCreator<TQuark>::
+template<class TRoot, class TQuark>
+LQTreeCreator<TRoot, TQuark>::
 ~LQTreeCreator()
 {
     *m_currentParent = nullptr;
     *m_currentPrevSibling = nullptr;
 }
 
-template<class TQuark>
-LQTreeCreator<TQuark>&
-LQTreeCreator<TQuark>::
+template<class TRoot, class TQuark>
+LQTreeCreator<TRoot, TQuark>&
+LQTreeCreator<TRoot, TQuark>::
 sub()
 {
     if (m_quark->lastChild()) {
@@ -33,9 +32,9 @@ sub()
     return *this;
 }
 
-template<class TQuark>
-LQTreeCreator<TQuark>&
-LQTreeCreator<TQuark>::
+template<class TRoot, class TQuark>
+LQTreeCreator<TRoot, TQuark>&
+LQTreeCreator<TRoot, TQuark>::
 super()
 {
     if (m_quark != m_root) {
@@ -46,33 +45,33 @@ super()
     return *this;
 }
 
-template<class TQuark>
+template<class TRoot, class TQuark>
 template<class TSubQuark, class ...TArgs>
-LQTreeCreator<TQuark>&
-LQTreeCreator<TQuark>::
+LQTreeCreator<TRoot, TQuark>&
+LQTreeCreator<TRoot, TQuark>::
 add(TArgs&& ...args) {
     m_quark->appendChild(new TSubQuark(std::forward<TArgs>(args)...));
     *m_currentPrevSibling = static_cast<TQuark*>(m_quark->lastChild());
     return *this;
 }
 
-template<class TQuark>
-LQTreeCreator<TQuark>
-createTree(LQuark& root)
+template<class TRoot, class TQuark>
+LQTreeCreator<TRoot, TQuark>
+createTree(TRoot& root)
 {
-    return LQTreeCreator<TQuark>(&root, nullptr, nullptr);
+    return LQTreeCreator<TRoot, TQuark>(&root, nullptr, nullptr);
 }
 
-template<class TQuark>
-LQTreeCreator<TQuark>
-createTree(LQuark& root, TQuark*& parent)
+template<class TRoot, class TQuark>
+LQTreeCreator<TRoot, TQuark>
+createTree(TRoot& root, TQuark*& parent)
 {
-    return LQTreeCreator<TQuark>(&root, &parent, nullptr);
+    return LQTreeCreator<TRoot, TQuark>(&root, &parent, nullptr);
 }
 
-template<class TQuark>
-LQTreeCreator<TQuark>
-createTree(LQuark& root, TQuark*& parent, TQuark*& prevSibling)
+template<class TRoot, class TQuark>
+LQTreeCreator<TRoot, TQuark>
+createTree(TRoot& root, TQuark*& parent, TQuark*& prevSibling)
 {
-    return LQTreeCreator<TQuark>(&root, &parent, &prevSibling);
+    return LQTreeCreator<TRoot, TQuark>(&root, &parent, &prevSibling);
 }

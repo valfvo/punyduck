@@ -1,40 +1,38 @@
 #pragma once
 
-#include "LQuark.hpp"
-
-template<class TQuark>
+template<class TRoot, class TQuark>
 class LQTreeCreator {
 public:
-    LQTreeCreator(LQuark* root, TQuark** parent, TQuark** prevSibling);
+    LQTreeCreator(TRoot* root, TQuark** parent, TQuark** prevSibling);
     ~LQTreeCreator();
 
-    LQTreeCreator<TQuark>&
+    LQTreeCreator<TRoot, TQuark>&
     sub();
 
-    LQTreeCreator<TQuark>&
+    LQTreeCreator<TRoot, TQuark>&
     super();
 
     template<class TSubQuark, class ...TArgs>
-    LQTreeCreator<TQuark>&
+    LQTreeCreator<TRoot, TQuark>&
     add(TArgs&& ...args);
 
 private:
-    LQuark*  m_root;
-    LQuark*  m_quark;
+    TRoot*  m_root;
+    TRoot*  m_quark;
     TQuark** m_currentParent;
     TQuark** m_currentPrevSibling;
 };
 
-template<class TQuark>
-LQTreeCreator<TQuark>
-createTree(LQuark& root);
+template<class TRoot, class TQuark>
+LQTreeCreator<TRoot, TQuark>
+createTree(TQuark& root);
 
-template<class TQuark>
-LQTreeCreator<TQuark>
-createTree(LQuark& root, TQuark*& parent);
+template<class TRoot, class TQuark>
+LQTreeCreator<TRoot, TQuark>
+createTree(TRoot& root, TQuark*& parent);
 
-template<class TQuark>
-LQTreeCreator<TQuark>
-createTree(LQuark& root, TQuark*& parent, TQuark*& prevSibling);
+template<class TRoot, class TQuark>
+LQTreeCreator<TRoot, TQuark>
+createTree(TRoot& root, TQuark*& parent, TQuark*& prevSibling);
 
 #include "LQTreeCreator.ipp"

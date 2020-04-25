@@ -6,7 +6,7 @@
 void LQWindowFBSizeCallback(GLFWwindow* window, int width, int height);
 
 LQWindow::LQWindow(int _width, int _height, char const* title)
-: LQSurface(), m_window(nullptr)
+: LQViewable(), m_window(nullptr)
 {
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
@@ -36,8 +36,11 @@ LQWindow::LQWindow(int _width, int _height, char const* title)
                         GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
     glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
     m_shader = new LQShader("shaders/shaderVertex.txt", "shaders/shaderFragment.txt");
-    width() = _width;
-    height() = _height;
+
+    m_width.linkQuark<LQWindow>(*this);
+    m_height.linkQuark<LQWindow>(*this);
+    width() = m_texWidth = _width;
+    height() = m_texHeight =_height;
 }
 
 void LQWindow::run() {

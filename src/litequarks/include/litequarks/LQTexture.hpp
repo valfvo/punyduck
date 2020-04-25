@@ -8,10 +8,9 @@
 class LQTexture {
 public:
     LQTexture();
-    LQTexture(GLuint width, GLuint height);
 
     LQTexture(LQsize width, LQsize height,
-              GLubyte* data, GLenum format=GL_RGBA,
+              GLubyte* data=nullptr, GLenum format=GL_RGBA,
               GLint mipmapLevel=0, GLint internalFormat=GL_RGBA,
               GLenum wrapS=GL_REPEAT, GLenum wrapT=GL_REPEAT,
               GLenum minFilter=GL_LINEAR, GLenum magFilter=GL_LINEAR);
@@ -23,13 +22,16 @@ public:
 
     //acceseurs
     GLuint getId() const;
-    GLuint getWidth() const;
-    GLuint getHeight() const;
+    GLint getWidth() const;
+    GLint getHeight() const;
 
-protected: 
+protected:
+    GLuint genTexture();
+    LQTexture resize(GLuint texWidth, GLuint texHeight);
+
     GLuint m_id;
-    GLuint m_width;
-    GLuint m_height;
+    GLuint m_texWidth;
+    GLuint m_texHeight;
     GLint  m_format;
     GLenum m_wrapS;
     GLenum m_wrapT;

@@ -2,7 +2,7 @@
 
 #include <litequarks/LQNumber.hpp>
 
-float LQNumber::old = 0.0f;
+float LQNumber::s_old = 0.0f;
 
 LQNumber::LQNumber()
 : m_quark(nullptr), m_invoke(nullptr), m_value(0.0f),
@@ -22,7 +22,7 @@ LQNumber::LQNumber(LQNumber&& other)
   m_refs(std::move(other.m_refs)) { }
 
 void LQNumber::recalc() {
-    old = m_value;
+    s_old = m_value;
     m_value = m_expr.eval();
     if (m_invoke) {
         m_invoke(m_quark);
@@ -38,4 +38,8 @@ float LQNumber::f() const {
 
 LQNumber::operator float() const {
     return m_value;
+}
+
+float LQNumber::old() {
+    return s_old;
 }

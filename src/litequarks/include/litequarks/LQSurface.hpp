@@ -14,8 +14,6 @@ public:
     LQSurface(LQNumber&& x, LQNumber&& y, LQNumber&& width, LQNumber&& height, GLint color);
     LQSurface(LQSurface&& other);
 
-    void resizeCallback() { };
-
     //accesseurs
     LQMathExpr x();
     LQMathExpr left();
@@ -36,7 +34,7 @@ public:
     void setClearColor(GLint r, GLint g, GLint b, GLint a=255);
 
     //méthodes
-    void drawChildren();
+    virtual void drawChildren();
     // void blit(LQTexture const& texture, GLfloat x, GLfloat y, GLfloat width, GLfloat height);
     void blit(LQTexture const& texture, GLfloat x, GLfloat y, GLuint VAO);
     void blit(const LQSurface& surface);
@@ -57,20 +55,20 @@ public:
     // LQDrawCharge
 
     // LQTransformCharge    
-    void resize(GLfloat width, GLfloat height);
-    void resizeWidth(GLfloat width);
-    void resizeHeight(GLfloat height);
-    void scale(GLfloat scaleW, GLfloat scaleH);
-    void scaleWidth(GLfloat scaleW);
-    void scaleHeight(GLfloat scaleH);
+    // void resize(LQNumber&& width, LQNumber&& height);
+    // void resizeWidth(LQNumber&& width);
+    // void resizeHeight(LQNumber&& height);
+    // void scale(GLfloat scaleW, GLfloat scaleH);
+    // void scaleWidth(GLfloat scaleW);
+    // void scaleHeight(GLfloat scaleH);
+    void resizeCallback();
     // void rotate(GLfloat angle);
     // void flip(bool xbool, bool ybool);
 
 protected:
+    void linkFramebuffer();
     void linkMetrics();
 
-    static GLfloat s_vertices[54];
-    static LQShader* s_default_shader;
     GLuint m_VBO;
     GLuint m_VAO;
     GLuint m_FBO;
@@ -80,4 +78,7 @@ protected:
     LQNumber m_width;
     LQNumber m_height;
     LQColor m_clearColor;
+
+    static GLfloat s_vertices[54];
+    static LQShader* s_default_shader;
 };

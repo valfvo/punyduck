@@ -3,9 +3,9 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
-#include "LQSurface.hpp"
+#include "LQViewable.hpp"
 
-class LQWindow : public LQSurface {
+class LQWindow : public LQViewable {
 public:
     LQWindow(int width, int height, const char* title);
     void run();

@@ -54,9 +54,22 @@ public:
     {
         LQViewable *parent, *prev;
         createTree(*this, parent, prev)
-        .add<LQText>("Accueil", 0.0f, 0.0f, parent->height())
-        .add<LQText>("Projets", prev->right()+5_px, 0.0f, parent->height())
-        .add<LQText>("Collection", prev->right()+5_px, 0.0f, parent->height());
+        .add<LQText>("Accueil", 10_px, 1_em, parent->height())
+        .add<LQText>("Projets", prev->right()+10_px, 1_em, parent->height())
+        .add<LQText>("Collection", prev->right()+10_px, 1_em, parent->height());
+    }
+};
+
+class FlexTest : public LQViewable {
+public:
+    FlexTest(float x, float y)
+    : LQViewable(x, y)
+    {
+        LQViewable *parent, *prev;
+        createTree(*this, parent, prev)
+        .add<LQText>("Projets1", 0_px, 0_px, 1_em)
+        .add<LQText>("Projets2", prev->right()+10_px, 0_px, prev->height())
+        .add<LQText>("Collection g12", prev->right()+10_px, 0_px, prev->height());
     }
 };
 
@@ -74,9 +87,8 @@ int main() {
     createTree(window, parent, prev)
     .add<NavBar>(0.0f, 0.0f, parent->width(), 1_wu)
     .add<ProjectView>(0.0f, prev->height(), parent->width(),
-                      parent->height() - prev->height());
-
-    // window.appendChild(font.renderText(U"c'eSt jgqp Yn tEsTé ~@#êéèàô", 0x93C763));
+                      parent->height() - prev->height())
+    .add<FlexTest>(100.0f, 100.0f);
 
     window.clear();
     window.drawChildren();

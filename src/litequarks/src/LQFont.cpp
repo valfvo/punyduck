@@ -45,8 +45,8 @@ const LQGlyph& LQFont::renderChar(char32_t character) {
         }
         m_glyphs.insert(std::make_pair(character,
             LQGlyph{
-                LQTexture{m_face->glyph->bitmap.width,
-                        m_face->glyph->bitmap.rows,
+                LQTexture{std::max(m_face->glyph->bitmap.width, 1U),
+                        std::max(m_face->glyph->bitmap.rows, 1U),
                         m_face->glyph->bitmap.buffer,
                         GL_RED, 0, GL_RED,
                         GL_CLAMP_TO_BORDER, GL_CLAMP_TO_BORDER},
@@ -97,32 +97,35 @@ LQText LQFont::renderText(
 
     GLfloat width = 0;
     LQindex iGlyph = 0;
+    const LQGlyph* p_glyph = nullptr;
 
-    GLint baseline = 0;
-    GLuint height = 0;
+    GLint ascender = 0;
+    GLint descender = 0;
 
     for (auto c : text) {
         glyphs[iGlyph] = &renderChar(c);
-        width += glyphs[iGlyph]->advanceX;
-        baseline = std::max(baseline, glyphs[iGlyph]->top);
-        height = std::max(height, glyphs[iGlyph]->bitmap.getHeight());
+        p_glyph = glyphs[iGlyph];
+        width += p_glyph->advanceX;
+        ascender = std::max(ascender, p_glyph->top);
+        descender = std::max(descender,
+                             p_glyph->bitmap.getHeight() - p_glyph->top);
         ++iGlyph;
     }
 
-    LQText renderedText(std::move(x), std::move(y), width, height, baseline);
+    LQText renderedText(std::move(x), std::move(y),
+                        width, ascender + descender, ascender);
     renderedText.setClearColor(c.r(), c.g(), c.b(), 0.0f);
     renderedText.clear();
     renderedText.setShader(new LQShader("shaders/font.vert", "shaders/font.frag"));
 
     GLfloat advance = 0;
-    const LQGlyph* p_glyph = nullptr;
     for (GLuint iGlyph = 0; iGlyph < text.length(); ++iGlyph) {
         p_glyph = glyphs[iGlyph];
 
         renderedText.blit(
             p_glyph->bitmap,
             advance + p_glyph->left,
-            baseline - p_glyph->top,
+            ascender - p_glyph->top,
             VAO);
 
         advance += p_glyph->advanceX;
