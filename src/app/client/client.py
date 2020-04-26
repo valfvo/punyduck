@@ -8,62 +8,10 @@ from argon2 import *
 
 ph = PasswordHasher()
  
-async def register(writer, reader): #Fonction appelée pour inscrire un nouvel utilisateur
-    #On envoie un login et un mot de passe au serveur
-    login = input("Entrez un login : ")
-    password = input("Choisissez un mot de passe : ")
-    while len(password) < 8:
-        password = input("Mot de passe trop court, choisissez un mot de passe : ")
-    
-    mail = input("Entrez une adrese mail : ")
-
-    query = "INSERT INTO UserInfo (login, password, email, admin, idImage, idBio) VALUES('%s', '%s', '%s', FALSE, 1, 1)" % (login, ph.hash(password), mail)
-    print(type(query), " Query = ", query)
-    await send_message(writer, query.encode())
-
-    #Le serveur nous dit si le login est disponible, ou s'il est déjà utilisé par un autre compte. Dans ce cas, on en entre un nouveau
-    loginValide = await reader.read(1)
-    print("loginvalide = ", loginValide)
-    while loginValide == b'\x00': #Tant que le login n'est pas valide, on envoie un nouveau login au serveur pour le tester
-        print("Ce nom est déjà pris")
-        login = input("Entrez un login : ")
-        password = input("Choisissez un mot de passe : ")
-        while len(password) < 8:
-            password = input("Mot de passe trop court, choisissez un mot de passe : ")
-        
-        mail = input("Entrez une adrese mail : ")
-
-        query = "INSERT INTO UserInfo (login, password, email, admin, idImage, idBio) VALUES('%s', '%s', '%s', FALSE, 1, 1)" % (login, ph.hash(password), mail)
-        await send_message(writer, query.encode())
-        loginValide = await reader.read(1)
-
-    print("Vous vous êtes correctement inscrit")
-    gw.transmit_response(b'\x01')
-
-async def login(writer, reader): #Fonction appelée quand un utilisateur souhaite se connecter
-    #On envoie un login et un mot de passe au serveur
-    login = input("Login : ")
-    await send_message(writer, login.encode())
-    password = input("Mot de passe : ")
-    await send_message(writer, password.encode())
-
-    #Si les identifiants sont bons, le serveur renvoie le login, sinon il renvoie "False".
-    response = await receive_message(reader)
-    response = response.decode()
-    print("response = ", response)
-    gw.transmit_response(login.encode())
-    while response == "False": #Tant que les identifiants sont incorrects, on en envoie de nouveaux au serveur pour les tester
-        print("\033[31mLe nom d'utilisateur ou mot de passe est incorrect\033[0m")
-        login = input("Login : ")
-        await send_message(writer, login.encode())
-        password = input("Mot de passe : ")
-        await send_message(writer, password.encode())
-
-    return response #On retourne le login
 
 def encodeBuffer(message): #Fonction qui renvoie la taille d'un message en binaire
     sizeBuffer_send = len(message).to_bytes(4, "big")
-    print("sizeBuffer_send : ", len(message))
+    print("sizeBuffer_send : ", len(message).to_bytes(4, 'big'))
 
     return sizeBuffer_send
 
@@ -87,15 +35,17 @@ async def send_file(path, writer, oDir): #Fonction envoyant un fichier au serveu
                 if test:
                     pathServer += i+'/'
             pathServer = pathServer[:-1]
-            print("pathServer : ", pathServer)
+            print("pathServer : ", pathServer, "path : ", path, "oDir : ", oDir)
             await send_message(writer, pathServer.encode())
 
             filesize = os.path.getsize(path)
+            print("filesize :", filesize.to_bytes(4, 'big'))
             writer.write(filesize.to_bytes(4, 'big')) #On envoie la taille du fichier
             loop = asyncio.get_running_loop()
             await loop.sendfile(writer.transport, file) #On envoie le fichier
+        # print("File size :", os.path.getsize(path))
     except IOError: #Si le fichier n'a pas pu être ouvert
-        print("Erreur ! Le fichier n'a pas pu être ouvert")
+        print("Erreur ! Le fichier", path, "n'a pas pu être ouvert")
         data = "Erreur ! Le fichier n'a pas pu être ouvert".encode()
         await send_message(writer, data)
 
@@ -122,7 +72,6 @@ async def send_message(writer, message): #Fonction pouvant envoyer un message au
     writer.write(sizeBuffer_send)
 
     if len(message) > 1024:
-        print("test")
         i = 0
         while i < len(message)/1024: #On envoie le message kilo par kilo si celui-ci est suffisament grand
             writer.write(message[i*1024:(i+1)*1024])
@@ -130,14 +79,14 @@ async def send_message(writer, message): #Fonction pouvant envoyer un message au
             if i % 10 == 0:
                 await writer.drain()
     else:
-        print("message to send : ", message, ", type : ", type(message))
+        # print("message to send : ", message, ", type : ", type(message))
         writer.write(message)
         await writer.drain()
-        print("message envoyé")
+        # print("message envoyé")
         
 async def receive_message(reader): #Fonction pour récupérer un message envoyé par la fonction "send_message()" ou "loop.sendfile()" du serveur
     sizeBuffer_received = await reader.read(4) #On lit la taille du message à recevoir
-    print("Size Buffer received = ", sizeBuffer_received)
+    # print("Size Buffer received = ", sizeBuffer_received)
     sizeBuffer_received = decodeBuffer(sizeBuffer_received)
 
     data = bytearray(sizeBuffer_received)
@@ -156,16 +105,16 @@ async def receive_message(reader): #Fonction pour récupérer un message envoyé
 async def send_dir(pathDir, writer, oDir):
     """Fonction envoyant les fichiers d'un dossier de manière récursive. On lui passe en paramètre le chemin pour accéder au dossier originel,
     le writer, et le nom du dossier originel."""
-    print("send dir : ", pathDir, "oDir : ", oDir)
+    print("send dir :", pathDir, "oDir :", oDir)
     if os.path.isdir(pathDir):
-        print(pathDir, "est un dossier")
+        # print(pathDir, "est un dossier")
         tree = os.listdir(pathDir)
         for fileordir in tree: #Pour chaque fichier/dossier du dossier originel :
             print("dir : ", pathDir+'/'+fileordir)
             await send_dir(pathDir+'/'+fileordir, writer, oDir)
             await writer.drain()
     elif os.path.isfile(pathDir):
-        print(pathDir, "est un fichier")
+        # print(pathDir, "est un fichier")
         await send_file(pathDir, writer, oDir)
     else:
         print("Veuillez entrer un chemin valide")
@@ -183,15 +132,8 @@ async def logicalResponse(writer, reader, event, size_to_read):
         gw.transmit_response(event+b'\0'+int(1).to_bytes(1, 'big'))
     return result
 
-async def upProject(writer, action, idLog):
-    matchInfos = re.match(r'(.*)\|(.*)', action[1:].tobytes().decode())
-    nom = matchInfos.group(1)
-    path = matchInfos.group(2)[1:]
-    oDir = path.split('/')[-1]
-
+async def upProject(writer, path, oDir, idLog):
     #On envoie ensuite le chemin du projet ainsi que le login de l'utilisateur au serveur
-    path = path.replace('\\', '/')
-    print("B - path : ", path)
     await send_dir(path, writer, oDir) #Pour finir, on appelle la fonction send_dir() pour envoyer le projet au serveur
     writer.write(b'\x01') #On envoie un 1 pour indiquer qu'il n'y a plus rien à télécharger
     
@@ -231,9 +173,9 @@ async def main():
                 connected = False
 
             elif action.tobytes()[0] == 1: #DataQuery
+                print("requete demande")
                 infos= bytes(await receive_message(reader))
                 gw.transmit_response(infos)
-                print("-----JJJJJJJJJJJJJJJJJJJ-------")
 
             elif action.tobytes()[0] == 2: #Login
                 idLog = await logicalResponse(writer, reader, "login".encode(), 2)
@@ -246,9 +188,24 @@ async def main():
                 checkName = await logicalResponse(writer, reader, "upProject".encode(), 1)
                 print("checkname : ", int.from_bytes(checkName, 'big'))
                 if int.from_bytes(checkName, 'big'):
-                    task = asyncio.create_task(upProject(writer, action, idLog))
+                    infos = ((action.tobytes())[1:]).decode()
+                    matchInfos = infos.split('|')
+                    path = matchInfos[0]
+                    path = path.replace('\\', '/')
+                    oDir = path.split('/')[-1]
+                    print("Envoi du projet , path = ", path, "oDir = ", oDir)
+                    task = asyncio.create_task(upProject(writer, path, oDir, idLog))
                     await task
+                    print("Envoi de l'image")
+                    pathImage = matchInfos[4]
+                    if pathImage != "":
+                        pathImage = pathImage.replace('\\', '/')
+                        oDir = pathImage.split('/')[-1]
+                        task2 = asyncio.create_task(send_file(pathImage, writer, oDir))
+                        await task2
+                    print("Fin python")
                     gw.transmit_response("projectUploaded".encode()+b'\0'+int(1).to_bytes(1, 'big'))
+                    print("Fin transmission")
 
             elif action.tobytes()[0] == 5:
                 #On vérifie à chaque tour si il y a encore un fichier à télécharger ou non. Si oui, on appelle receive_file()

@@ -34,7 +34,7 @@ public:
     const LQsize itemCount;
     const bool* attributes;
 
-    LQRawData rawData;
+    LQRawData data;
 };
 
 class LQModelUpdateEvent : public LQEvent {
@@ -60,7 +60,7 @@ public:
 
 class upProjectEvent : public LQEvent {
 public:
-    upProjectEvent(std::string nom, std::string chemin);
+    upProjectEvent(std::string chemin, std::string nom, std::string tag, std::string descr, std::string pathImage);
 
     const std::string infos;
 };

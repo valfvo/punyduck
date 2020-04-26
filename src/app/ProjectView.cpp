@@ -3,16 +3,19 @@
 
 using namespace LQUnit;
 
+
 LI_Project::LI_Project(const Project* project, LQNumber&& x, LQNumber&& y,
                        LQNumber&& width, LQNumber&& height)
-: LQViewable(std::move(x), std::move(y), std::move(width), std::move(height))
+: LQViewable(std::move(x), std::move(y),
+             std::move(width), std::move(height), 0x00ff00)
 {
-    // LQViewable *parent, *prev;
-    // createTree(*this, parent, prev)
+    LQViewable *parent, *prev;
+    createTree(*this, parent, prev)
     // .add<LQImage>(0.0f, 0.0f, parent->height(), parent->height(), project->img)
     // ;
-    // .add<LQText>(project->name, prev->right()+1_wu, 0.0f)
-    // .add<LQText>(project->desc, prev->right()+2_wu, 0.0f);
+    // .add<LQText>(project->nom, prev->right()+1_wu, 0.0f)
+    .add<LQText>(project->nom, 0.0f, 0.0f, 1_em, 0xff0000)
+    .add<LQText>(project->tag, prev->right()+1_wu, 0.0f, 1_em, 0x0000ff);
 }
 
 void LI_Project::toggleGridView(GLfloat x, GLfloat y) {
@@ -37,13 +40,12 @@ void LI_Project::toggleListView(GLfloat y, GLfloat width, GLfloat height) {
 
 
 UL_Project::UL_Project(LQNumber&& x, LQNumber&& y)
-: LQViewable(std::move(x), std::move(y), 6_hu, 1_hu)
+: LQViewable(std::move(x), std::move(y))
 {
-    appendChild(new LQViewable(0.0f, 0.0f, width(), 1_hu, 0x2f3136));
-    // static_cast<LQViewable*>(firstChild())->hide();
+    appendChild(new LQViewable(0.0f, -1_hu, 6_hu, 1_hu));
+    static_cast<LQViewable*>(firstChild())->hide();
 
     LQ_FOR_EACH(Project, addProject);
-    // fitChildrenDimensions();
 }
 
 void UL_Project::addProject(Project* project) {
@@ -138,12 +140,12 @@ ProjectView::ProjectView(LQNumber&& x, LQNumber&& y, LQNumber&& w, LQNumber&& h,
                          GLint color)
 : LQViewable(std::move(x), std::move(y), std::move(w), std::move(h), color)
 {
-    // LQViewable *parent, *prev;
-    // createTree(*this, parent, prev)
+    LQViewable *parent, *prev;
+    createTree(*this, parent, prev)
     // // .add<Trie>(1_wu, 2_hu)
     // // .add<UL_Trie>(prev->right(), prev->top())
     // // .add<SearchBar>(prev->right()+9_wu, prev->top())
     // // .add<ButtonMosaique>(prev->right()+0.5_wu, prev->top()) //link avec UL_Project
     // // .add<ButtonListe>(prev->right()+0.5_wu, prev->top())
-    // .add<UL_Project>(1_wu, 4_hu);
+    .add<UL_Project>(50_px, 150_px);
 };

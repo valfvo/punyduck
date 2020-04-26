@@ -12,7 +12,6 @@ LQAppModel::s_items;
 
 std::unordered_map<std::type_index, std::string>
 LQAppModel::s_modelNames;
-
 void LQAppModel::init() {
     lqOn<LQDataReceivedEvent>(dataReceivedCallback);
 }
@@ -63,7 +62,7 @@ void LQAppModel::dataReceivedCallback(LQDataReceivedEvent& event) {
     infos.push_back({event.model, get(event.model).size()});
 
     for (LQindex i = 0; i < event.itemCount; ++i) {
-        LQAppModel::createItem(event.model, event.rawData, event.attributes);
+        LQAppModel::createItem(event.model, event.data, event.attributes);
     }
 
     LQAppController::pushEvent(new LQModelUpdateEvent(std::move(infos)));

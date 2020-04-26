@@ -12,9 +12,8 @@ CREATE TABLE UserInfo
 CREATE TABLE Projet
 (
     idProjet SERIAL PRIMARY KEY NOT NULL,
-    chemin varchar(256) NOT NULL,
-    valide boolean,
     nom varchar(64),
+    valide boolean,
     tag varchar(16),
     -- note int(10),
     -- nbNote int,

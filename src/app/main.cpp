@@ -43,7 +43,7 @@ public:
 
     void afficheProject(Project* project) {
         std::cout << "nous allons afficher:\nnom: "
-                  << project->nom << " desc: " << project->desc << std::endl;
+                  << project->nom << " desc: " << project->tag << std::endl;
     }
 };
 
@@ -63,7 +63,7 @@ public:
 class FlexTest : public LQViewable {
 public:
     FlexTest(float x, float y)
-    : LQViewable(x, y)
+    : LQViewable(x, y, true)
     {
         LQViewable *parent, *prev;
         createTree(*this, parent, prev)
@@ -80,6 +80,7 @@ int main() {
     LQAppModel::init();
     LQFont::init();
     LQText::init();
+    initModelsConstructors();
 
     LQWindow window(SCREEN_WIDTH, SCREEN_HEIGHT, "Punyduck");
 
@@ -87,21 +88,21 @@ int main() {
     createTree(window, parent, prev)
     .add<NavBar>(0.0f, 0.0f, parent->width(), 1_wu)
     .add<ProjectView>(0.0f, prev->height(), parent->width(),
-                      parent->height() - prev->height())
-    .add<FlexTest>(100.0f, 100.0f);
+                      parent->height() - prev->height());
+    // .add<FlexTest>(100.0f, 100.0f);
 
-    window.clear();
-    window.drawChildren();
+    // TestAffiche test;
 
-    TestAffiche test;
-
-    // LQAppModel::dataQuery("projectSELECT idProject, nom, tag, pDescr, pPathImage, login FROM Projet, UserInfo WHERE pIdLog = idLog;");
+    // LQAppModel::dataQuery("projectSELECT idProjet, nom, tag, pDescr, pPathImage, login FROM Projet, UserInfo WHERE pIdLog = idLog;");
+    LQAppModel::dataQuery("projectSELECT idProjet, nom, tag FROM Projet;");
     // int action;
     // std::cout << "Choissisez une action (1 login 2 register 3 upProjet 4 dlProject)" << std::endl;
     // std::cin >> action;
     // LQAppController::pushEvent(new tempActionEvent(action));
 
     while (window.alive()) {
+        window.clear();
+        window.drawChildren();
         window.update();
     }
 

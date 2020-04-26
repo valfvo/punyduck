@@ -4,6 +4,8 @@
 #include <iostream>
 #include <typeinfo>
 
+int i =24;
+
 std::queue<LQEvent*>
 LQAppController::s_eventQueue;
 
@@ -77,7 +79,6 @@ void LQAppController::pollEvents() {
         std::cout << "event : " << (event->type).name() << std::endl;
         auto dispatch =
             s_eventDispatcher[std::make_pair(event->type, event->target)];
-        // std::cout << "dispatch vide ?" << (dispatch == nullptr) << std::endl;
         dispatch(event);
         s_eventQueue.pop();
     }
@@ -100,13 +101,13 @@ void LQAppController::pollResponses() {
                 std::cin >> login >> password; // >> email;
                 LQAppController::pushEvent(new loginEvent(login, password)); // <- Ici event pour demander un login (Vue)
             }
-            else {
-                std::cout << "Vous etes correctement connecte" << std::endl;
-                int action;
-                std::cout << "Choissisez une action (1 login 2 register 3 upProjet 4 dlProject)" << std::endl;
-                std::cin >> action;
-                LQAppController::pushEvent(new tempActionEvent(action));
-            }
+            // else {
+            //     std::cout << "Vous etes correctement connecte" << std::endl;
+            //     int action;
+            //     std::cout << "Choissisez une action (1 login 2 register 3 upProjet 4 dlProject)" << std::endl;
+            //     std::cin >> action;
+            //     LQAppController::pushEvent(new tempActionEvent(action));
+            // }
         }
         if(type == "register") {
             int rep = data.parse<int8_t>();
@@ -128,23 +129,40 @@ void LQAppController::pollResponses() {
             int rep = data.parse<int8_t>();
             if(rep == 0) {
                 std::cout << "Nom deja pris. Entrez nom, chemin : " << std::endl;
-                std::string nom, chemin;
+                std::string nom, chemin, tag, descr, pathImage;
                 std::cin >> nom;
                 std::getline(std::cin, chemin);
-                LQAppController::pushEvent(new upProjectEvent(nom, chemin)); // <- Ici event pour demander un nom de projet (Vue)
+                LQAppController::pushEvent(new upProjectEvent(chemin, nom, tag, descr, pathImage)); // Dans la class bouton register
             }
         }
         if(type == "projectUploaded") {
             int rep = data.parse<int8_t>();
+            std::cout << "OUUUUI" << std::endl;
             if(rep == 0) {
                 std::cout << "Erreur lors de l'upload du projet. Fin de programme" << std::endl;
             }
-            else {
-                std::cout << "Projet mit sur le serveur." << std::endl;
-                int action;
-                std::cout << "Choissisez une action (1 login 2 register 3 upProjet 4 dlProject)" << std::endl;
-                std::cin >> action;
-                LQAppController::pushEvent(new tempActionEvent(action));
+            else if(i < 23) {
+                std::cout << "Projet uploaded" << std::endl;
+                std::string nom = "Projet";
+                std::string tag = "tag";
+                std::string chemin =  R"(D:/Travail/Licence/Semestre 4/HLIN405 - Projet PunyDuck/src/app/test)";
+                std::string descr = R"(Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras ligula tortor, auctor sed gravida quis, finibus et sem. Donec rhoncus justo lacus, vel dictum mi consectetur eu. Cras congue nisl sit amet libero tristique, ullamcorper euismod risus scelerisque. Nullam aliquam ante ac efficitur hendrerit. Nam a tortor sed sapien placerat porta sed ullamcorper est. Aenean semper arcu ut leo porttitor, et tempus risus fringilla. Donec blandit maximus nunc, at lacinia est cursus nec. Vivamus eget eros vitae dui efficitur suscipit. Mauris blandit tempus justo et molestie.
+                Cras sagittis vehicula nibh, in facilisis ipsum sagittis a. Curabitur ut aliquet orci. Nulla fermentum dolor eget lectus sagittis cursus. Nam auctor rutrum sodales. Aliquam risus tortor, facilisis imperdiet urna non, ornare ultrices velit. Vivamus mattis aliquam enim ut interdum. Duis a posuere elit, in rhoncus odio.
+                
+                Sed sed lorem efficitur, suscipit ante eget, laoreet massa. Suspendisse pellentesque cursus lectus, et tincidunt mauris commodo ac. Aliquam erat volutpat. Nam a ex non sapien ornare iaculis. Integer nec leo accumsan, rutrum lectus sit amet, tempus dolor. Morbi orci sapien, porttitor eu ultricies vel, eleifend sit amet dui. Fusce vitae elit a diam tristique gravida convallis commodo tortor.
+                Aliquam sed nisi nisi. Aliquam tempor egestas nulla, congue vestibulum purus cursus in. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Ut nec erat vitae erat pellentesque finibus nec sed ante. Sed sed posuere leo. Quisque fermentum dolor id ex suscipit placerat eget ac dui. Nam vitae lobortis justo, ut porttitor risus. Nulla venenatis maximus turpis, et ullamcorper quam dapibus sed. Praesent id fringilla metus, eu elementum odio. Nullam urna libero, tincidunt nec nulla nec, imperdiet sollicitudin nunc. Phasellus ut fermentum lectus, a porttitor nisl. Mauris eu sagittis leo. Pellentesque non enim vulputate, posuere risus ac, mattis ante. Aliquam erat volutpat.
+                Vivamus rhoncus ac elit ut pellentesque. Etiam aliquet lorem risus, id porta metus pharetra a. Cras volutpat elit non sapien facilisis, eu volutpat augue sollicitudin. Vivamus pretium augue massa, ac elementum leo condimentum at. Vivamus vitae odio et sem ultricies convallis nec ut est. Maecenas eleifend et velit sit amet convallis. Fusce ligula turpis, pretium id pellentesque vel, cursus vel ligula. Nulla rhoncus nibh eget dui fringilla porta. Cras aliquet, mi ac varius cursus, tellus elit condimentum magna, vitae congue nulla purus et orci. Pellentesque ullamcorper, sem sed ornare blandit, lacus risus porta nunc, non consectetur eros lacus sed tortor. Duis euismod elementum maximus. In at blandit orci. Etiam mollis, nisi sit amet faucibus semper, augue eros gravida metus, non consequat est odio vitae ipsum. Nunc eu ligula vel arcu laoreet ultrices. Cras a dolor eros.
+                
+                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras ligula tortor, auctor sed gravida quis, finibus et sem. Donec rhoncus justo lacus, vel dictum mi consectetur eu. Cras congue nisl sit amet libero tristique, ullamcorper euismod risus scelerisque. Nullam aliquam ante ac efficitur hendrerit. Nam a tortor sed sapien placerat porta sed ullamcorper est. Aenean semper arcu ut leo porttitor, et tempus risus fringilla. Donec blandit maximus nunc, at lacinia est cursus nec. Vivamus eget eros vitae dui efficitur suscipit. Mauris blandit tempus justo et molestie.
+                Cras sagittis vehicula nibh, in facilisis ipsum sagittis a. Curabitur ut aliquet orci. Nulla fermentum dolor eget lectus sagittis cursus. Nam auctor rutrum sodales. Aliquam risus tortor, facilisis imperdiet urna non, ornare ultrices velit. Vivamus mattis aliquam enim ut interdum. Duis a posuere elit, in rhoncus odio.
+                
+                Sed sed lorem efficitur, suscipit ante eget, laoreet massa. Suspendisse pellentesque cursus lectus, et tincidunt mauris commodo ac. Aliquam erat volutpat. Nam a ex non sapien ornare iaculis. Integer nec leo accumsan, rutrum lectus sit amet, tempus dolor. Morbi orci sapien, porttitor eu ultricies vel, eleifend sit amet dui. Fusce vitae elit a diam tristique gravida convallis commodo tortor.
+                Aliquam sed nisi nisi. Aliquam tempor egestas nulla, congue vestibulum purus cursus in. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Ut nec erat vitae erat pellentesque finibus nec sed ante. Sed sed posuere leo. Quisque fermentum dolor id ex suscipit placerat eget ac dui. Nam vitae lobortis justo, ut porttitor risus. Nulla venenatis maximus turpis, et ullamcorper quam dapibus sed. Praesent id fringilla metus, eu elementum odio. Nullam urna libero, tincidunt nec nulla nec, imperdiet sollicitudin nunc. Phasellus ut fermentum lectus, a porttitor nisl. Mauris eu sagittis leo. Pellentesque non enim vulputate, posuere risus ac, mattis ante. Aliquam erat volutpat.
+                Vivamus rhoncus ac elit ut pellentesque. Etiam aliquet lorem risus, id porta metus pharetra a. Cras volutpat elit non sapien facilisis, eu volutpat augue sollicitudin. Vivamus pretium augue massa, ac elementum leo condimentum at. Vivamus vitae odio et sem ultricies convallis nec ut est. Maecenas eleifend et velit sit amet convallis. Fusce ligula turpis, pretium id pellentesque vel, cursus vel ligula. Nulla rhoncus nibh eget dui fringilla porta. Cras aliquet, mi ac varius cursus, tellus elit condimentum magna, vitae congue nulla purus et orci. Pellentesque ullamcorper, sem sed ornare blandit, lacus risus porta nunc, non consectetur eros lacus sed tortor. Duis euismod elementum maximus. In at blandit orci. Etiam mollis, nisi sit amet faucibus semper, augue eros gravida metus, non consequat est odio vitae ipsum. Nunc eu ligula vel arcu laoreet ultrices. Cras a dolor eros.)";
+                i++;
+                nom += std::to_string(i);
+                tag += std::to_string(i);
+                LQAppController::pushEvent(new upProjectEvent(chemin, nom, tag, descr, "D:/Images/pfp.PNG")); // Dans la class bouton register
             }
         }
         if(type == "projectDownloaded") {
@@ -219,7 +237,7 @@ void LQAppController::dlProjectCallback(dlProjectEvent& event) {
 }
 
 void LQAppController::tempActionCallback(tempActionEvent& event) {
-    std::string login, password, email, nom, chemin;
+    std::string login, password, email, nom, chemin, tag, descr, pathImage;
     switch (event.action) {
     case 1:
         std::cout << "Entrez login, password : " << std::endl;
@@ -234,10 +252,17 @@ void LQAppController::tempActionCallback(tempActionEvent& event) {
         break;
 
     case 3:
-        std::cout << "Entrez nom, chemin : " << std::endl;
-        std::cin >> nom;
+        std::cout << "Entrez chemin, nom, tag, pathImage : " << std::endl;
         std::getline(std::cin, chemin);
-        LQAppController::pushEvent(new upProjectEvent(nom, chemin)); // Dans la class bouton register
+        std::getline(std::cin, nom);
+        std::getline(std::cin, tag);
+        descr = R"("Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras ligula tortor, auctor sed gravida quis, finibus et sem. Donec rhoncus justo lacus, vel dictum mi consectetur eu. Cras congue nisl sit amet libero tristique, ullamcorper euismod risus scelerisque. Nullam aliquam ante ac efficitur hendrerit. Nam a tortor sed sapien placerat porta sed ullamcorper est. Aenean semper arcu ut leo porttitor, et tempus risus fringilla. Donec blandit maximus nunc, at lacinia est cursus nec. Vivamus eget eros vitae dui efficitur suscipit. Mauris blandit tempus justo et molestie.
+Cras sagittis vehicula nibh, in facilisis ipsum sagittis a. Curabitur ut aliquet orci. Nulla fermentum dolor eget lectus sagittis cursus. Nam auctor rutrum sodales. Aliquam risus tortor, facilisis imperdiet urna non, ornare ultrices velit. Vivamus mattis aliquam enim ut interdum. Duis a posuere elit, in rhoncus odio.
+Sed sed lorem efficitur, suscipit ante eget, laoreet massa. Suspendisse pellentesque cursus lectus, et tincidunt mauris commodo ac. Aliquam erat volutpat. Nam a ex non sapien ornare iaculis. Integer nec leo accumsan, rutrum lectus sit amet, tempus dolor. Morbi orci sapien, porttitor eu ultricies vel, eleifend sit amet dui. Fusce vitae elit a diam tristique gravida convallis commodo tortor.
+Aliquam sed nisi nisi. Aliquam tempor egestas nulla, congue vestibulum purus cursus in. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Ut nec erat vitae erat pellentesque finibus nec sed ante. Sed sed posuere leo. Quisque fermentum dolor id ex suscipit placerat eget ac dui. Nam vitae lobortis justo, ut porttitor risus. Nulla venenatis maximus turpis, et ullamcorper quam dapibus sed. Praesent id fringilla metus, eu elementum odio. Nullam urna libero, tincidunt nec nulla nec, imperdiet sollicitudin nunc. Phasellus ut fermentum lectus, a porttitor nisl. Mauris eu sagittis leo. Pellentesque non enim vulputate, posuere risus ac, mattis ante. Aliquam erat volutpat.
+Vivamus rhoncus ac elit ut pellentesque. Etiam aliquet lorem risus, id porta metus pharetra a. Cras volutpat elit non sapien facilisis, eu volutpat augue sollicitudin. Vivamus pretium augue massa, ac elementum leo condimentum at. Vivamus vitae odio et sem ultricies convallis nec ut est. Maecenas eleifend et velit sit amet convallis. Fusce ligula turpis, pretium id pellentesque vel, cursus vel ligula. Nulla rhoncus nibh eget dui fringilla porta. Cras aliquet, mi ac varius cursus, tellus elit condimentum magna, vitae congue nulla purus et orci. Pellentesque ullamcorper, sem sed ornare blandit, lacus risus porta nunc, non consectetur eros lacus sed tortor. Duis euismod elementum maximus. In at blandit orci. Etiam mollis, nisi sit amet faucibus semper, augue eros gravida metus, non consequat est odio vitae ipsum. Nunc eu ligula vel arcu laoreet ultrices. Cras a dolor eros.")";
+        std::getline(std::cin, pathImage);
+        LQAppController::pushEvent(new upProjectEvent(chemin, nom, tag, descr, pathImage)); // Dans la class bouton register
         break;
     
     case 4:
