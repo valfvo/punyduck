@@ -64,6 +64,7 @@ LQViewable& LQViewable::appendChild(LQViewable* child) {
 }
 
 void LQViewable::drawChildren() {
+    draw();
     for (
         LQViewable* child = static_cast<LQViewable*>(m_firstChild);
         child != nullptr;

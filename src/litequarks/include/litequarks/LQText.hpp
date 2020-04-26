@@ -21,6 +21,8 @@ public:
     LQText(LQText&& other) = default;
     LQText(const LQText& other) = delete;
 
+    void draw() override;
+
     static void init();
 
     static std::wstring_convert<std::codecvt_utf8<char32_t>, char32_t>

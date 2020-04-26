@@ -22,6 +22,7 @@ public:
     void displayBlock();
 
     LQViewable& appendChild(LQViewable* child);
+
     void drawChildren() override;
     // margin
     // padding-top

@@ -34,6 +34,7 @@ public:
     void setClearColor(GLint r, GLint g, GLint b, GLint a=255);
 
     //méthodes
+    virtual void draw();
     virtual void drawChildren();
     // void blit(LQTexture const& texture, GLfloat x, GLfloat y, GLfloat width, GLfloat height);
     void blit(LQTexture const& texture, GLfloat x, GLfloat y, GLuint VAO);

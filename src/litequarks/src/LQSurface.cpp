@@ -161,6 +161,10 @@ void LQSurface::setClearColor(GLint r, GLint g, GLint b, GLint a) {
 //     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 // }
 
+void LQSurface::draw() {
+    clear();
+}
+
 void LQSurface::drawChildren() {
     for (
         LQSurface* child = static_cast<LQSurface*>(m_firstChild);

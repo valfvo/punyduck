@@ -21,3 +21,5 @@ LQText::LQText(const std::string& text, LQNumber&& _x, LQNumber&& _y,
 void LQText::init() {
     s_font.change("Montserrat-Regular");
 }
+
+void LQText::draw() { }
