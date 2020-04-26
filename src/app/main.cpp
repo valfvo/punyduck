@@ -35,18 +35,6 @@ int SCREEN_HEIGHT = 720;
 #define BACKGROUND_SECONDARY 0x2f3136
 #define BACKGROUND_TERNARY   0x202225
 
-class TestAffiche {
-public:
-    TestAffiche() {
-        LQ_FOR_EACH(Project, afficheProject);
-    }
-
-    void afficheProject(Project* project) {
-        std::cout << "nous allons afficher:\nnom: "
-                  << project->nom << " desc: " << project->tag << std::endl;
-    }
-};
-
 class NavBar : public LQViewable {
 public:
     NavBar(LQNumber&& x, LQNumber&& y, LQNumber&& w, LQNumber&& h)
@@ -57,19 +45,6 @@ public:
         .add<LQText>("Accueil", 10_px, 1_em, parent->height())
         .add<LQText>("Projets", prev->right()+10_px, 1_em, parent->height())
         .add<LQText>("Collection", prev->right()+10_px, 1_em, parent->height());
-    }
-};
-
-class FlexTest : public LQViewable {
-public:
-    FlexTest(float x, float y)
-    : LQViewable(x, y, true)
-    {
-        LQViewable *parent, *prev;
-        createTree(*this, parent, prev)
-        .add<LQText>("Projets1", 0_px, 0_px, 1_em)
-        .add<LQText>("Projets2", prev->right()+10_px, 0_px, prev->height())
-        .add<LQText>("Collection g12", prev->right()+10_px, 0_px, prev->height());
     }
 };
 
@@ -88,10 +63,7 @@ int main() {
     createTree(window, parent, prev)
     .add<NavBar>(0.0f, 0.0f, parent->width(), 1_wu)
     .add<ProjectView>(0.0f, prev->height(), parent->width(),
-                      parent->height() - prev->height());
-    // .add<FlexTest>(100.0f, 100.0f);
-
-    // TestAffiche test;
+                      parent->height() - prev->height(), 0xD9D9D9);
 
     // LQAppModel::dataQuery("projectSELECT idProjet, nom, tag, pDescr, pPathImage, login FROM Projet, UserInfo WHERE pIdLog = idLog;");
     LQAppModel::dataQuery("projectSELECT idProjet, nom, tag FROM Projet;");
@@ -101,7 +73,6 @@ int main() {
     // LQAppController::pushEvent(new tempActionEvent(action));
 
     while (window.alive()) {
-        window.clear();
         window.drawChildren();
         window.update();
     }

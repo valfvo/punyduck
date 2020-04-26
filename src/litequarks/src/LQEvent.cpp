@@ -7,18 +7,18 @@ LQEvent::LQEvent(const std::type_info& _type, void* _target)
 
 LQEvent::~LQEvent() { }
 
-LQDataQueryEvent::LQDataQueryEvent(void* _target, const std::string& _query)
-: LQEvent(typeid(LQDataQueryEvent), _target), query(_query)
-{ }
+LQClickEvent::LQClickEvent(void* _target, float _mx, float _my)
+: LQEvent(typeid(LQClickEvent), _target), mx(_mx), my(_my) { }
 
-#include <iostream>
+LQDataQueryEvent::LQDataQueryEvent(void* _target, const std::string& _query)
+: LQEvent(typeid(LQDataQueryEvent), _target), query(_query) { }
+
 LQDataReceivedEvent::LQDataReceivedEvent(LQRawData& _data)
 : LQEvent(typeid(LQDataReceivedEvent), nullptr),
   model(_data.parse<char*>()), itemCount(_data.parse<int32_t>()),
   attributes(nullptr), data(_data)
 {
     int attrCount = data.parse<int8_t>();
-    std::cout << "attrCount" << attrCount << std::endl;
     bool* attr = new bool[attrCount];
     for (int i = 0; i < attrCount; ++i) {
         attr[i] = false;

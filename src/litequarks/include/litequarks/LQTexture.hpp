@@ -16,7 +16,7 @@ public:
               GLenum minFilter=GL_LINEAR, GLenum magFilter=GL_LINEAR);
 
     // LQTexture(LQTexture const& texture);
-    LQTexture(std::string const& path);
+    LQTexture(std::string const& path, int width=0, int height=0);
     LQTexture(LQTexture&& other);
     // void save(std::string const& path) const;
 

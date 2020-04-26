@@ -1,7 +1,17 @@
 #pragma once
 
+#include <string>
+
 #include <litequarks/litequarks.hpp>
 #include "model.hpp"
+
+class IMG : public LQViewable {
+public:
+    IMG(LQNumber&& x, LQNumber&& y, LQNumber&& width, LQNumber&& height,
+        GLint color, const std::string& path);
+
+    void draw() override;
+};
 
 class LI_Project : public LQViewable {
 public:
@@ -26,20 +36,20 @@ public:
     void toggleGridView();
 };
 
-// class UL_Trie : public LQViewable {
-// public:
-//     UL_Trie(GLfloat x, GLfloat y);
-// };
+class DIV_Sorting : public LQViewable {
+public:
+    DIV_Sorting(LQNumber&& x, LQNumber&& y);
+};
 
 // class Trie : public LQViewable {
 // public:
 //     Trie(GLfloat x, GLfloat y);
 // };
 
-// class SearchBar : public LQViewable {
-// public:
-//     SearchBar(GLfloat x, GLfloat y);
-// };
+class SearchBar : public LQViewable {
+public:
+    SearchBar(LQNumber&& x, LQNumber&& y, LQNumber&& width, LQNumber&& height);
+};
 
 // class ButtonMosaique : public LQViewable {
 // public:
@@ -74,5 +84,5 @@ public:
 class ProjectView : public LQViewable {
 public:
     ProjectView(LQNumber&& x, LQNumber&& y, LQNumber&& width, LQNumber&& height,
-                GLint color=0x36393f);
+                GLint color=0xD9D9D9);  // 0x36393f
 };

@@ -1,5 +1,7 @@
 #pragma once
 
+#include <string>
+
 #include "LQuark.hpp"
 #include "LQTexture.hpp"
 #include "LQColor.hpp"
@@ -11,10 +13,16 @@ public:
     //constructeurs
     LQSurface();
     LQSurface(LQNumber&& x, LQNumber&& y, LQNumber&& width, LQNumber&& height);
-    LQSurface(LQNumber&& x, LQNumber&& y, LQNumber&& width, LQNumber&& height, GLint color);
+    LQSurface(LQNumber&& x, LQNumber&& y, LQNumber&& width, LQNumber&& height,
+              GLint color, const std::string& iconPath="");
     LQSurface(LQSurface&& other);
 
     //accesseurs
+    float xF() const;
+    float yF() const;
+    float widthF() const;
+    float heightF() const;
+
     LQMathExpr x();
     LQMathExpr left();
     LQMathExpr right();

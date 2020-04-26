@@ -21,6 +21,8 @@ public:
     LQText(LQText&& other) = default;
     LQText(const LQText& other) = delete;
 
+    int baseline();
+
     void draw() override;
 
     static void init();

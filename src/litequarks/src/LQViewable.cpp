@@ -9,9 +9,10 @@ LQViewable::LQViewable()
 // }
 
 LQViewable::LQViewable(LQNumber&& x, LQNumber&& y,
-                       LQNumber&& width, LQNumber&& height, GLint color)
-: LQSurface(std::move(x), std::move(y),
-            std::move(width), std::move(height), color),
+                       LQNumber&& width, LQNumber&& height,
+                       GLint color, const std::string& iconPath)
+: LQSurface(std::move(x), std::move(y), std::move(width), std::move(height),
+            color, iconPath),
   m_flex(false), m_hidden(false)
 //   m_left(this, LQMetricKind_Coords), m_top(this, LQMetricKind_Coords),
 //   m_w(LQMetricKind_Length), m_h(LQMetricKind_Length)

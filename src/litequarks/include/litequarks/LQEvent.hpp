@@ -18,6 +18,14 @@ protected:
     LQEvent(const std::type_info& type, void* target);
 };
 
+class LQClickEvent : public LQEvent {
+public:
+    LQClickEvent(void* target, float mx, float my);
+
+    const float mx;
+    const float my;
+};
+
 class LQDataQueryEvent : public LQEvent {
 public:
     LQDataQueryEvent(void* target, const std::string& query);

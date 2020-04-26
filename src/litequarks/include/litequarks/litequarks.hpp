@@ -5,8 +5,10 @@
 #include <litequarks/LQViewable.hpp>
 
 #include <litequarks/LQWindow.hpp>
-#include <litequarks/LQColor.hpp>
+#include <litequarks/LQButton.hpp>
+
 #include <litequarks/LQTreeCreator.hpp>
+#include <litequarks/LQColor.hpp>
 #include <litequarks/LQFont.hpp>
 #include <litequarks/LQText.hpp>
 #include <litequarks/LQRawData.hpp>

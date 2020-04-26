@@ -1,6 +1,8 @@
 #pragma once
 
-// #include "LQNumber.hpp"
+#include <string>
+
+#include "LQNumber.hpp"
 #include "LQSurface.hpp"
 #include "LQAppController.hpp"
 
@@ -8,7 +10,8 @@ class LQViewable : public LQSurface {
 public:
     LQViewable();
     LQViewable(LQNumber&& x, LQNumber&& y,
-               LQNumber&& width, LQNumber&& height, GLint color=0x000000);
+               LQNumber&& width, LQNumber&& height,
+               GLint color=0x000000, const std::string& iconPath="");
     LQViewable(LQNumber&& x, LQNumber&& y, bool flex=true);
     // LQViewable(LQNumber x, LQNumber y, LQImageData& image);
     LQViewable(LQViewable&& other) = default;

@@ -1,3 +1,4 @@
+#include <cmath>  // std::ceil
 #include <iostream>
 #include <utility>  // std::move
 #include <litequarks/LQSurface.hpp>
@@ -59,12 +60,19 @@ LQSurface::LQSurface(LQNumber&& x, LQNumber&& y,
     glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
 
-LQSurface::LQSurface(LQNumber&& x, LQNumber&& y,
-                     LQNumber&& width, LQNumber&& height, GLint color)
-: LQSurface(std::move(x), std::move(y), std::move(width), std::move(height))
+LQSurface::LQSurface(LQNumber&& _x, LQNumber&& _y,
+                     LQNumber&& _width, LQNumber&& _height,
+                     GLint color, const std::string& iconPath)
+: LQSurface(std::move(_x), std::move(_y), std::move(_width), std::move(_height))
 {
     m_clearColor = LQColor(color);
     clear();
+    if (!iconPath.empty()) {
+        LQTexture icon("images/" + iconPath, m_width.f(), m_height.f());
+        // icon.m_texWidth = m_width.f();
+        // icon.m_texHeight = m_height.f();
+        blit(icon, 0.0f, 0.0f, m_VAO);
+    }
 }
 
 LQSurface::LQSurface(LQSurface&& other)
@@ -78,6 +86,22 @@ LQSurface::LQSurface(LQSurface&& other)
 {
     other.m_VBO = other.m_VAO = other.m_FBO = 0;
     other.m_shader = nullptr;
+}
+
+float LQSurface::xF() const {
+    return m_x.f();
+}
+
+float LQSurface::yF() const {
+    return m_y.f();
+}
+
+float LQSurface::widthF() const {
+    return m_width.f();
+}
+
+float LQSurface::heightF() const {
+    return m_height.f();
 }
 
 LQMathExpr LQSurface::x() {

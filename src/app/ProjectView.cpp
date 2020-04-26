@@ -3,6 +3,12 @@
 
 using namespace LQUnit;
 
+IMG::IMG(LQNumber&& x, LQNumber&& y, LQNumber&& width, LQNumber&& height,
+        GLint color, const std::string& path)
+: LQViewable(std::move(x), std::move(y),
+             std::move(width), std::move(height), color, path) { }
+
+void IMG::draw() { }
 
 LI_Project::LI_Project(const Project* project, LQNumber&& x, LQNumber&& y,
                        LQNumber&& width, LQNumber&& height)
@@ -42,8 +48,9 @@ void LI_Project::toggleListView(GLfloat y, GLfloat width, GLfloat height) {
 UL_Project::UL_Project(LQNumber&& x, LQNumber&& y)
 : LQViewable(std::move(x), std::move(y))
 {
-    appendChild(new LQViewable(0.0f, -1_hu, 6_hu, 1_hu));
-    static_cast<LQViewable*>(firstChild())->hide();
+    appendChild(new LQViewable(0.0f, 0.0f, 0.70f * 1280.0f, 5_em, 0xE9E9E9));
+    // appendChild(new LQViewable(0.0f, -1_hu, 6_hu, 1_hu));
+    // static_cast<LQViewable*>(firstChild())->hide();
 
     LQ_FOR_EACH(Project, addProject);
 }
@@ -94,25 +101,33 @@ void UL_Project::toggleListView() {
 // }
 
 
-// Trie::Trie(GLfloat x, GLfloat y)
-// : LQViewable(x, y)
-// {
-//     LQViewable *parent, *prev;
-//     createTree(*this, parent, prev)
-//     .add<LQText>("Trier par :", 0.0f, 0.0f)
-//     .add<UL_Trie>(prev->right()+0.5_wu, 0.0f);
-// }
+DIV_Sorting::DIV_Sorting(LQNumber&& x, LQNumber&& y)
+: LQViewable(std::move(x), std::move(y))
+{
+    // setClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+    setClearColor(0xD9D9D9);
+    LQViewable *parent, *prev;
+    createTree(*this, parent, prev)
+    .add<LQText>("Trier par : ", 0.0f, 0.0f, 1_em, 0x595959)
+    .add<LQText>("plus récent", prev->right(), 0.0f, prev->height(), 0x356b34)
+    .add<LQText>("Filtres : ", prev->right()+25_px, 0.0f, prev->height(), 0x595959)
+    .add<LQText>("tout", prev->right(), 0.0f, prev->height(), 0x356b34);
+}
 
-
-// SearchBar::SearchBar(GLfloat x, GLfloat y)
-// : LQViewable(x, y)
-// {
-//     auto logo = LQAppModel::getFirst("logo");
-//     LQViewable *parent, *prev;
-//     createTree(*this, parent, prev)
-//     .add<LQImage>(0.0f, 0.0f, parent->height(), parent->height(), logo->search)
-//     .add<LQButton>(prev->right()+0.5_wu, 0.0f, parent->height(), parent->height());
-// }
+SearchBar::SearchBar(LQNumber&& _x, LQNumber&& _y,
+                     LQNumber&& _width, LQNumber&& _height)
+: LQViewable(std::move(_x), std::move(_y),
+             std::move(_width), std::move(_height), 0xE9E9E9)  // 0xECECEC
+{
+    // #6D6D6D
+    // auto logo = LQAppModel::getFirst("logo");
+    LQViewable *parent, *prev;
+    createTree(*this, parent, prev)
+    .add<IMG>(12.5f, 12.5f, 25.0f, 25.0f,
+                     0xE9E9E9, "search-icon.png")
+    .add<LQText>("Rechercher...", prev->right()+12_px, 15_px, 1_em, 0x808080);
+    // .add<LQButton>(prev->right()+0.5_wu, 0.0f, parent->height(), parent->height());
+}
 
 
 // ButtonMosaique::ButtonMosaique(GLfloat x, GLfloat y, UL_Project* ul)
@@ -142,10 +157,11 @@ ProjectView::ProjectView(LQNumber&& x, LQNumber&& y, LQNumber&& w, LQNumber&& h,
 {
     LQViewable *parent, *prev;
     createTree(*this, parent, prev)
-    // // .add<Trie>(1_wu, 2_hu)
-    // // .add<UL_Trie>(prev->right(), prev->top())
-    // // .add<SearchBar>(prev->right()+9_wu, prev->top())
-    // // .add<ButtonMosaique>(prev->right()+0.5_wu, prev->top()) //link avec UL_Project
-    // // .add<ButtonListe>(prev->right()+0.5_wu, prev->top())
-    .add<UL_Project>(50_px, 150_px);
+    .add<DIV_Sorting>(25_px, 25_px)
+    .add<LQButton>(parent->width()-100_px, prev->top(),
+                   50_px, 50_px, "list-view-icon.png")
+    .add<LQButton>(prev->left()-75_px, prev->top(),
+                   prev->width(), prev->height(), "grid-view-icon.png")
+    .add<SearchBar>(prev->left()-525_px, prev->top(), 500_px, prev->height())
+    .add<UL_Project>(0.15f * 1280.0f, 150_px);
 };

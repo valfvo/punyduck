@@ -4,7 +4,7 @@
 #include <iostream>
 #include <typeinfo>
 
-int i =24;
+int i = 24;
 
 std::queue<LQEvent*>
 LQAppController::s_eventQueue;

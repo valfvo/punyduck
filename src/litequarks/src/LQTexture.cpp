@@ -1,8 +1,11 @@
 #include <iostream>
-#include <litequarks/LQTexture.hpp>
 
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
+#define STB_IMAGE_RESIZE_IMPLEMENTATION
+#include "stb_image_resize.h"
+
+#include <litequarks/LQTexture.hpp>
 
 //constructeurs
 LQTexture::LQTexture()
@@ -43,8 +46,7 @@ LQTexture::LQTexture(
         
 //     }
 // }
-
-LQTexture::LQTexture(std::string const& path)
+LQTexture::LQTexture(std::string const& path, int width, int height)
 : m_id(0), m_texWidth(0), m_texHeight(0), m_format(GL_RGBA),
   m_wrapS(GL_REPEAT), m_wrapT(GL_REPEAT),
   m_minFilter(GL_LINEAR), m_magFilter(GL_LINEAR)
@@ -58,13 +60,24 @@ LQTexture::LQTexture(std::string const& path)
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, m_magFilter);
 
     int img_width, img_height, img_format;
+    stbi_set_flip_vertically_on_load(true);
     GLubyte* data = stbi_load(path.c_str(), &img_width, &img_height, &img_format, 0);
-    if (data) {
+
+    if (data && (img_format == 3 || img_format == 4)) {
+        if (width >= 1 && height >= 1) {
+            GLubyte* resized = new GLubyte[width*height*img_format];
+            stbir_resize_uint8(data, img_width, img_height, 0,
+                               resized, width, height, 0, img_format);
+            stbi_image_free(data);
+            data = resized;
+            img_width = width;
+            img_height = height;
+        }
         m_texWidth = img_width;
         m_texHeight = img_height;
-        m_format = img_format;
+        m_format = img_format == 3 ? GL_RGB : GL_RGBA;
         glTexImage2D(GL_TEXTURE_2D, 0, m_format, m_texWidth, m_texHeight, 0,
-                     GL_RGBA, GL_UNSIGNED_BYTE, data);
+                     m_format, GL_UNSIGNED_BYTE, data);
     }
     else {
         std::cout << "Failed to load texture" << std::endl;

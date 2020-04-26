@@ -18,6 +18,10 @@ LQText::LQText(const std::string& text, LQNumber&& _x, LQNumber&& _y,
     s_convert.from_bytes(text), color,
     std::move(_x), std::move(_y), std::move(h))) { }
 
+int LQText::baseline() {
+    return m_baseline;
+}
+
 void LQText::init() {
     s_font.change("Montserrat-Regular");
 }
