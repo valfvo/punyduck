@@ -1,3 +1,4 @@
+#include <litequarks/LQAppController.hpp>
 #include <litequarks/LQButton.hpp>
 
 LQButton::LQButton(LQNumber&& x, LQNumber&& y, LQImageData imageData,

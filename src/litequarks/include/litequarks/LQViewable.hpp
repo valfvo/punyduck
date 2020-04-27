@@ -4,7 +4,6 @@
 
 #include "LQNumber.hpp"
 #include "LQSurface.hpp"
-#include "LQAppController.hpp"
 
 class LQViewable : public LQSurface {
 public:
