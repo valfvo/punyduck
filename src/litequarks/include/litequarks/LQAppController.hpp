@@ -9,23 +9,13 @@
 #include <vector>
 #include <cstdint>
 
+#include "LQWindow.hpp"
 #include "LQEvent.hpp"
 #include "LQHash.hpp"
 #include "LQAppModel.hpp"
+#include <GLFW/glfw3.h>
 
 #include <client/ClientGateway.hpp>
-
-// struct LQBinData {
-//     int   size;
-//     char* data;
-// };
-
-// struct Project {
-//     const std::string name;
-//     const std::string tag;
-//     const std::string desc;
-//     LQBinData img;
-// };
 
 class LQAppController {
 public:
@@ -47,6 +37,10 @@ public:
 
     static void pollResponses();
 
+    static void setWindow(LQWindow* window);
+
+    static void cursor_position_callback(GLFWwindow* window, double mx, double my);
+    
     static void dataQueryCallback(LQDataQueryEvent& event);
 
     static void modelUpdateCallback(LQModelUpdateEvent& event);
@@ -89,6 +83,14 @@ protected:
 
     static std::thread*
     s_gatewayThread;
+
+    static LQWindow*
+    s_window;
+
+    static LQViewable*
+    s_hover_focus;
+
+    static float prevAbsX, prevAbsY, prevRelX, prevRelY;
 };
 
 template<class T, class TArg, void (T::*callback)(TArg*)>

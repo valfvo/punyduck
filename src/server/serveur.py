@@ -26,16 +26,19 @@ def decodeBuffer(buffer): #Fonction qui décode un nombre encodé en binaire (ap
     # print("sizeBuffer_received : ", sizeBuffer_received)
     return sizeBuffer_received
 
-async def send_file(path, writer): #Fonction envoyant un fichier au serveur. On passe en paramètre le chemin du fichier, le writer, et le dossier originel du projet
+async def send_file(path, writer, name): #Fonction envoyant un fichier au serveur. On passe en paramètre le chemin du fichier, le writer, et le dossier originel du projet
     writer.write(b'\x00') #On écrit un pour dire au client qu'il va recevoir un fichier
     try:
         with open(path, "rb") as file:
             """On crée un string "pathServer" qui stockera le chemin à partir du dossier originel. Cela sera utile dans les cas où
             le dossier à transmettre se situera à plusieurs dossiers d'intervalle du client, on supprimera donc les dossiers intervalles
             du chemin."""
-            cur.execute("SELECT nom FROM Projet WHERE idProjet = %s", (path,))
-            nom = cur.fetchone()[0]
-            await send_message(writer, nom.encode())
+            pathClient = path.split('/')
+            pathclient = name
+            for i in pathClient[1:]:
+                pathclient += '/' + i
+
+            await send_message(writer, pathclient.encode())
 
             filesize = os.path.getsize(path)
             writer.write(filesize.to_bytes(4, 'big')) #On envoie la taille du fichier
@@ -93,7 +96,7 @@ async def receive_message(reader): #Fonction pour récupérer un message envoyé
         data[total_read:total_read+len(packet)] = packet
         total_read += len(packet)
 
-async def send_dir(pathDir, writer):
+async def send_dir(pathDir, writer, name):
     """Fonction envoyant les fichiers d'un dossier de manière récursive. On lui passe en paramètre le chemin pour accéder au dossier originel,
     le writer, et le nom du dossier originel."""
     print("send dir : ", pathDir)
@@ -102,11 +105,11 @@ async def send_dir(pathDir, writer):
         tree = os.listdir(pathDir)
         for fileordir in tree: #Pour chaque fichier/dossier du dossier originel :
             print("dir : ", pathDir+'/'+fileordir)
-            await send_dir(pathDir+'/'+fileordir, writer)
+            await send_dir(pathDir+'/'+fileordir, writer, name)
             await writer.drain()
     elif os.path.isfile(pathDir):
         print(pathDir, "est un fichier")
-        await send_file(pathDir, writer)
+        await send_file(pathDir, writer, name)
     else:
         print("Veuillez entrer un chemin valide")
 
@@ -412,7 +415,9 @@ async def handle_echo(reader, writer):
             idProjet = int.from_bytes(action[1:], 'big')
             print("idProjet : ", idProjet)
             path = str(idProjet)
-            await send_dir(path, writer)
+            cur.execute("SELECT nom FROM Projet WHERE idProjet = %s", (idProjet,))
+            name = cur.fetchone()[0]
+            await send_dir(path, writer, name)
             writer.write(b'\x01')
             print('projet envoye')
 

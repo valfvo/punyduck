@@ -4,8 +4,6 @@
 #include <iostream>
 #include <typeinfo>
 
-int i = 24;
-
 std::queue<LQEvent*>
 LQAppController::s_eventQueue;
 
@@ -32,6 +30,21 @@ LQAppController::s_gateway = nullptr;
 std::thread*
 LQAppController::s_gatewayThread = nullptr;
 
+LQWindow*
+LQAppController::s_window = nullptr;
+
+LQViewable*
+LQAppController::s_hover_focus = nullptr;
+
+float
+LQAppController::prevAbsX = 0;
+float
+LQAppController::prevAbsY = 0;
+float
+LQAppController::prevRelX = 0;
+float
+LQAppController::prevRelY = 0;
+
 void LQAppController::init() {
     lqOn<LQDataQueryEvent>(dataQueryCallback);
     lqOn<LQModelUpdateEvent>(modelUpdateCallback);
@@ -42,6 +55,7 @@ void LQAppController::init() {
     lqOn<tempActionEvent>(tempActionCallback);
     s_gateway = new ClientGateway(s_queries, s_responses);
     s_gatewayThread = new std::thread(std::ref(*s_gateway));
+    s_hover_focus = s_window;
 }
 
 void LQAppController::finalize() {
@@ -141,29 +155,29 @@ void LQAppController::pollResponses() {
             if(rep == 0) {
                 std::cout << "Erreur lors de l'upload du projet. Fin de programme" << std::endl;
             }
-            else if(i < 23) {
-                std::cout << "Projet uploaded" << std::endl;
-                std::string nom = "Projet";
-                std::string tag = "tag";
-                std::string chemin =  R"(D:/Travail/Licence/Semestre 4/HLIN405 - Projet PunyDuck/src/app/test)";
-                std::string descr = R"(Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras ligula tortor, auctor sed gravida quis, finibus et sem. Donec rhoncus justo lacus, vel dictum mi consectetur eu. Cras congue nisl sit amet libero tristique, ullamcorper euismod risus scelerisque. Nullam aliquam ante ac efficitur hendrerit. Nam a tortor sed sapien placerat porta sed ullamcorper est. Aenean semper arcu ut leo porttitor, et tempus risus fringilla. Donec blandit maximus nunc, at lacinia est cursus nec. Vivamus eget eros vitae dui efficitur suscipit. Mauris blandit tempus justo et molestie.
-                Cras sagittis vehicula nibh, in facilisis ipsum sagittis a. Curabitur ut aliquet orci. Nulla fermentum dolor eget lectus sagittis cursus. Nam auctor rutrum sodales. Aliquam risus tortor, facilisis imperdiet urna non, ornare ultrices velit. Vivamus mattis aliquam enim ut interdum. Duis a posuere elit, in rhoncus odio.
+            // else if(i < 23) {
+            //     std::cout << "Projet uploaded" << std::endl;
+            //     std::string nom = "Projet";
+            //     std::string tag = "tag";
+            //     std::string chemin =  R"(D:/Travail/Licence/Semestre 4/HLIN405 - Projet PunyDuck/src/app/test)";
+            //     std::string descr = R"(Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras ligula tortor, auctor sed gravida quis, finibus et sem. Donec rhoncus justo lacus, vel dictum mi consectetur eu. Cras congue nisl sit amet libero tristique, ullamcorper euismod risus scelerisque. Nullam aliquam ante ac efficitur hendrerit. Nam a tortor sed sapien placerat porta sed ullamcorper est. Aenean semper arcu ut leo porttitor, et tempus risus fringilla. Donec blandit maximus nunc, at lacinia est cursus nec. Vivamus eget eros vitae dui efficitur suscipit. Mauris blandit tempus justo et molestie.
+            //     Cras sagittis vehicula nibh, in facilisis ipsum sagittis a. Curabitur ut aliquet orci. Nulla fermentum dolor eget lectus sagittis cursus. Nam auctor rutrum sodales. Aliquam risus tortor, facilisis imperdiet urna non, ornare ultrices velit. Vivamus mattis aliquam enim ut interdum. Duis a posuere elit, in rhoncus odio.
                 
-                Sed sed lorem efficitur, suscipit ante eget, laoreet massa. Suspendisse pellentesque cursus lectus, et tincidunt mauris commodo ac. Aliquam erat volutpat. Nam a ex non sapien ornare iaculis. Integer nec leo accumsan, rutrum lectus sit amet, tempus dolor. Morbi orci sapien, porttitor eu ultricies vel, eleifend sit amet dui. Fusce vitae elit a diam tristique gravida convallis commodo tortor.
-                Aliquam sed nisi nisi. Aliquam tempor egestas nulla, congue vestibulum purus cursus in. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Ut nec erat vitae erat pellentesque finibus nec sed ante. Sed sed posuere leo. Quisque fermentum dolor id ex suscipit placerat eget ac dui. Nam vitae lobortis justo, ut porttitor risus. Nulla venenatis maximus turpis, et ullamcorper quam dapibus sed. Praesent id fringilla metus, eu elementum odio. Nullam urna libero, tincidunt nec nulla nec, imperdiet sollicitudin nunc. Phasellus ut fermentum lectus, a porttitor nisl. Mauris eu sagittis leo. Pellentesque non enim vulputate, posuere risus ac, mattis ante. Aliquam erat volutpat.
-                Vivamus rhoncus ac elit ut pellentesque. Etiam aliquet lorem risus, id porta metus pharetra a. Cras volutpat elit non sapien facilisis, eu volutpat augue sollicitudin. Vivamus pretium augue massa, ac elementum leo condimentum at. Vivamus vitae odio et sem ultricies convallis nec ut est. Maecenas eleifend et velit sit amet convallis. Fusce ligula turpis, pretium id pellentesque vel, cursus vel ligula. Nulla rhoncus nibh eget dui fringilla porta. Cras aliquet, mi ac varius cursus, tellus elit condimentum magna, vitae congue nulla purus et orci. Pellentesque ullamcorper, sem sed ornare blandit, lacus risus porta nunc, non consectetur eros lacus sed tortor. Duis euismod elementum maximus. In at blandit orci. Etiam mollis, nisi sit amet faucibus semper, augue eros gravida metus, non consequat est odio vitae ipsum. Nunc eu ligula vel arcu laoreet ultrices. Cras a dolor eros.
+            //     Sed sed lorem efficitur, suscipit ante eget, laoreet massa. Suspendisse pellentesque cursus lectus, et tincidunt mauris commodo ac. Aliquam erat volutpat. Nam a ex non sapien ornare iaculis. Integer nec leo accumsan, rutrum lectus sit amet, tempus dolor. Morbi orci sapien, porttitor eu ultricies vel, eleifend sit amet dui. Fusce vitae elit a diam tristique gravida convallis commodo tortor.
+            //     Aliquam sed nisi nisi. Aliquam tempor egestas nulla, congue vestibulum purus cursus in. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Ut nec erat vitae erat pellentesque finibus nec sed ante. Sed sed posuere leo. Quisque fermentum dolor id ex suscipit placerat eget ac dui. Nam vitae lobortis justo, ut porttitor risus. Nulla venenatis maximus turpis, et ullamcorper quam dapibus sed. Praesent id fringilla metus, eu elementum odio. Nullam urna libero, tincidunt nec nulla nec, imperdiet sollicitudin nunc. Phasellus ut fermentum lectus, a porttitor nisl. Mauris eu sagittis leo. Pellentesque non enim vulputate, posuere risus ac, mattis ante. Aliquam erat volutpat.
+            //     Vivamus rhoncus ac elit ut pellentesque. Etiam aliquet lorem risus, id porta metus pharetra a. Cras volutpat elit non sapien facilisis, eu volutpat augue sollicitudin. Vivamus pretium augue massa, ac elementum leo condimentum at. Vivamus vitae odio et sem ultricies convallis nec ut est. Maecenas eleifend et velit sit amet convallis. Fusce ligula turpis, pretium id pellentesque vel, cursus vel ligula. Nulla rhoncus nibh eget dui fringilla porta. Cras aliquet, mi ac varius cursus, tellus elit condimentum magna, vitae congue nulla purus et orci. Pellentesque ullamcorper, sem sed ornare blandit, lacus risus porta nunc, non consectetur eros lacus sed tortor. Duis euismod elementum maximus. In at blandit orci. Etiam mollis, nisi sit amet faucibus semper, augue eros gravida metus, non consequat est odio vitae ipsum. Nunc eu ligula vel arcu laoreet ultrices. Cras a dolor eros.
                 
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras ligula tortor, auctor sed gravida quis, finibus et sem. Donec rhoncus justo lacus, vel dictum mi consectetur eu. Cras congue nisl sit amet libero tristique, ullamcorper euismod risus scelerisque. Nullam aliquam ante ac efficitur hendrerit. Nam a tortor sed sapien placerat porta sed ullamcorper est. Aenean semper arcu ut leo porttitor, et tempus risus fringilla. Donec blandit maximus nunc, at lacinia est cursus nec. Vivamus eget eros vitae dui efficitur suscipit. Mauris blandit tempus justo et molestie.
-                Cras sagittis vehicula nibh, in facilisis ipsum sagittis a. Curabitur ut aliquet orci. Nulla fermentum dolor eget lectus sagittis cursus. Nam auctor rutrum sodales. Aliquam risus tortor, facilisis imperdiet urna non, ornare ultrices velit. Vivamus mattis aliquam enim ut interdum. Duis a posuere elit, in rhoncus odio.
+            //     Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras ligula tortor, auctor sed gravida quis, finibus et sem. Donec rhoncus justo lacus, vel dictum mi consectetur eu. Cras congue nisl sit amet libero tristique, ullamcorper euismod risus scelerisque. Nullam aliquam ante ac efficitur hendrerit. Nam a tortor sed sapien placerat porta sed ullamcorper est. Aenean semper arcu ut leo porttitor, et tempus risus fringilla. Donec blandit maximus nunc, at lacinia est cursus nec. Vivamus eget eros vitae dui efficitur suscipit. Mauris blandit tempus justo et molestie.
+            //     Cras sagittis vehicula nibh, in facilisis ipsum sagittis a. Curabitur ut aliquet orci. Nulla fermentum dolor eget lectus sagittis cursus. Nam auctor rutrum sodales. Aliquam risus tortor, facilisis imperdiet urna non, ornare ultrices velit. Vivamus mattis aliquam enim ut interdum. Duis a posuere elit, in rhoncus odio.
                 
-                Sed sed lorem efficitur, suscipit ante eget, laoreet massa. Suspendisse pellentesque cursus lectus, et tincidunt mauris commodo ac. Aliquam erat volutpat. Nam a ex non sapien ornare iaculis. Integer nec leo accumsan, rutrum lectus sit amet, tempus dolor. Morbi orci sapien, porttitor eu ultricies vel, eleifend sit amet dui. Fusce vitae elit a diam tristique gravida convallis commodo tortor.
-                Aliquam sed nisi nisi. Aliquam tempor egestas nulla, congue vestibulum purus cursus in. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Ut nec erat vitae erat pellentesque finibus nec sed ante. Sed sed posuere leo. Quisque fermentum dolor id ex suscipit placerat eget ac dui. Nam vitae lobortis justo, ut porttitor risus. Nulla venenatis maximus turpis, et ullamcorper quam dapibus sed. Praesent id fringilla metus, eu elementum odio. Nullam urna libero, tincidunt nec nulla nec, imperdiet sollicitudin nunc. Phasellus ut fermentum lectus, a porttitor nisl. Mauris eu sagittis leo. Pellentesque non enim vulputate, posuere risus ac, mattis ante. Aliquam erat volutpat.
-                Vivamus rhoncus ac elit ut pellentesque. Etiam aliquet lorem risus, id porta metus pharetra a. Cras volutpat elit non sapien facilisis, eu volutpat augue sollicitudin. Vivamus pretium augue massa, ac elementum leo condimentum at. Vivamus vitae odio et sem ultricies convallis nec ut est. Maecenas eleifend et velit sit amet convallis. Fusce ligula turpis, pretium id pellentesque vel, cursus vel ligula. Nulla rhoncus nibh eget dui fringilla porta. Cras aliquet, mi ac varius cursus, tellus elit condimentum magna, vitae congue nulla purus et orci. Pellentesque ullamcorper, sem sed ornare blandit, lacus risus porta nunc, non consectetur eros lacus sed tortor. Duis euismod elementum maximus. In at blandit orci. Etiam mollis, nisi sit amet faucibus semper, augue eros gravida metus, non consequat est odio vitae ipsum. Nunc eu ligula vel arcu laoreet ultrices. Cras a dolor eros.)";
-                i++;
-                nom += std::to_string(i);
-                tag += std::to_string(i);
-                LQAppController::pushEvent(new upProjectEvent(chemin, nom, tag, descr, "D:/Images/pfp.PNG")); // Dans la class bouton register
-            }
+            //     Sed sed lorem efficitur, suscipit ante eget, laoreet massa. Suspendisse pellentesque cursus lectus, et tincidunt mauris commodo ac. Aliquam erat volutpat. Nam a ex non sapien ornare iaculis. Integer nec leo accumsan, rutrum lectus sit amet, tempus dolor. Morbi orci sapien, porttitor eu ultricies vel, eleifend sit amet dui. Fusce vitae elit a diam tristique gravida convallis commodo tortor.
+            //     Aliquam sed nisi nisi. Aliquam tempor egestas nulla, congue vestibulum purus cursus in. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Ut nec erat vitae erat pellentesque finibus nec sed ante. Sed sed posuere leo. Quisque fermentum dolor id ex suscipit placerat eget ac dui. Nam vitae lobortis justo, ut porttitor risus. Nulla venenatis maximus turpis, et ullamcorper quam dapibus sed. Praesent id fringilla metus, eu elementum odio. Nullam urna libero, tincidunt nec nulla nec, imperdiet sollicitudin nunc. Phasellus ut fermentum lectus, a porttitor nisl. Mauris eu sagittis leo. Pellentesque non enim vulputate, posuere risus ac, mattis ante. Aliquam erat volutpat.
+            //     Vivamus rhoncus ac elit ut pellentesque. Etiam aliquet lorem risus, id porta metus pharetra a. Cras volutpat elit non sapien facilisis, eu volutpat augue sollicitudin. Vivamus pretium augue massa, ac elementum leo condimentum at. Vivamus vitae odio et sem ultricies convallis nec ut est. Maecenas eleifend et velit sit amet convallis. Fusce ligula turpis, pretium id pellentesque vel, cursus vel ligula. Nulla rhoncus nibh eget dui fringilla porta. Cras aliquet, mi ac varius cursus, tellus elit condimentum magna, vitae congue nulla purus et orci. Pellentesque ullamcorper, sem sed ornare blandit, lacus risus porta nunc, non consectetur eros lacus sed tortor. Duis euismod elementum maximus. In at blandit orci. Etiam mollis, nisi sit amet faucibus semper, augue eros gravida metus, non consequat est odio vitae ipsum. Nunc eu ligula vel arcu laoreet ultrices. Cras a dolor eros.)";
+            //     i++;
+            //     nom += std::to_string(i);
+            //     tag += std::to_string(i);
+            //     LQAppController::pushEvent(new upProjectEvent(chemin, nom, tag, descr, "D:/Images/pfp.PNG")); // Dans la class bouton register
+            // }
         }
         if(type == "projectDownloaded") {
             int rep = data.parse<int8_t>();
@@ -179,6 +193,45 @@ void LQAppController::pollResponses() {
             }
         }
         s_responses.pop();
+    }
+}
+
+void LQAppController::setWindow(LQWindow* window) {
+    s_window = window;
+}
+
+void LQAppController::cursor_position_callback(GLFWwindow* window, double mx, double my) {
+    float deltaX = mx - prevAbsX;
+    float deltaY = my - prevAbsY;
+    prevRelX += deltaX;
+    prevRelY += deltaY;
+
+    LQViewable* current = s_hover_focus;
+    bool outCurrent = (prevRelX < 0) || (prevRelX > current->widthF())
+                    || (prevRelY < 0) || (prevRelY > current->heightF());
+    
+    while(outCurrent) {
+        prevRelX -= current->xF();
+        prevRelY -= current->yF();
+        current = static_cast<LQViewable*>(current->parent());
+        outCurrent = (prevRelX < 0) || (prevRelX > current->widthF())
+                    || (prevRelY < 0) || (prevRelY > current->heightF());
+    }
+
+    s_hover_focus = current;
+    current = static_cast<LQViewable*>(current->firstChild()); // On recherche un fils correspondant à notre position
+    while(current) {
+        prevRelX -= current->xF();
+        prevRelY -= current->yF();
+        outCurrent = (prevRelX < 0) || (prevRelX > current->widthF())
+                    || (prevRelY < 0) || (prevRelY > current->heightF());
+        if(outCurrent) {
+            current = static_cast<LQViewable*>(current->nextSibling());
+        }
+        else {
+            s_hover_focus = current;
+            current = static_cast<LQViewable*>(current->firstChild());
+        }
     }
 }
 
