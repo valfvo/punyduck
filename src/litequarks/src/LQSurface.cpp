@@ -69,8 +69,6 @@ LQSurface::LQSurface(LQNumber&& _x, LQNumber&& _y,
     clear();
     if (!iconPath.empty()) {
         LQTexture icon("images/" + iconPath, m_width.f(), m_height.f());
-        // icon.m_texWidth = m_width.f();
-        // icon.m_texHeight = m_height.f();
         blit(icon, 0.0f, 0.0f, m_VAO);
     }
 }
@@ -200,19 +198,15 @@ void LQSurface::drawChildren() {
     }
 }
 
-void LQSurface::blit(
-    const LQTexture& texture, GLfloat x, GLfloat y, GLuint VAO)
+void LQSurface::blit(const LQTexture& texture, GLfloat x, GLfloat y, GLuint VAO)
 {
-    if (!m_id || !texture.m_id) {
-        std::cout << "can't blit texture" << std::endl;
-        return;
-    }
     glm::mat4 model = glm::translate(glm::mat4(1.0f), glm::vec3(x, y, 0.0f));
     model = glm::scale(model, glm::vec3(texture.m_texWidth, texture.m_texHeight, 1.0f));
 
     m_shader->use();
     m_shader->set("model", model);
-    m_shader->set("projection", glm::ortho(0.0f, m_width.f(), m_height.f(), 0.0f, -1.0f, 0.0f));
+    m_shader->set("projection",
+        glm::ortho(0.0f, m_width.f(), m_height.f(), 0.0f, -1.0f, 0.0f));
     m_shader->set("texture0", 0);
 
     glViewport(0, 0, m_width, m_height);
@@ -229,7 +223,7 @@ void LQSurface::blit(
 
 void LQSurface::blit(LQSurface const& surface) {
     glm::mat4 model = glm::translate(glm::mat4(1.0f),
-        glm::vec3(surface.m_x.f(), surface.m_y.f(), 0.0f));
+        glm::vec3(surface.m_x.i(), surface.m_y.i(), 0.0f));
     model = glm::scale(model,
         glm::vec3(surface.m_width.f(), surface.m_height.f(), 1.0f));
 

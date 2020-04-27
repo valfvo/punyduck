@@ -32,6 +32,10 @@ void LQNumber::recalc() {
     }
 }
 
+float LQNumber::i() const {
+    return int(m_value);
+}
+
 float LQNumber::f() const {
     return m_value;
 }

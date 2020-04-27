@@ -29,6 +29,7 @@ public:
 
     void recalc();
 
+    float i() const;
     float f() const;
     operator float() const;
 

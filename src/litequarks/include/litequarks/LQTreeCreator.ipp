@@ -25,7 +25,7 @@ LQTreeCreator<TRoot, TQuark>::
 sub()
 {
     if (m_quark->lastChild()) {
-        m_quark = m_quark->lastChild();
+        m_quark = static_cast<TRoot*>(m_quark->lastChild());
         *m_currentParent = static_cast<TQuark*>(m_quark);
         *m_currentPrevSibling = static_cast<TQuark*>(m_quark->lastChild());
     }
@@ -38,7 +38,7 @@ LQTreeCreator<TRoot, TQuark>::
 super()
 {
     if (m_quark != m_root) {
-        m_quark = m_quark->parent();
+        m_quark = static_cast<TRoot*>(m_quark->parent());
         *m_currentParent = static_cast<TQuark*>(m_quark);
         *m_currentPrevSibling = static_cast<TQuark*>(m_quark->lastChild());
     }

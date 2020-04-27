@@ -42,9 +42,9 @@ public:
     {
         LQViewable *parent, *prev;
         createTree(*this, parent, prev)
-        .add<LQText>("Accueil", 10_px, 1_em, parent->height())
-        .add<LQText>("Projets", prev->right()+10_px, 1_em, parent->height())
-        .add<LQText>("Collection", prev->right()+10_px, 1_em, parent->height());
+        .add<LQText>("Accueil", 10_px, 2_em, parent->height(), 0xffffff)
+        .add<LQText>("Projets", prev->right()+10_px, 2_em, parent->height(), 0xffffff)
+        .add<LQText>("Collection", prev->right()+10_px, 2_em, parent->height(), 0xffffff);
     }
 };
 
@@ -58,6 +58,7 @@ int main() {
     initModelsConstructors();
 
     LQWindow window(SCREEN_WIDTH, SCREEN_HEIGHT, "Punyduck");
+    window.setClearColor(0xffffff);
 
     LQSurface *parent, *prev;
     createTree(window, parent, prev)
@@ -72,8 +73,9 @@ int main() {
     // std::cin >> action;
     // LQAppController::pushEvent(new tempActionEvent(action));
 
+    window.drawChildren();
     while (window.alive()) {
-        window.drawChildren();
+        // window.drawChildren();
         window.update();
     }
 
