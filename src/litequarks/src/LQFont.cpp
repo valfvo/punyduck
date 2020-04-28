@@ -112,7 +112,7 @@ LQText LQFont::renderText(
         ++iGlyph;
     }
 
-    LQText renderedText(std::move(x), y - ascender,
+    LQText renderedText(text, std::move(x), y - ascender,
                         width, ascender + descender, ascender);
     renderedText.setClearColor(c.r(), c.g(), c.b(), 0.0f);
     renderedText.clear();

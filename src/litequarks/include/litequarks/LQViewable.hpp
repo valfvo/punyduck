@@ -14,6 +14,7 @@ public:
     LQViewable(LQNumber&& x, LQNumber&& y, bool flex=true);
     // LQViewable(LQNumber x, LQNumber y, LQImageData& image);
     LQViewable(LQViewable&& other) = default;
+    ~LQViewable() override;
 
     bool hidden();
     void hide();

@@ -62,10 +62,12 @@ int main() {
 
     LQSurface *parent, *prev;
     createTree(window, parent, prev)
+    // .add<LQTextArea>(150_px, 150_px, 100_px, 25_px, 0xE9E9E9, "Rechercher...");
     .add<NavBar>(0.0f, 0.0f, parent->width(), 1_wu)
     .add<ProjectView>(0.0f, prev->height(), parent->width(),
                       parent->height() - prev->height(), 0xD9D9D9);
-
+    // auto t = LQText::s_font.renderText(U"a", 0x000000, 200_px, 200_px, 1_em);
+    // window.appendChild(&t);
     // LQAppModel::dataQuery("projectSELECT idProjet, nom, tag, pDescr, pPathImage, login FROM Projet, UserInfo WHERE pIdLog = idLog;");
     LQAppModel::dataQuery("projectSELECT idProjet, nom, tag FROM Projet;");
     // int action;
@@ -73,9 +75,9 @@ int main() {
     // std::cin >> action;
     // LQAppController::pushEvent(new tempActionEvent(action));
 
-    window.drawChildren();
+    // window.drawChildren();
     while (window.alive()) {
-        // window.drawChildren();
+        window.drawChildren();
         window.update();
     }
 

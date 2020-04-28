@@ -26,6 +26,23 @@ public:
     const float my;
 };
 
+class LQFocusGainEvent : public LQEvent {
+public:
+    LQFocusGainEvent(void* target);
+};
+
+class LQFocusLoseEvent : public LQEvent {
+public:
+    LQFocusLoseEvent(void* target);
+};
+
+class LQCharEvent : public LQEvent {
+public:
+    LQCharEvent(void* target, char32_t codepoint);
+
+    const std::u32string codepoint;
+};
+
 class LQDataQueryEvent : public LQEvent {
 public:
     LQDataQueryEvent(void* target, const std::string& query);

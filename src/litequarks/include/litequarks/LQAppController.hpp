@@ -4,6 +4,8 @@
 #include <mutex>
 #include <queue>
 #include <thread>
+#include <typeinfo>
+#include <typeindex>
 #include <unordered_map>
 #include <utility>  // std::pair
 #include <vector>
@@ -37,10 +39,22 @@ public:
 
     static void pollResponses();
 
+    template<class TEvent>
+    static bool hasCallback(void* target);
+
     static void setWindow(LQWindow* window);
 
+    static LQViewable* getEligibleFocus();
+
+    static void removeFocus(LQViewable* viewable);
+
     static void cursor_position_callback(GLFWwindow* window, double mx, double my);
-    
+
+    static void mouse_button_callback(GLFWwindow* window, int button,
+                                      int action, int mods);
+
+    static void character_callback(GLFWwindow* window, unsigned int codepoint);
+  
     static void dataQueryCallback(LQDataQueryEvent& event);
 
     static void modelUpdateCallback(LQModelUpdateEvent& event);
@@ -89,6 +103,9 @@ protected:
 
     static LQViewable*
     s_hover_focus;
+
+    static LQViewable*
+    s_focus;
 
     static float prevAbsX, prevAbsY, prevRelX, prevRelY;
 };

@@ -6,6 +6,8 @@ LQuark::LQuark()
 {
 }
 
+LQuark::~LQuark() { }
+
 LQuark* LQuark::parent() const {
     return m_parent;
 }

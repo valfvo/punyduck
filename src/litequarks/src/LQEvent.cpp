@@ -1,6 +1,6 @@
 #include <litequarks/LQEvent.hpp>
 #include <cstdint>
-#include <iostream>
+
 LQEvent::LQEvent(const std::type_info& _type, void* _target)
 : type(_type), target(_target)
 { }
@@ -9,6 +9,15 @@ LQEvent::~LQEvent() { }
 
 LQClickEvent::LQClickEvent(void* _target, float _mx, float _my)
 : LQEvent(typeid(LQClickEvent), _target), mx(_mx), my(_my) { }
+
+LQFocusGainEvent::LQFocusGainEvent(void* _target)
+: LQEvent(typeid(LQFocusGainEvent), _target) { }
+
+LQFocusLoseEvent::LQFocusLoseEvent(void* _target)
+: LQEvent(typeid(LQFocusLoseEvent), _target) { }
+
+LQCharEvent::LQCharEvent(void* _target, char32_t _codepoint)
+: LQEvent(typeid(LQCharEvent), _target), codepoint(1, _codepoint) { }
 
 LQDataQueryEvent::LQDataQueryEvent(void* _target, const std::string& _query)
 : LQEvent(typeid(LQDataQueryEvent), _target), query(_query) { }

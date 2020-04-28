@@ -20,5 +20,6 @@ protected:
     float m_coeff;
     LQMathVar* m_next;
 
+    friend class LQNumber;
     friend class LQMathExpr;
 };

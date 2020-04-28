@@ -1,8 +1,8 @@
 #include <litequarks/LQAppController.hpp>
 #include <litequarks/LQAppModel.hpp>
 #include <litequarks/LQRawData.hpp>
+
 #include <iostream>
-#include <typeinfo>
 
 std::queue<LQEvent*>
 LQAppController::s_eventQueue;
@@ -36,12 +36,18 @@ LQAppController::s_window = nullptr;
 LQViewable*
 LQAppController::s_hover_focus = nullptr;
 
+LQViewable*
+LQAppController::s_focus = nullptr;
+
 float
 LQAppController::prevAbsX = 0;
+
 float
 LQAppController::prevAbsY = 0;
+
 float
 LQAppController::prevRelX = 0;
+
 float
 LQAppController::prevRelY = 0;
 
@@ -55,7 +61,6 @@ void LQAppController::init() {
     lqOn<tempActionEvent>(tempActionCallback);
     s_gateway = new ClientGateway(s_queries, s_responses);
     s_gatewayThread = new std::thread(std::ref(*s_gateway));
-    s_hover_focus = s_window;
 }
 
 void LQAppController::finalize() {
@@ -94,6 +99,7 @@ void LQAppController::pollEvents() {
         auto dispatch =
             s_eventDispatcher[std::make_pair(event->type, event->target)];
         dispatch(event);
+        delete event;
         s_eventQueue.pop();
     }
 }
@@ -196,42 +202,108 @@ void LQAppController::pollResponses() {
     }
 }
 
+template<class TEvent>
+bool LQAppController::hasCallback(void* target) {
+    auto event = std::make_pair(std::type_index(typeid(TEvent)), target);
+    return s_eventDispatcher.find(event) != s_eventDispatcher.end();
+}
+
 void LQAppController::setWindow(LQWindow* window) {
     s_window = window;
+    if (!s_hover_focus) {
+        s_hover_focus = s_window;
+        s_focus = s_window;
+    }
+}
+
+LQViewable* LQAppController::getEligibleFocus() {
+    LQViewable* eligible = s_hover_focus;
+    while (!hasCallback<LQFocusGainEvent>(eligible)) {
+        eligible = static_cast<LQViewable*>(eligible->parent());
+    }
+    return eligible;
+}
+
+void LQAppController::removeFocus(LQViewable* viewable) {
+    if (viewable == s_hover_focus) {
+        prevRelX = prevAbsX;
+        prevRelY = prevAbsY;
+        s_hover_focus = s_window;
+    }
+    if (viewable == s_focus) {
+        s_focus = s_window;
+    }
 }
 
 void LQAppController::cursor_position_callback(GLFWwindow* window, double mx, double my) {
+    // std::cout << "\nmx my:"<< mx << " " << my << std::endl;
     float deltaX = mx - prevAbsX;
     float deltaY = my - prevAbsY;
     prevRelX += deltaX;
     prevRelY += deltaY;
 
+    // std::cout << "deb:"<< prevRelX<<' '<<prevRelY <<' '<<prevAbsX<<' '<<prevAbsY<< std::endl;
+
     LQViewable* current = s_hover_focus;
-    bool outCurrent = (prevRelX < 0) || (prevRelX > current->widthF())
-                    || (prevRelY < 0) || (prevRelY > current->heightF());
-    
-    while(outCurrent) {
-        prevRelX -= current->xF();
-        prevRelY -= current->yF();
+    // std::cout << "current:"<<current->xF()<<' '<<current->yF()<<' '<<current->widthF()<<' '<<current->heightF()<<std::endl;
+    bool outCurrent = prevRelX < 0 || prevRelX > current->widthF() ||
+                      prevRelY < 0 || prevRelY > current->heightF();
+
+    while (outCurrent && current != s_window) {
+        // std::cout << current << ' ' << s_window << std::endl;
+        prevRelX += current->xF();
+        prevRelY += current->yF();
+        // std::cout << prevRelX << " " << prevRelY << std::endl;
         current = static_cast<LQViewable*>(current->parent());
-        outCurrent = (prevRelX < 0) || (prevRelX > current->widthF())
-                    || (prevRelY < 0) || (prevRelY > current->heightF());
+        outCurrent = prevRelX < 0 || prevRelX > current->widthF() ||
+                     prevRelY < 0 || prevRelY > current->heightF();
     }
 
     s_hover_focus = current;
     current = static_cast<LQViewable*>(current->firstChild()); // On recherche un fils correspondant à notre position
-    while(current) {
-        prevRelX -= current->xF();
-        prevRelY -= current->yF();
-        outCurrent = (prevRelX < 0) || (prevRelX > current->widthF())
-                    || (prevRelY < 0) || (prevRelY > current->heightF());
-        if(outCurrent) {
+    while (current) {
+        outCurrent =
+            prevRelX < current->xF() || prevRelY < current->yF() ||
+            prevRelX > current->xF() + current->widthF() ||
+            prevRelY > current->yF() + current->heightF();
+        if (outCurrent) {
             current = static_cast<LQViewable*>(current->nextSibling());
         }
         else {
             s_hover_focus = current;
+            prevRelX -= current->xF();
+            prevRelY -= current->yF();
             current = static_cast<LQViewable*>(current->firstChild());
         }
+    }
+
+    prevAbsX = mx;
+    prevAbsY = my;
+    // std::cout << "end " << mx << " " << my << std::endl;
+    // std::cout << "end:"<< prevRelX<<' '<<prevRelY <<' '<<prevAbsX<<' '<<prevAbsY<< std::endl;
+}
+
+void LQAppController::mouse_button_callback(
+    GLFWwindow* window, int button, int action, int mods)
+{
+    if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS) {
+        auto eligible = getEligibleFocus();
+        if (s_focus != eligible) {
+            if (hasCallback<LQFocusLoseEvent>(s_focus)) {
+                s_eventQueue.push(new LQFocusLoseEvent(s_focus));
+            }
+            s_eventQueue.push(new LQFocusGainEvent(eligible));
+            s_focus = eligible;
+        }
+        if (hasCallback<LQClickEvent>(s_hover_focus)) {
+            s_eventQueue.push(new LQClickEvent(s_focus, prevRelX, prevRelY));
+        }
+    }
+}
+
+void LQAppController::character_callback(GLFWwindow* window, unsigned int codepoint) {
+    if (hasCallback<LQCharEvent>(s_focus)) {
+        s_eventQueue.push(new LQCharEvent(s_focus, codepoint));
     }
 }
 

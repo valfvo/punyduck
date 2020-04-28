@@ -1,4 +1,5 @@
 #include <litequarks/LQViewable.hpp>
+#include <litequarks/LQAppController.hpp>
 
 LQViewable::LQViewable()
 : LQSurface(), m_flex(false), m_hidden(false) { }
@@ -23,6 +24,10 @@ LQViewable::LQViewable(LQNumber&& x, LQNumber&& y,
 LQViewable::LQViewable(LQNumber&& x, LQNumber&& y, bool flex)
 : LQSurface(std::move(x), std::move(y), 0.0f, 0.0f),
   m_flex(flex), m_hidden(false) { }
+
+LQViewable::~LQViewable() {
+    LQAppController::removeFocus(this);
+}
 
 bool LQViewable::hidden() {
     return m_hidden;

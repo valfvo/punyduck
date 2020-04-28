@@ -14,8 +14,8 @@ class LQText;
 
 class LQText : public LQViewable {
 public:
-    LQText(LQNumber&& x, LQNumber&& y, LQNumber&& width, LQNumber&& height,
-           int baseline);
+    LQText(const std::u32string& text, LQNumber&& x, LQNumber&& y,
+           LQNumber&& width, LQNumber&& height, int baseline);
     LQText(const std::string& text, LQNumber&& x, LQNumber&& y,
            LQNumber&& height=LQUnit::operator""_em(1ULL), GLint color=0x000000);
     LQText(LQText&& other) = default;
@@ -33,7 +33,13 @@ public:
     static LQFont
     s_font;
 
-private:
+protected:
+    // m_text += codepoint
+    // renderedChar = renderText(codepoint, ...)
+    // width() += renderedChar.widthF()
+    // blit(renderedChar)
     std::u32string m_text;
     int m_baseline;
+
+    friend class LQTextArea;
 };

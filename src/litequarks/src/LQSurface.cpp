@@ -286,8 +286,8 @@ void LQSurface::linkFramebuffer() {
 }
 
 void LQSurface::linkMetrics() {
-    m_x.linkQuark<LQSurface, resizeCallback>(*this);
-    m_y.linkQuark<LQSurface, resizeCallback>(*this);
+    m_x.linkQuark<LQSurface>(*this);
+    m_y.linkQuark<LQSurface>(*this);
     m_width.linkQuark<LQSurface, resizeCallback>(*this);
     m_height.linkQuark<LQSurface, resizeCallback>(*this);
 }

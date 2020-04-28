@@ -25,6 +25,8 @@ public:
     GLint getWidth() const;
     GLint getHeight() const;
 
+    static void deleteTexture(LQTexture& texture);
+
 protected:
     GLuint genTexture();
     LQTexture resize(GLuint texWidth, GLuint texHeight);

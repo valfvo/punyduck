@@ -5,6 +5,7 @@
 class LQuark {
 public:
     LQuark();
+    virtual ~LQuark();
     // accessors
     LQuark* parent() const;
     LQuark* firstChild() const;

@@ -30,7 +30,7 @@ public:
 
 class UL_Project : public LQViewable {
 public:
-    UL_Project(LQNumber&& x, LQNumber&& y);
+    UL_Project(LQNumber&& x, LQNumber&& y, LQNumber&& width);
     void addProject(Project* project);
     void toggleListView();
     void toggleGridView();

@@ -11,6 +11,7 @@
 #include <litequarks/LQColor.hpp>
 #include <litequarks/LQFont.hpp>
 #include <litequarks/LQText.hpp>
+#include <litequarks/LQTextArea.hpp>
 #include <litequarks/LQRawData.hpp>
 
 #include <litequarks/LQAppController.hpp>

@@ -111,6 +111,10 @@ GLint LQTexture::getHeight() const {
     return m_texHeight;
 }
 
+void LQTexture::deleteTexture(LQTexture& texture) {
+    glDeleteTextures(1, &texture.m_id);
+}
+
 GLuint LQTexture::genTexture() {
     GLuint id = 0;
     if (m_texWidth >= 1 && m_texHeight >= 1) {

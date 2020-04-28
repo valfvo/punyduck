@@ -41,6 +41,8 @@ protected:
     LQMathVar* m_first;
     LQMathVar* m_last;
     float m_constant;
+
+    friend class LQNumber;
 };
 
 LQMathExpr&& operator+(float constant, LQMathExpr&& expr);

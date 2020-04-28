@@ -12,6 +12,8 @@ public:
     void update();
     bool alive() const;
 
+    void onFocusGain();
+
 private:
     void framebufferSizeCallback(GLFWwindow* window, int width, int height);
     void processInput(GLFWwindow* window);

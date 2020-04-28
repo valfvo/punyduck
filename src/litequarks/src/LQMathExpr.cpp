@@ -164,14 +164,18 @@ void LQMathExpr::addCompatible(LQMathVar* first, float coeff) {
         &p_number->m_expr.m_last :
         &p_number->m_expr.m_first;
 
-    for (auto* p_var = first->m_next; p_var; p_var = p_var->m_next) {
-        if (first->compatible(*p_number)) {
-            first->m_coeff *= coeff;
-            *pp_var = first;
+    auto* p_var = first;
+    while (p_var) {
+        if (p_var->compatible(*p_number)) {
+            p_var->m_coeff *= coeff;
+            *pp_var = p_var;
             pp_var = &(*pp_var)->m_next;
-            first->m_number->m_refs.push_front(p_number);
+            p_var->m_number->m_refs.push_front(p_number);
+            p_var = p_var->m_next;
         }
         else {
+            first = p_var;
+            p_var = p_var->m_next;
             delete first;
         }
     }

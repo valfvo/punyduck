@@ -45,14 +45,14 @@ void LI_Project::toggleListView(GLfloat y, GLfloat width, GLfloat height) {
 }
 
 
-UL_Project::UL_Project(LQNumber&& x, LQNumber&& y)
+UL_Project::UL_Project(LQNumber&& x, LQNumber&& y, LQNumber&& width)
 : LQViewable(std::move(x), std::move(y))
 {
     // appendChild(new LQViewable(0.0f, 0.0f, 0.70f * 1280.0f, 5_em, 0xE9E9E9));
     setClearColor(0xb5b3b3);
     LQViewable *parent, *prev;
     createTree(*this, parent, prev)
-    .add<LQViewable>(0.0f, 0.0f, 0.70f * 1280.0f, 5_em, 0xE9E9E9).sub()
+    .add<LQViewable>(0.0f, 0.0f, std::move(width), 5_em, 0xE9E9E9).sub()
         .add<IMG>(1_em, 1_em, 3_em, 3_em, 0xE9E9E9, "defaultpp.png")
         .add<LQText>("Darwin's Nightmare", prev->right()+20_px, 3_em, 1_em, 0x595959)
         .add<LQText>("jeu", prev->right()+20_px, 3_em, 1_em, 0x356b34).super()
@@ -80,6 +80,7 @@ UL_Project::UL_Project(LQNumber&& x, LQNumber&& y)
         .add<IMG>(1_em, 1_em, 3_em, 3_em, 0xE9E9E9, "defaultpp.png")
         .add<LQText>("Darwin's Nightmare", prev->right()+20_px, 3_em, 1_em, 0x595959)
         .add<LQText>("jeu", prev->right()+20_px, 3_em, 1_em, 0x356b34);
+
     // appendChild(new LQViewable(0.0f, -1_hu, 6_hu, 1_hu));
     // static_cast<LQViewable*>(firstChild())->hide();
 
@@ -154,7 +155,10 @@ SearchBar::SearchBar(LQNumber&& _x, LQNumber&& _y,
     LQViewable *parent, *prev;
     createTree(*this, parent, prev)
     .add<IMG>(12.5f, 12.5f, 25.0f, 25.0f, 0xE9E9E9, "search-icon.png")
-    .add<LQText>("Rechercher...", prev->right()+12_px, 30_px, 1_em, 0x808080);
+    .add<LQTextArea>(prev->right()+12_px, 0.0f, parent->width()-25_px,
+                     parent->height(), 0xE9E9E9, "Rechercher...");
+    // .add<LQTextArea>(prev->right()+12_px, 10_px, 0x808080, "Rechercher...")
+    // .add<LQText>("Rechercher...", prev->right()+12_px, 30_px, 1_em, 0x808080);
     // .add<LQButton>(prev->right()+0.5_wu, 0.0f, parent->height(), parent->height());
 }
 
@@ -192,5 +196,5 @@ ProjectView::ProjectView(LQNumber&& x, LQNumber&& y, LQNumber&& w, LQNumber&& h,
     .add<LQButton>(prev->left()-75_px, prev->top(),
                    prev->width(), prev->height(), "grid-view-icon.png")
     .add<SearchBar>(prev->left()-525_px, prev->top(), 500_px, prev->height())
-    .add<UL_Project>(0.15f * 1280.0f, 150_px);
+    .add<UL_Project>(0.15f * parent->width(), 150_px, 0.70f * parent->width());
 };

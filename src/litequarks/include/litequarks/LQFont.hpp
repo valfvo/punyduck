@@ -38,7 +38,6 @@ public:
     static void init();
 
 private:
-
     FT_Face m_face;
     std::unordered_map<char32_t, LQGlyph> m_glyphs;
 
