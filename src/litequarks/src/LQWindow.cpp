@@ -28,6 +28,7 @@ LQWindow::LQWindow(int _width, int _height, char const* title)
     glfwSetFramebufferSizeCallback(m_window, LQWindowFBSizeCallback);
     glfwSetCursorPosCallback(m_window, LQAppController::cursor_position_callback);
     glfwSetMouseButtonCallback(m_window, LQAppController::mouse_button_callback);
+    glfwSetKeyCallback(m_window, LQAppController::key_callback);
     glfwSetCharCallback(m_window, LQAppController::character_callback);
 
     if (!gladLoadGLLoader(reinterpret_cast<GLADloadproc>(glfwGetProcAddress))) {
@@ -87,3 +88,4 @@ void LQWindowFBSizeCallback(GLFWwindow* window, int width, int height) {
     auto lqWindow = static_cast<LQWindow*>(glfwGetWindowUserPointer(window));
     lqWindow->framebufferSizeCallback(window, width, height);
 }
+    

@@ -226,9 +226,9 @@ LQViewable* LQAppController::getEligibleFocus() {
 
 void LQAppController::removeFocus(LQViewable* viewable) {
     if (viewable == s_hover_focus) {
+        s_hover_focus = s_window;
         prevRelX = prevAbsX;
         prevRelY = prevAbsY;
-        s_hover_focus = s_window;
     }
     if (viewable == s_focus) {
         s_focus = s_window;
@@ -255,9 +255,12 @@ void LQAppController::cursor_position_callback(GLFWwindow* window, double mx, do
         prevRelY += current->yF();
         // std::cout << prevRelX << " " << prevRelY << std::endl;
         current = static_cast<LQViewable*>(current->parent());
+        // std::cout << "parent: " << current << std::endl;
         outCurrent = prevRelX < 0 || prevRelX > current->widthF() ||
                      prevRelY < 0 || prevRelY > current->heightF();
     }
+
+    // std::cout << "mid" << std::endl;
 
     s_hover_focus = current;
     current = static_cast<LQViewable*>(current->firstChild()); // On recherche un fils correspondant à notre position
@@ -298,6 +301,14 @@ void LQAppController::mouse_button_callback(
         if (hasCallback<LQClickEvent>(s_hover_focus)) {
             s_eventQueue.push(new LQClickEvent(s_focus, prevRelX, prevRelY));
         }
+    }
+}
+
+void LQAppController::key_callback(
+    GLFWwindow* window, int key, int scancode, int action, int mods)
+{
+    if (hasCallback<LQKeyEvent>(s_focus)) {
+        s_eventQueue.push(new LQKeyEvent(s_focus, key, action, mods));
     }
 }
 

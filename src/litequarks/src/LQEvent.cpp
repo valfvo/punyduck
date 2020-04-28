@@ -19,6 +19,10 @@ LQFocusLoseEvent::LQFocusLoseEvent(void* _target)
 LQCharEvent::LQCharEvent(void* _target, char32_t _codepoint)
 : LQEvent(typeid(LQCharEvent), _target), codepoint(1, _codepoint) { }
 
+LQKeyEvent::LQKeyEvent(void* _target, int _key, int _action, int _mods)
+: LQEvent(typeid(LQKeyEvent), _target), key(_key), action(_action), mods(_mods)
+{ }
+
 LQDataQueryEvent::LQDataQueryEvent(void* _target, const std::string& _query)
 : LQEvent(typeid(LQDataQueryEvent), _target), query(_query) { }
 

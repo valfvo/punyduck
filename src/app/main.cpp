@@ -69,7 +69,7 @@ int main() {
     // auto t = LQText::s_font.renderText(U"a", 0x000000, 200_px, 200_px, 1_em);
     // window.appendChild(&t);
     // LQAppModel::dataQuery("projectSELECT idProjet, nom, tag, pDescr, pPathImage, login FROM Projet, UserInfo WHERE pIdLog = idLog;");
-    LQAppModel::dataQuery("projectSELECT idProjet, nom, tag FROM Projet;");
+    LQAppModel::dataQuery("projectSELECT idProjet, nom, tag FROM Projet LIMIT 20;");
     // int action;
     // std::cout << "Choissisez une action (1 login 2 register 3 upProjet 4 dlProject)" << std::endl;
     // std::cin >> action;

@@ -43,6 +43,15 @@ public:
     const std::u32string codepoint;
 };
 
+class LQKeyEvent : public LQEvent {
+public:
+    LQKeyEvent(void* target, int key, int action, int mods);
+
+    const int key;
+    const int action;
+    const int mods;
+};
+
 class LQDataQueryEvent : public LQEvent {
 public:
     LQDataQueryEvent(void* target, const std::string& query);

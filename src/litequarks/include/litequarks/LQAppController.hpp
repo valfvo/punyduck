@@ -53,6 +53,9 @@ public:
     static void mouse_button_callback(GLFWwindow* window, int button,
                                       int action, int mods);
 
+    static void key_callback(GLFWwindow* window, int key, int scancode,
+                             int action, int mods);
+
     static void character_callback(GLFWwindow* window, unsigned int codepoint);
   
     static void dataQueryCallback(LQDataQueryEvent& event);
