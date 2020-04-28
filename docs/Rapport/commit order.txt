@@ -1,0 +1,24 @@
+Selon les commits du git (tout est donnée dans l'ordre, donc du plus vieux au plus récent, 20->13)
+
+du 20 janvier au 13 fevrier :
+	-Cahier des charges, listes des fonctionnalités.
+
+Du 30 janvier au 24 fevrier :
+	-Réseau : ajout de client et creation de server
+		fichier test, transfert de ficher, communication chemin/nom
+		Optimisation, corréction de bug.
+		Asyncio finalisation du transfer de dossier dans les deux sens
+	-FrameWork: ajout test opengl/litequarks et test framework.
+	-première version du site
+
+du 5 mars au 1 avril :
+	-Réseau : bases de données/mise en place des requêtes client serveur (c++ à python)/callback event
+	-FrameWork : Ajout LQuark LQSurface / responsive / LqTreeCreator /debut du model
+
+du 1 avril au 28 avril:
+	-Réseau : Système d'appel / gestion des requêtes SQL / structures du modèle 
+		/ Ajout de callback (telechargement de projet / login /register)
+	-FrameWork et FrontWork : réunisage du code / v2 système métrique et refactoring / v2 affichage du texte
+		/displayFlex() et displayBlock() / Correctif / page projets / Peaufinage et corréctif
+		/Affichage de la vue / Souris / LQTextArea.
+	-Site et rapport : v2 du site / rapport en cours.
