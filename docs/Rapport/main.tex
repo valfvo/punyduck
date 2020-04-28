@@ -198,32 +198,163 @@ Les interactions avec l'interface concernant le profil sont, la modification de 
 
 %.Partie 5 1/2 pages
 \chapter{Gestion du Projet}
-\section{Organisation et planification} %gantt et autres document de planification plus présentation de la gestion
-
+\section{Organisation et planification} 
+%gantt en latex, les [progress=0] ne sont pas obligatoire. Il faut rassembler plusieurs commit en un.
 \begin{comment} %ça met en commentaire
-\begin{document}
-    \begin{center}
-    \begin{ganttchart}{12}
-        \gantttitle{2013}{12} \\
-        \gantttitlelist{1,...,12}{1} \\
-        \ganttgroup{Group 1}{1}{7} \\
-        \ganttbar{Task 1}{1}{2} \\
-        \ganttlinkedbar{Task 2}{3}{7}
-        \ganttnewline
-        \ganttmilestone{Milestone}{7}
-        \ganttnewline
-        \ganttbar{Final Task}{8}{12}
-        \ganttlink{elem2}{elem3}
-        \ganttlink{elem3}{elem4}
-    \end{ganttchart}
-    \end{center}
-\end{document}
+\definecolor{bargreen}{RGB}{133,193,132}
+\definecolor{groupgreen}{RGB}{53,107,52}
+\definecolor{darkgreen}{RGB}{35,68,35}
+\definecolor{linkred}{RGB}{165,0,33} %rouge
+
+%police du gantt au choix selon préférence
+%\renewcommand\sfdefault{phv}
+%\renewcommand\mddefault{mc}
+%\renewcommand\bfdefault{bc}
+
+\setganttlinklabel{s-s}{START-TO-START}
+\setganttlinklabel{f-s}{FINISH-TO-START}
+\setganttlinklabel{f-f}{FINISH-TO-FINISH}
+\sffamily
+\begin{ganttchart}[
+    canvas/.append style={fill=none, draw=black!25, line width=3pt},
+    hgrid style/.style={draw=black!5, line width=.75pt},
+    vgrid={*1{draw=black!5, line width=.75pt}},
+    today label font=\small\bfseries,
+    title/.style={draw=none, fill=none},
+    title label font=\bfseries\footnotesize,
+    title label node/.append style={below=7pt},
+    include title in canvas=false,
+    %Zone des sous parties d'un groupe
+    bar label font=\mdseries\small\color{black!90},
+    bar label node/.append style={left=1.8cm},
+    bar/.append style={draw=none, fill=darkgreen!60},
+    bar incomplete/.append style={fill=bargreen},
+    bar progress label font=\mdseries\footnotesize\color{black!70},
+    %tête de groupe (Réseau, framwork)
+    group incomplete/.append style={fill=groupgreen!85},
+    group/.append style={draw=none, fill=darkgreen},
+    group left shift=0,
+    group right shift=0,
+    group height=0.3,
+    group peaks tip position=0,
+    group label node/.append style={left=2.5cm},
+    group progress label font=\bfseries\small,
+    %zone rouge / avancement
+    link/.style={-latex, line width=1.5pt, linkred},
+    link label font=\scriptsize\bfseries,
+    link label node/.append style={below left=-2pt and 0pt}
+  ]{1}{15}
+  \gantttitle[
+    title label node/.append style={below left=7pt and -3pt}
+  ]{SEMAINES:\quad1}{1}
+  \gantttitlelist{2,...,15}{1} \\
+  \ganttgroup{Partie Réseaux}{1}{15} \\
+  \ganttbar[progress=75,name=PR1A]{\textbf{PR 1.1} Activité A}{1}{8} \\
+  \ganttbar[progress=67,name=PR1B]{\textbf{PR 1.2} Activité B}{1}{3} \\
+  \ganttbar[progress=50,name=PR1C]{\textbf{PR 1.3} Activité C}{4}{10} \\
+  \ganttbar[progress=0,name=PR1D]{\textbf{PR 1.4} Activité D}{4}{10} \\[grid]
+  \ganttgroup{Partie framwork}{1}{25} \\
+  \ganttbar[progress=0]{\textbf{PFRA 2.1} Activité E}{4}{5} \\
+  \ganttbar[progress=0]{\textbf{PFRA 2.2} Activité F}{6}{8} \\
+  \ganttbar[progress=0]{\textbf{PFRA 2.3} Activité G}{9}{10}\\[grid]
+  \ganttgroup{Partie Rapport}{15}{25} \\
+  \ganttbar[progress=0]{\textbf{PRA 2.1} Activité K}{4}{5} \\
+  \ganttbar[progress=0]{\textbf{PRA 2.2} Activité L}{6}{8} 
+  
+  %link entre activitées
+  \ganttlink[link type=s-s]{PR1A}{PR1B}
+  \ganttlink[link type=f-s]{PR1B}{PR1C}
+  \ganttlink[
+    link type=f-f,
+    link label node/.append style=left
+  ]{PR1C}{PR1D}
+\end{ganttchart}
 \end{comment}
 
+%\begin{comment} %ça met en commentaire
+\definecolor{bargreen}{RGB}{133,193,132}
+\definecolor{groupgreen}{RGB}{53,107,52}
+\definecolor{darkgreen}{RGB}{35,68,35}
+\definecolor{linkred}{RGB}{165,0,33} %rouge
+
+%police du gantt au choix selon préférence
+%\renewcommand\sfdefault{phv}
+%\renewcommand\mddefault{mc}
+%\renewcommand\bfdefault{bc}
+
+\setganttlinklabel{s-s}{START-TO-START}
+\setganttlinklabel{f-s}{FINISH-TO-START}
+\setganttlinklabel{f-f}{FINISH-TO-FINISH}
+\sffamily
+\begin{ganttchart}[
+    canvas/.append style={fill=none, draw=black!25, line width=3pt},
+    hgrid style/.style={draw=black!5, line width=.75pt},
+    vgrid={*1{draw=black!5, line width=.75pt}},
+    today label font=\small\bfseries,
+    title/.style={draw=none, fill=none},
+    title label font=\bfseries\footnotesize,
+    title label node/.append style={below=7pt},
+    include title in canvas=false,
+    %Zone des sous parties d'un groupe
+    bar label font=\mdseries\small\color{black!90},
+    bar label node/.append style={left=1.8cm},
+    bar/.append style={draw=none, fill=darkgreen!60},
+    bar incomplete/.append style={fill=bargreen},
+    bar progress label font=\mdseries\footnotesize\color{black!70},
+    %tête de groupe (Réseau, framwork)
+    group incomplete/.append style={fill=groupgreen!85},
+    group/.append style={draw=none, fill=darkgreen},
+    group left shift=0,
+    group right shift=0,
+    group height=0.3,
+    group peaks tip position=0,
+    group label node/.append style={left=2.5cm},
+    group progress label font=\bfseries\small,
+    %zone rouge / avancement
+    link/.style={-latex, line width=1.5pt, linkred},
+    link label font=\scriptsize\bfseries,
+    link label node/.append style={below left=-2pt and 0pt}
+  ]{1}{30}
+  \gantttitle[
+    title label node/.append style={below left=7pt and -3pt}
+  ]{SEMAINES:\quad1}{1}
+  \gantttitlelist{2,...,30}{1} \\
+  \ganttgroup{Préliminaire Projet}{1}{1} \\[grid]
+  \ganttgroup[name = R]{Partie Réseaux}{2}{10} \\
+  \ganttbar[progress=75,name=PR1A]{\textbf{PR 1.1} Activité A}{2}{8} \\
+  \ganttbar[progress=67,name=PR1B]{\textbf{PR 1.2} Activité B}{2}{10} \\
+  \ganttbar[progress=0 ,name=PR1C]{\textbf{PR 1.4} Activité C}{4}{10} \\[grid]
+  \ganttgroup{Partie framwork}{2}{10} \\
+  \ganttbar[progress=0]{\textbf{PFRA 2.1} Activité D}{2}{5} \\
+  \ganttbar[progress=0]{\textbf{PFRA 2.2} Activité E}{3}{5} \\
+  \ganttbar[progress=0]{\textbf{PFRA 2.3} Activité F}{4}{5}\\[grid]
+  \ganttgroup[name= F]{Partie frontwork}{11}{14} \\
+  \ganttbar[progress=0]{\textbf{PFRO 2.1} Activité G}{5}{6} \\
+  \ganttbar[progress=0]{\textbf{PFRO 2.2} Activité H}{6}{8} \\
+  \ganttbar[progress=0]{\textbf{PFRO 2.3} Activité I}{9}{10}\\[grid]
+  \ganttgroup{Partie Rapport}{2}{15}\\[grid]
+  \ganttgroup{Partie Site web}{9}{13}
+  
+  %link entre activitées
+  \ganttlink[link type=s-s]{PR1A}{PR1B}
+  \ganttlink[link type=f-s]{R}{F}
+  \ganttlink[link type=f-f,link label node/.append style=left]{PR1C}{PR1B}
+\end{ganttchart}
+%\end{comment}
 \section{Changements majeurs}%ceux effectués en cours de projet (changement d'idée, revoir un algo,...)
+Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse eget augue accumsan nisi luctus gravida. Nulla non risus risus. Suspendisse orci ligula, euismod et ornare eu, suscipit vitae nisi. Morbi massa lacus, rutrum sed sodales sed, luctus vel mi. Integer sed purus lorem. Vivamus nec suscipit sem, nec ultrices tellus. Donec efficitur elit sit amet ultricies vestibulum. Nullam a leo eu enim iaculis feugiat eget id purus. Mauris sed hendrerit quam, vitae ultricies libero. Pellentesque viverra sed ex at dapibus. Aliquam sed auctor dolor, vehicula maximus quam. Vestibulum sed eros eu justo tempor varius. Cras efficitur metus ac iaculis volutpat. 
 
 %.Partie 6 1 page
-\chapter{Bilan} %bilan et Conclusion, parler en onction du cahier des charges, les perspectives futur du projet et l'apport.
+\chapter{Bilan et Perspectives} %bilan et Conclusion, parler en onction du cahier des charges, les perspectives futur du projet et l'apport.
+Le bilan de cette fin de projet est très positive, en comparant à notre cahier des charges, la quasi totalité des demandes et des objectif a été atteints. Malgré le manque de mains d'oeuvres pour la partie informatique, 3 au lieu de 5, le projet à pu voir le jour avec succès.
+Bilan partie réseau
+Bilan partie front et framwork
+Bilan des aides (cours, site, grâce à quoi, etc...)
+
+\vspace{1cm}
+\textbf{\huge{}{Conclusion}}\\
+
+Conclusion global, point negatif et positif plus terminer par les perspectives du client.
 
 %.Partie 7
 \chapter{Bibliographie et Annexes}
