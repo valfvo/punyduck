@@ -11,6 +11,10 @@
 \usepackage{comment} 
 \usepackage{amsmath}
 \usepackage{enumerate}
+\usepackage{tikz-uml}
+
+\sloppy
+\hyphenpenalty 10000000
 
 \begin{document}
 
@@ -177,7 +181,26 @@ Cependant, le langage Python de base ne permet pas de faire de la programmation 
 %Partie 3 Développement logiciel 5/10 pages
 \chapter{Développement logiciel, Conception, Modélisation, Implémentation}
 \section{Présentation du développement}
+
 \section{Modélisation} %UML
+\begin{center}
+\begin{tikzpicture}
+\umlclass[x=8, fill=grey!5]{LQViewable}{n : uint \\ t : float}{}
+\umlclass[y=-3, fill=grey!5]{LQSurface}{d : double}{\umlvirt{setB(b : B) : void je suis un test} \\ getB() : B}
+\umlclass[x=-2, fill=grey!5]{LQuark}{n : uint \\ s : string}{}
+\umlclass[x=2, fill=grey!5]{LQTexture}{n : uint}{}
+\umlclass[x=8, y=-6, fill=grey!5]{LQNumber}{n : uint}{}
+\umlclass[x=-2, y=-6, fill=grey!5]{LQMathVar}{n : uint}{}
+\umlclass[x=2, y=-6, fill=grey!5]{LQMathExpr}{n : uint}{}
+\umlinherit[geometry=-|]{LQuark}{LQSurface}
+\umlinherit[geometry=-|]{LQTexture}{LQSurface}
+\umlinherit[geometry=-|]{LQNumber}{LQViewable}
+\umlinherit[geometry=-|]{LQSurface}{LQViewable}
+\umlinherit[geometry=-|]{LQMathVar}{LQMathExpr}
+\umlinherit[geometry=-|]{LQMathExpr}{LQNumber}
+\end{tikzpicture}
+\end{center}
+
 \section{Fonctionnalités de l'interface}
 %Je parle de ce qui devait être fait (j'ai pas mis les notification, ni personnalisation) si quelque chose ne peux être fait ou n'est pas fait d'ici la fin, enlever directement la partie en question.
 L'interface graphique est composé de plusieurs fenêtres, chacune spécifique. D'autant plus que l'ensemble peux être personnalisable (placement de certains bloc présent sur l'interface). Pour la partie commune à chaque fenêtre de l'interface
@@ -186,10 +209,10 @@ on a la barre des onglets contenant, dans cet ordre :
 \begin{itemize}
     \item "L'accueil", comprenant les lancements rapide d'application dernièrement utilisées ainsi que les nouveautés lié à l'application ou de certains projets.
     \item Les "Projets", où l'ensemble des projets mis en ligne seront affichés. 
-    \item La "Collection", contenant les projets suivie et télécharger seront directement affichés.
+    %\item La "Collection", contenant les projets suivie et télécharger seront directement affichés.
     \item Le "Profil" est l'endroit où l'on peut modifier ses données personnelles, sa page de profil et les paramètres de l'application.
-    \item Les "Contact", seront les différentes personnes suivie ou qui nous suive avec la possibilités d'échanger par message dans l'application.
-    \item La "Communauté" recensera l'ensemble des forums d'aides.
+    %\item Les "Contact", seront les différentes personnes suivie ou qui nous suive avec la possibilités d'échanger par message dans l'application.
+    %\item La "Communauté" recensera l'ensemble des forums d'aides.
     \item Le "Dépôt" vas servir à faire une demande de dépôt de projet, afin qu'il soit vérifier avant mise en ligne (pour éviter les dépôt de virus ou autre).
     \item Icônes basique tel que épinglé, réduire et fermer. Mais contient aussi le mode nuit (fond clair qui devient foncé).
 \end{itemize}
@@ -204,8 +227,7 @@ Pour l'accueil il est possible de cliquer sur les articles mis en avant enfin de
 \end{itemize}
 Ainsi que les boutons d'action, lancer qui vas démarrer l'application, et installer qui vas télécharger et installer l'application.\\
 En ce qui concerne la page de présentation du projet, on peux interagir avec la notations (données une notes ou envoyé un commentaire) mais également un lien qui va envoyé vers un forum existant en lien avec le projet. On a notamment accès au bouton suivre pour l'avoir dans notre collection et le bouton j'aime pour aimé un projet.\\
-Les interactions avec l'interface concernant le profil sont, la modification de fond et de l'image de profil ainsi que des autres paramètres (nom, prénom, mot de passe,...), l'accès au paramètre du client (langue,emplacement,...) et le bouton de déconnexion. Pour l'interface communauté, on peux trié les différents forum (aide, suggestion, bugs, autres) ou encore en rechercher un. De plus on a le bouton d'ajout de forum.
-
+Les interactions avec l'interface concernant le profil sont, la modification de fond et de l'image de profil ainsi que des autres paramètres (nom, prénom, mot de passe,...), l'accès au paramètre du client (langue,emplacement,...) et le bouton de déconnexion.
 
 \section{Format des données et procédure d'utilisation} % dnnées utilisées ou encore convention, décrire certaines procédures de lecture et de validation
 \section{Statistique} %nombres de classes/scripts/ lignes de code/ nombre de module
@@ -362,7 +384,6 @@ Les interactions avec l'interface concernant le profil sont, la modification de 
 \end{ganttchart}
 %\end{comment}
 \section{Changements majeurs}%ceux effectués en cours de projet (changement d'idée, revoir un algo,...)
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse eget augue accumsan nisi luctus gravida. Nulla non risus risus. Suspendisse orci ligula, euismod et ornare eu, suscipit vitae nisi. Morbi massa lacus, rutrum sed sodales sed, luctus vel mi. Integer sed purus lorem. Vivamus nec suscipit sem, nec ultrices tellus. Donec efficitur elit sit amet ultricies vestibulum. Nullam a leo eu enim iaculis feugiat eget id purus. Mauris sed hendrerit quam, vitae ultricies libero. Pellentesque viverra sed ex at dapibus. Aliquam sed auctor dolor, vehicula maximus quam. Vestibulum sed eros eu justo tempor varius. Cras efficitur metus ac iaculis volutpat. 
 
 %.Partie 6 1 page
 \chapter{Bilan et Perspectives} %bilan et Conclusion, parler en onction du cahier des charges, les perspectives futur du projet et l'apport.
