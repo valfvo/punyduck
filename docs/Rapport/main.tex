@@ -10,6 +10,7 @@
 \usepackage{pgfgantt}
 \usepackage{comment} 
 \usepackage{amsmath}
+\usepackage{enumerate}
 
 \begin{document}
 
@@ -104,55 +105,74 @@ base de données.
     \item Connexion entre l’application et le serveur.
     \item Création d’une base de données pour stocker les comptes des utilisateurs et les
 projets.
-    \item Mise en service d’un site internet permettant le téléchargement de l’application.
-Cahier des charges
+    \item Mise en service d’un site internet permettant le téléchargement de l’application. 
 \end{itemize}
-I - Le serveur
-\begin{itemize}
-    \item Fonctionnement asynchrone
-    \item Héberger de manière sécurisée les données des utilisateurs.
-    \item Les utilisateurs pourront télécharger les projets hébergés.
-    \item Doit pouvoir gérer la plupart des erreurs de réseau, comme la coupure de la
-    connexion lors d’un téléchargement.
-\end{itemize}
-II - Le framework
-\begin{itemize}
-    \item Ensemble de classes et fonctions qui serviront de base à la structure d’une nouvelle
-application.
-    \item Son utilisation doit être facile avec assez de fonctionnalités déjà disponibles pour
-    pouvoir réduire les appels de fonctions bas niveau.
-    \item Permettre la plasticité des interfaces
-\end{itemize}
-III - L’application
-\begin{itemize}
-    \item Interface graphique permettant de naviguer facilement entre différents onglets
-Possibilité d'accéder aux informations de son compte et de les modifier :
-pseudonyme, adresse mail, âge, niveau, badges.
-    \item Personnalisation limitée : mode clair / sombre, position de certains éléments de la
-fenêtre, couleur de l’arrière plan.
-\end{itemize}
-IV - La base de données
-\begin{itemize}
-    \item Stocke les données relatives aux comptes des utilisateurs ainsi que les projets.
-Les données seront cryptées.
-\end{itemize}
-V - Le site
-\begin{itemize}
-    \item Une page pour télécharger l’application.
-    \item Design responsive et dynamique
-\end{itemize}
+\vspace{0.5cm}
+\large{\textbf{Cahier des charges :}}
+\begin{enumerate}[I]
+%I 
+    \item - Le serveur
+        \begin{itemize}
+        \item Fonctionnement asynchrone
+        \item Héberger de manière sécurisée les données des utilisateurs.
+        \item Les utilisateurs pourront télécharger les projets hébergés.
+        \item Doit pouvoir gérer la plupart des erreurs de réseau, comme la coupure de la
+        connexion lors d’un téléchargement.
+        \end{itemize}
+%II
+    \item - Le framework
+        \begin{itemize}
+        \item Ensemble de classes et fonctions qui serviront de base à la structure d’une nouvelle
+    application.
+        \item Son utilisation doit être facile avec assez de fonctionnalités déjà disponibles pour
+        pouvoir réduire les appels de fonctions bas niveau.
+        \item Permettre la plasticité des interfaces
+        \end{itemize}
+%III
+    \item - L’application
+        \begin{itemize}
+            \item Interface graphique permettant de naviguer facilement entre différents onglets
+        Possibilité d'accéder aux informations de son compte et de les modifier :
+        pseudonyme, adresse mail, âge, niveau, badges.
+            \item Personnalisation limitée : mode clair / sombre, position de certains éléments de la
+        fenêtre, couleur de l’arrière plan.
+        \end{itemize}
+%IV
+    \item - La base de données
+        \begin{itemize}
+            \item Stocke les données relatives aux comptes des utilisateurs ainsi que les projets.
+        Les données seront cryptées.
+        \end{itemize}
+%V
+    \item - Le site
+        \begin{itemize}
+            \item Une page pour télécharger l’application.
+            \item Design responsive et dynamique
+        \end{itemize}
+\end{enumerate}
 
 %Partie 2 Partie technologies utilisées 1/2 pages
 \chapter{Technologies utilisées}
 \section{Langages}
-Le choix du langage pour coder l'application a été le C/C++ pour sa fiabilité, son efficacité, et sa très grande possibilité d'utilisation. De plus le C++ nous a permis de coder en orienté objet, ainsi permettant la réalisation de l'application.
-Dans le cadre des UEs HLIN202 et HLIN302 basé sur le langage C++, cela nous a permis de partir sur ce choix de langage en étant rassurés. \\ % à reformuler 
+ % idées à reformuler
+1 - Le choix du langage pour coder l'application a été le C/C++ pour sa fiabilité, son efficacité, et ..\\ 2 - De plus le C++ nous a permis de coder en orienté objet, ainsi permettant la réalisation de l'application. \\
+3 - Dans le cadre des UEs HLIN202 et HLIN302 nous avons programmer en C/C++ donc nous étions rassurés car nous avions des bases. \\
 
 Pour gérer la partie réseau de notre application, nous n'avions pas besoin d'utiliser un langage puissant comme le C/C++, nous pouvions donc nous rabattre sur un langage moins performant mais plus facile d'accès.
 De ce fait, nous nous sommes dirigés vers le langage python, qui est un langage très simple d'utilisation, pratique pour débuter dans le domaine complexe de la programmation que représente la programmation en réseau. De surcroît il est plutôt efficace pour gérer les entrées sorties, notamment pour la lecture et l'écriture dans des fichiers, qui est une notion centrale dans notre projet.\\
 
-Cependant, le langage Python de base ne permet pas de faire de la programmation en réseau, nous avons donc du choisir une des nombreuses bibliothèques disponibles permettant de faire de la programmation réseau en Python. Après réflexion, nous avons opté pour le module « asyncio » pour deux raisons : premièrement, ce module offrait une interface de programmation en réseau de haut niveau donc plus simple d'utilisation, ce qui nous arrangeait particulièrement étant donné que nous sommes parfaitement novices dans ce domaine ; deuxièmement, le gros point fort de ce module est le fait qu'il implémente une nouvelle manière de programmer~: la programmation asynchrone. La programmation asynchrone pour les entrées/sorties est une forme de programmation parallèle permettant d'exécuter d'autres parties d'un programme lorsque celui-ci est en attente d'une transmission de donnée, afin de grandement diminuer le temps d'exécution du programme.
+Cependant, le langage Python de base ne permet pas de faire de la programmation en réseau, nous avons donc du choisir une des nombreuses bibliothèques disponibles permettant de faire de la programmation réseau en Python. Après réflexion, nous avons opté pour le module « asyncio » pour deux raisons : premièrement, ce module offrait une interface de programmation en réseau de haut niveau donc plus simple d'utilisation, ce qui nous arrangeait particulièrement étant donné que nous sommes parfaitement novices dans ce domaine ; Deuxièmement, le gros point fort de ce module est le fait qu'il implémente une nouvelle manière de programmer~: la programmation asynchrone. La programmation asynchrone pour les entrées/sorties est une forme de programmation parallèle permettant d'exécuter d'autres parties d'un programme lorsque celui-ci est en attente d'une transmission de donnée, afin de grandement diminuer le temps d'exécution du programme.
 \section{Outils} %outils utilisés pourquoi ce choix avantages ? postgresql
+% idées 
+\begin{itemize}
+    \item python -> serv
+    \item C++ -> application
+    \item postgresql -> bbd
+    \item UML -> conception de l'application
+    \item discord -> communication du groupe
+    \item git -> sauvgarder notre travail au fur et a mesure
+    \item Visual Studio Code -> coder seul ou a plusieurs (liveShare disponible)
+\end{itemize}
 
 %Partie 3 Développement logiciel 5/10 pages
 \chapter{Développement logiciel, Conception, Modélisation, Implémentation}
@@ -160,7 +180,7 @@ Cependant, le langage Python de base ne permet pas de faire de la programmation 
 \section{Modélisation} %UML
 \section{Fonctionnalités de l'interface}
 %Je parle de ce qui devait être fait (j'ai pas mis les notification, ni personnalisation) si quelque chose ne peux être fait ou n'est pas fait d'ici la fin, enlever directement la partie en question.
-L'interface graphique se décompose de plusieurs fenêtres chacune spécifique d'autant plus que l'ensemble peux être personnalisable (placement de certains bloc présent sur l'interface). Pour la partie commune à chaque fenêtre de l'interface
+L'interface graphique est composé de plusieurs fenêtres, chacune spécifique. D'autant plus que l'ensemble peux être personnalisable (placement de certains bloc présent sur l'interface). Pour la partie commune à chaque fenêtre de l'interface
 on a la barre des onglets contenant, dans cet ordre :
 \vspace{0.5cm}
 \begin{itemize}
@@ -253,7 +273,7 @@ Les interactions avec l'interface concernant le profil sont, la modification de 
   \ganttbar[progress=67,name=PR1B]{\textbf{PR 1.2} Activité B}{1}{3} \\
   \ganttbar[progress=50,name=PR1C]{\textbf{PR 1.3} Activité C}{4}{10} \\
   \ganttbar[progress=0,name=PR1D]{\textbf{PR 1.4} Activité D}{4}{10} \\[grid]
-  \ganttgroup{Partie framwork}{1}{25} \\
+  \ganttgroup{Partie framework}{1}{25} \\
   \ganttbar[progress=0]{\textbf{PFRA 2.1} Activité E}{4}{5} \\
   \ganttbar[progress=0]{\textbf{PFRA 2.2} Activité F}{6}{8} \\
   \ganttbar[progress=0]{\textbf{PFRA 2.3} Activité G}{9}{10}\\[grid]
@@ -278,7 +298,7 @@ Les interactions avec l'interface concernant le profil sont, la modification de 
 \definecolor{linkred}{RGB}{165,0,33} %rouge
 
 %police du gantt au choix selon préférence
-%\renewcommand\sfdefault{phv}
+\renewcommand\sfdefault{phv}
 %\renewcommand\mddefault{mc}
 %\renewcommand\bfdefault{bc}
 
@@ -324,7 +344,7 @@ Les interactions avec l'interface concernant le profil sont, la modification de 
   \ganttbar[progress=75,name=PR1A]{\textbf{PR 1.1} Activité A}{2}{8} \\
   \ganttbar[progress=67,name=PR1B]{\textbf{PR 1.2} Activité B}{2}{10} \\
   \ganttbar[progress=0 ,name=PR1C]{\textbf{PR 1.4} Activité C}{4}{10} \\[grid]
-  \ganttgroup{Partie framwork}{2}{10} \\
+  \ganttgroup{Partie framework}{2}{10} \\
   \ganttbar[progress=0]{\textbf{PFRA 2.1} Activité D}{2}{5} \\
   \ganttbar[progress=0]{\textbf{PFRA 2.2} Activité E}{3}{5} \\
   \ganttbar[progress=0]{\textbf{PFRA 2.3} Activité F}{4}{5}\\[grid]
@@ -348,13 +368,13 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse eget augue 
 \chapter{Bilan et Perspectives} %bilan et Conclusion, parler en onction du cahier des charges, les perspectives futur du projet et l'apport.
 Le bilan de cette fin de projet est très positive, en comparant à notre cahier des charges, la quasi totalité des demandes et des objectif a été atteints. Malgré le manque de mains d'oeuvres pour la partie informatique, 3 au lieu de 5, le projet à pu voir le jour avec succès.
 Bilan partie réseau
-Bilan partie front et framwork
+Bilan partie front et framework
 Bilan des aides (cours, site, grâce à quoi, etc...)
 
 \vspace{1cm}
 \textbf{\huge{}{Conclusion}}\\
 
-Conclusion global, point negatif et positif plus terminer par les perspectives du client.
+Conclusion global, point négatif et positif plus terminer par les perspectives du client.
 
 %.Partie 7
 \chapter{Bibliographie et Annexes}
