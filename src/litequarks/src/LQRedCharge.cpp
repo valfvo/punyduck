@@ -39,14 +39,14 @@ LQuark& LQuark::removeChild(LQindex index) {
 
 LQuark& LQuark::removeFirstChild() {
     if (m_firstChild) {
-        m_firstChild->detach();
+        return m_firstChild->detach();
     }
     return *this;
 }
 
 LQuark& LQuark::removeLastChild() {
     if (m_lastChild) {
-        m_lastChild->detach();
+        return m_lastChild->detach();
     }
     return *this;
 }

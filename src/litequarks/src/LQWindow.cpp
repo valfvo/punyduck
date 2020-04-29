@@ -30,6 +30,7 @@ LQWindow::LQWindow(int _width, int _height, char const* title)
     glfwSetMouseButtonCallback(m_window, LQAppController::mouse_button_callback);
     glfwSetKeyCallback(m_window, LQAppController::key_callback);
     glfwSetCharCallback(m_window, LQAppController::character_callback);
+    glfwSetScrollCallback(m_window, LQAppController::scroll_callback);
 
     if (!gladLoadGLLoader(reinterpret_cast<GLADloadproc>(glfwGetProcAddress))) {
         std::clog << "failed to initialize GLAD" << std::endl;
@@ -82,6 +83,7 @@ void LQWindow::processInput(GLFWwindow* window) {
 void LQWindow::framebufferSizeCallback(GLFWwindow* window, int _width, int _height) {
     width() = _width;
     height() = _height;
+    LQAppController::resetMousePosition();
 }
 
 void LQWindowFBSizeCallback(GLFWwindow* window, int width, int height) {

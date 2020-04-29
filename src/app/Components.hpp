@@ -34,6 +34,7 @@ public:
     void addProject(Project* project);
     void toggleListView();
     void toggleGridView();
+    void searchCallback(std::vector<Project*>& projects);
 };
 
 class DIV_Sorting : public LQViewable {

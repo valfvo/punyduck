@@ -7,7 +7,6 @@ import gateway as gw
 from argon2 import *
 
 ph = PasswordHasher()
- 
 
 def encodeBuffer(message): #Fonction qui renvoie la taille d'un message en binaire
     sizeBuffer_send = len(message).to_bytes(4, "big")

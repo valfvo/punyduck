@@ -69,11 +69,44 @@ int main() {
     // auto t = LQText::s_font.renderText(U"a", 0x000000, 200_px, 200_px, 1_em);
     // window.appendChild(&t);
     // LQAppModel::dataQuery("projectSELECT idProjet, nom, tag, pDescr, pPathImage, login FROM Projet, UserInfo WHERE pIdLog = idLog;");
-    LQAppModel::dataQuery("projectSELECT idProjet, nom, tag FROM Projet LIMIT 20;");
+    LQAppModel::dataQuery("projectSELECT idProjet, nom, tag FROM Projet;");
     // int action;
     // std::cout << "Choissisez une action (1 login 2 register 3 upProjet 4 dlProject)" << std::endl;
     // std::cin >> action;
     // LQAppController::pushEvent(new tempActionEvent(action));
+
+    // UL_Project ul(0.0f, 0.0f, 0.0f);
+    // using namespace std::placeholders;
+    // std::function<void(std::vector<Project*>&)> oui =
+    //     std::bind(&UL_Project::searchCallback, &ul, _1);
+    // // std::function<void(std::vector<Project*>&)> oui = [](std::vector<Project*>& v) { };
+    // const std::string input = "oui";
+
+    // auto lb = std::function<bool(Project*)>([](Project* project) {
+    //     return project->nom.find("") != std::string::npos;
+    // });
+
+    // [parent, lb](const std::string& input) {
+    //     LQAppModel::itemQuery("project",
+    //         static_cast<UL_Project*>(parent->prevSibling()),
+    //         UL_Project::searchCallback, lb);
+    // };
+
+    // std::function<bool(Project*)> non = [input](Project* project) {
+    //     return project->nom.find(input) != std::string::npos;
+    // };
+
+    // LQAppModel::itemQuery<Project, UL_Project>(input, &ul, oui, [](Project* project) { return true; });
+    // LQAppModel::itemQuery(input, &ul, oui, [](Project* project) { return true; });
+
+    // LQAppModel::itemQuery<Project, UL_Project, UL_Project::searchCallback>(
+    //     input, &ul);
+    // LQAppModel::itemQuery<Project, UL_Project>(input, &ul);
+
+    // auto lb = [&ul, non](const std::string& input) {
+        // LQAppModel::itemQuery<Project, UL_Project>(input, &ul, &UL_Project::searchCallback, non);
+        // LQAppModel::itemQuery<Project, UL_Project>(input, &ul, &UL_Project::searchCallback);
+    // };
 
     // window.drawChildren();
     while (window.alive()) {

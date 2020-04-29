@@ -327,7 +327,7 @@ async def SQL(writer, query):
                 nItems.to_bytes(4, 'big') + nAttributes + ordreIndice + infos
         # str + \0 + str + \0 + 4 bytes + 1 byte + (4 bytes + 4 * nbIndice bytes) + n bytes
         print("nitem :", nItems.to_bytes(4, 'big'))
-        print("infos =", infos)
+        # print("infos =", infos)
         await send_message(writer, infos)
 
 

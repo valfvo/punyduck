@@ -63,3 +63,7 @@ LQuark const* LQuark::nthSibling(LQindex nth) const {
 LQsize LQuark::childrenCount() const {
     return m_childrenCount;
 }
+
+void LQuark::setNextSibling(LQuark* nextSibling) {
+    m_nextSibling = nextSibling;
+}

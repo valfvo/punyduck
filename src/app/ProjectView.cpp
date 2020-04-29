@@ -13,15 +13,19 @@ void IMG::draw() { }
 LI_Project::LI_Project(const Project* project, LQNumber&& x, LQNumber&& y,
                        LQNumber&& width, LQNumber&& height)
 : LQViewable(std::move(x), std::move(y),
-             std::move(width), std::move(height), 0x00ff00)
+             std::move(width), std::move(height), 0xE9E9E9)
 {
     LQViewable *parent, *prev;
     createTree(*this, parent, prev)
     // .add<LQImage>(0.0f, 0.0f, parent->height(), parent->height(), project->img)
     // ;
     // .add<LQText>(project->nom, prev->right()+1_wu, 0.0f)
-    .add<LQText>(project->nom, 0.0f, 0.0f, 1_em, 0xff0000)
-    .add<LQText>(project->tag, prev->right()+1_wu, 0.0f, 1_em, 0x0000ff);
+    .add<IMG>(1_em, 1_em, 3_em, 3_em, 0xE9E9E9, "defaultpp.png")
+    .add<LQText>(project->nom, prev->right()+20_px, 3_em, 1_em, 0x595959)
+    .add<LQText>(project->tag, prev->right()+20_px, 3_em, 1_em, 0x356b34);
+
+    // .add<LQText>(project->nom, 0.0f, 0.0f, 1_em, 0xff0000)
+    // .add<LQText>(project->tag, prev->right()+1_wu, 0.0f, 1_em, 0x0000ff);
 }
 
 void LI_Project::toggleGridView(GLfloat x, GLfloat y) {
@@ -48,48 +52,17 @@ void LI_Project::toggleListView(GLfloat y, GLfloat width, GLfloat height) {
 UL_Project::UL_Project(LQNumber&& x, LQNumber&& y, LQNumber&& width)
 : LQViewable(std::move(x), std::move(y))
 {
-    // appendChild(new LQViewable(0.0f, 0.0f, 0.70f * 1280.0f, 5_em, 0xE9E9E9));
     setClearColor(0xb5b3b3);
-    LQViewable *parent, *prev;
-    createTree(*this, parent, prev)
-    .add<LQViewable>(0.0f, 0.0f, std::move(width), 5_em, 0xE9E9E9).sub()
-        .add<IMG>(1_em, 1_em, 3_em, 3_em, 0xE9E9E9, "defaultpp.png")
-        .add<LQText>("Darwin's Nightmare", prev->right()+20_px, 3_em, 1_em, 0x595959)
-        .add<LQText>("jeu", prev->right()+20_px, 3_em, 1_em, 0x356b34).super()
-    .add<LQViewable>(0.0f, prev->bottom()+1_px, 0.70f * 1280.0f, 5_em, 0xE9E9E9).sub()
-        .add<IMG>(1_em, 1_em, 3_em, 3_em, 0xE9E9E9, "defaultpp.png")
-        .add<LQText>("Darwin's Nightmare", prev->right()+20_px, 3_em, 1_em, 0x595959)
-        .add<LQText>("jeu", prev->right()+20_px, 3_em, 1_em, 0x356b34).super()
-    .add<LQViewable>(0.0f, prev->bottom()+1_px, 0.70f * 1280.0f, 5_em, 0xE9E9E9).sub()
-        .add<IMG>(1_em, 1_em, 3_em, 3_em, 0xE9E9E9, "defaultpp.png")
-        .add<LQText>("Darwin's Nightmare", prev->right()+20_px, 3_em, 1_em, 0x595959)
-        .add<LQText>("jeu", prev->right()+20_px, 3_em, 1_em, 0x356b34).super()
-    .add<LQViewable>(0.0f, prev->bottom()+1_px, 0.70f * 1280.0f, 5_em, 0xE9E9E9).sub()
-        .add<IMG>(1_em, 1_em, 3_em, 3_em, 0xE9E9E9, "defaultpp.png")
-        .add<LQText>("Darwin's Nightmare", prev->right()+20_px, 3_em, 1_em, 0x595959)
-        .add<LQText>("jeu", prev->right()+20_px, 3_em, 1_em, 0x356b34).super()
-    .add<LQViewable>(0.0f, prev->bottom()+1_px, 0.70f * 1280.0f, 5_em, 0xE9E9E9).sub()
-        .add<IMG>(1_em, 1_em, 3_em, 3_em, 0xE9E9E9, "defaultpp.png")
-        .add<LQText>("Darwin's Nightmare", prev->right()+20_px, 3_em, 1_em, 0x595959)
-        .add<LQText>("jeu", prev->right()+20_px, 3_em, 1_em, 0x356b34).super()
-    .add<LQViewable>(0.0f, prev->bottom()+1_px, 0.70f * 1280.0f, 5_em, 0xE9E9E9).sub()
-        .add<IMG>(1_em, 1_em, 3_em, 3_em, 0xE9E9E9, "defaultpp.png")
-        .add<LQText>("Darwin's Nightmare", prev->right()+20_px, 3_em, 1_em, 0x595959)
-        .add<LQText>("jeu", prev->right()+20_px, 3_em, 1_em, 0x356b34).super()
-    .add<LQViewable>(0.0f, prev->bottom()+1_px, 0.70f * 1280.0f, 5_em, 0xE9E9E9).sub()
-        .add<IMG>(1_em, 1_em, 3_em, 3_em, 0xE9E9E9, "defaultpp.png")
-        .add<LQText>("Darwin's Nightmare", prev->right()+20_px, 3_em, 1_em, 0x595959)
-        .add<LQText>("jeu", prev->right()+20_px, 3_em, 1_em, 0x356b34);
-
-    // appendChild(new LQViewable(0.0f, -1_hu, 6_hu, 1_hu));
-    // static_cast<LQViewable*>(firstChild())->hide();
+    appendChild(new LQViewable(0.0f, -5_em-1_px, std::move(width), 5_em, 0xE9E9E9));
+    static_cast<LQViewable*>(m_firstChild)->hide();
 
     LQ_FOR_EACH(Project, addProject);
+    // lqOn<LQEvent>(this, callback);
 }
 
 void UL_Project::addProject(Project* project) {
     auto prev = static_cast<LI_Project*>(lastChild());
-    appendChild(new LI_Project(project, prev->left(), prev->bottom(),
+    appendChild(new LI_Project(project, prev->left(), prev->bottom()+1_px,
                                         prev->width(), prev->height()));
 }
 
@@ -119,6 +92,34 @@ void UL_Project::toggleListView() {
     // }
 }
 
+#include <iostream>
+void UL_Project::searchCallback(std::vector<Project*>& projects) {
+    // std::cout << "enter!!! "<< firstChild() << std::endl;
+    // std::cout << "this " << this << std::endl;
+    // std::cout << firstChild() << "<- first" << std::endl;
+    auto prev = firstChild()->nextSibling();
+    // std::cout << "erlkghj!!!" << std::endl;
+    if (prev) {
+        // std::cout << "non!!!" << std::endl;
+        for (auto child = prev->nextSibling();
+            child != nullptr;
+            child = child->nextSibling())
+        {
+            // std::cout << "nonwerlkgjhb!!!" << std::endl;
+            delete prev;
+            prev = child;
+        }
+        delete prev;
+    }
+    m_lastChild = m_firstChild;
+    m_childrenCount = 1;
+    m_firstChild->setNextSibling(nullptr);
+    // std::cout << "sortie" << std::endl;
+    for (auto project : projects) {
+    // std::cout << "purodjekto" << std::endl;
+        addProject(project);
+    }
+}
 
 // UL_Trie::UL_Trie(GLfloat x, GLfloat y)
 // : LQViewable(x, y)
@@ -150,16 +151,11 @@ SearchBar::SearchBar(LQNumber&& _x, LQNumber&& _y,
 : LQViewable(std::move(_x), std::move(_y),
              std::move(_width), std::move(_height), 0xE9E9E9)  // 0xECECEC
 {
-    // #6D6D6D
-    // auto logo = LQAppModel::getFirst("logo");
     LQViewable *parent, *prev;
     createTree(*this, parent, prev)
     .add<IMG>(12.5f, 12.5f, 25.0f, 25.0f, 0xE9E9E9, "search-icon.png")
     .add<LQTextArea>(prev->right()+12_px, 0.0f, parent->width()-25_px,
                      parent->height(), 0xE9E9E9, "Rechercher...");
-    // .add<LQTextArea>(prev->right()+12_px, 10_px, 0x808080, "Rechercher...")
-    // .add<LQText>("Rechercher...", prev->right()+12_px, 30_px, 1_em, 0x808080);
-    // .add<LQButton>(prev->right()+0.5_wu, 0.0f, parent->height(), parent->height());
 }
 
 
@@ -195,6 +191,25 @@ ProjectView::ProjectView(LQNumber&& x, LQNumber&& y, LQNumber&& w, LQNumber&& h,
                    50_px, 50_px, "list-view-icon.png")
     .add<LQButton>(prev->left()-75_px, prev->top(),
                    prev->width(), prev->height(), "grid-view-icon.png")
-    .add<SearchBar>(prev->left()-525_px, prev->top(), 500_px, prev->height())
+    // search bar
+    .add<LQViewable>(prev->left()-525_px, prev->top(), 500_px, prev->height(), 0xE9E9E9).sub()
+        .add<IMG>(12.5f, 12.5f, 25.0f, 25.0f, 0xE9E9E9, "search-icon.png")
+        .add<LQTextArea>(prev->right()+12_px, 0.0f, parent->width()-25_px,
+                         parent->height(), 0xE9E9E9, "Rechercher...").super()
     .add<UL_Project>(0.15f * parent->width(), 150_px, 0.70f * parent->width());
+
+    static_cast<LQTextArea*>(lastChild()->prevSibling()->lastChild())->setCallback(
+    [this](const std::string& input) {
+        if (input.empty()) {
+            LQAppModel::itemQuery<Project, UL_Project, UL_Project::searchCallback>(
+                "project", static_cast<UL_Project*>(lastChild()));
+        }
+        else {
+            LQAppModel::itemQuery<Project, UL_Project, UL_Project::searchCallback>(
+                "project", static_cast<UL_Project*>(lastChild()),
+                [input](Project* project) {
+                    return project->nom.find(input) != std::string::npos;
+                });
+        }
+    });
 };

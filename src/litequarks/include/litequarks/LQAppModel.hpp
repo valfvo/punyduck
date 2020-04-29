@@ -1,9 +1,11 @@
 #pragma once
 
+#include <functional>  // std::function
 #include <string>
 #include <unordered_map>
 #include <vector>
 #include <typeinfo>
+
 
 #include "LQDeclaration.hpp"
 #include "LQEvent.hpp"
@@ -37,6 +39,12 @@ public:
     static void
     dataQuery(const std::string& query);
 
+    template<class TItem, class TTarget,
+             void (TTarget::*callback)(std::vector<TItem*>&)>
+    static void
+    itemQuery(const std::string& model, TTarget* target,
+              const std::function<bool(TItem*)>& comparator = {});
+
     static void
     dataReceivedCallback(LQDataReceivedEvent& event);
 
@@ -50,3 +58,29 @@ protected:
     static std::unordered_map<std::type_index, std::string>
     s_modelNames;
 };
+
+template<class TItem, class TTarget,
+         void (TTarget::*callback)(std::vector<TItem*>&)>
+void LQAppModel::itemQuery(
+    const std::string& model, TTarget* target,
+    const std::function<bool(TItem*)>& comparator)
+{
+    auto it = s_items.find(model);
+    if (it != s_items.end()) {
+        std::vector<TItem*> items;
+        if (comparator) {
+            for (auto item : it->second) {
+                auto casted_item = static_cast<TItem*>(item);
+                if (comparator(casted_item)){
+                    items.push_back(casted_item);
+                }
+            }
+        }
+        else {
+            for (auto item : it->second) {
+                items.push_back(static_cast<TItem*>(item));
+            }
+        }
+        (target->*callback)(items);
+    }
+}

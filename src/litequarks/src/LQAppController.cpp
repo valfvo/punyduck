@@ -95,7 +95,7 @@ void LQAppController::addObserver(
 void LQAppController::pollEvents() {
     while (!s_eventQueue.empty()) {
         auto event = s_eventQueue.front();
-        std::cout << "event : " << (event->type).name() << std::endl;
+        // std::cout << "event : " << (event->type).name() << std::endl;
         auto dispatch =
             s_eventDispatcher[std::make_pair(event->type, event->target)];
         dispatch(event);
@@ -235,6 +235,16 @@ void LQAppController::removeFocus(LQViewable* viewable) {
     }
 }
 
+void LQAppController::resetMousePosition() {
+    prevAbsX = prevAbsY = prevRelX = prevRelY = 0;
+    s_hover_focus = s_window;
+    if (hasCallback<LQFocusLoseEvent>(s_focus)) {
+        s_eventQueue.push(new LQFocusLoseEvent(s_focus));
+    }
+    s_eventQueue.push(new LQFocusGainEvent(s_window));
+    s_focus = s_window;
+}
+
 void LQAppController::cursor_position_callback(GLFWwindow* window, double mx, double my) {
     // std::cout << "\nmx my:"<< mx << " " << my << std::endl;
     float deltaX = mx - prevAbsX;
@@ -299,7 +309,7 @@ void LQAppController::mouse_button_callback(
             s_focus = eligible;
         }
         if (hasCallback<LQClickEvent>(s_hover_focus)) {
-            s_eventQueue.push(new LQClickEvent(s_focus, prevRelX, prevRelY));
+            s_eventQueue.push(new LQClickEvent(s_hover_focus, prevRelX, prevRelY));
         }
     }
 }
@@ -316,6 +326,12 @@ void LQAppController::character_callback(GLFWwindow* window, unsigned int codepo
     if (hasCallback<LQCharEvent>(s_focus)) {
         s_eventQueue.push(new LQCharEvent(s_focus, codepoint));
     }
+}
+
+void LQAppController::scroll_callback(
+    GLFWwindow* window, double xoffset, double yoffset)
+{
+    std::cout << yoffset << std::endl;
 }
 
 void LQAppController::dataQueryCallback(LQDataQueryEvent& event) {

@@ -16,6 +16,8 @@ public:
     LQuark const* nthSibling(LQindex nth) const;
     LQsize  childrenCount() const;
 
+    void setNextSibling(LQuark* nextSibling);
+
     // LQGreenCharge
     LQuark& appendChild(LQuark* child);
     LQuark& appendChild(LQuark& child);

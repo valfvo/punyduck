@@ -48,6 +48,8 @@ public:
 
     static void removeFocus(LQViewable* viewable);
 
+    static void resetMousePosition();
+
     static void cursor_position_callback(GLFWwindow* window, double mx, double my);
 
     static void mouse_button_callback(GLFWwindow* window, int button,
@@ -58,6 +60,8 @@ public:
 
     static void character_callback(GLFWwindow* window, unsigned int codepoint);
   
+    static void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
+
     static void dataQueryCallback(LQDataQueryEvent& event);
 
     static void modelUpdateCallback(LQModelUpdateEvent& event);
