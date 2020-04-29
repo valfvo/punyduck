@@ -19,6 +19,12 @@ LQNumber::LQNumber(LQMathExpr&& expr)
     LQMathExpr(*this) = std::move(expr);
 }
 
+LQNumber::~LQNumber() {
+    for (auto* p_var = m_expr.m_first; p_var; p_var = p_var->m_next) {
+        p_var->m_number->removeRef(this);
+    }
+}
+
 LQNumber::LQNumber(LQNumber&& other)
 : m_quark(other.m_quark), m_invoke(other.m_invoke), m_value(other.m_value),
   m_kind(other.m_kind), m_expr(std::move(other.m_expr)),
@@ -43,6 +49,17 @@ void LQNumber::recalc() {
     }
     for (auto* p_ref : m_refs) {
         p_ref->recalc();
+    }
+}
+
+void LQNumber::removeRef(LQNumber* ref) {
+    auto prev_it = m_refs.before_begin();
+    for (auto it = m_refs.begin(); it != m_refs.end(); ++it) {
+        if (*it == ref) {
+            m_refs.erase_after(prev_it);
+            break;
+        }
+        prev_it = it;
     }
 }
 

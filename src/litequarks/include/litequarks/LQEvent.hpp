@@ -52,6 +52,14 @@ public:
     const int mods;
 };
 
+class LQScrollEvent : public LQEvent {
+public:
+    LQScrollEvent(void* target, float xoffset, float yoffset);
+
+    const float xoffset;
+    const float yoffset;
+};
+
 class LQDataQueryEvent : public LQEvent {
 public:
     LQDataQueryEvent(void* target, const std::string& query);

@@ -42,9 +42,10 @@ public:
     template<class TEvent>
     static bool hasCallback(void* target);
 
-    static void setWindow(LQWindow* window);
+    template<class TEvent>
+    static LQViewable* getEligible();
 
-    static LQViewable* getEligibleFocus();
+    static void setWindow(LQWindow* window);
 
     static void removeFocus(LQViewable* viewable);
 

@@ -82,7 +82,7 @@ public:
 //     void addFriend(Friends* friends);
 // };
 
-class ProjectView : public LQViewable {
+class ProjectView : public LQViewport {
 public:
     ProjectView(LQNumber&& x, LQNumber&& y, LQNumber&& width, LQNumber&& height,
                 GLint color=0xD9D9D9);  // 0x36393f

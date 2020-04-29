@@ -50,6 +50,7 @@ LQWindow::LQWindow(int _width, int _height, char const* title)
 
     LQAppController::setWindow(this);
     lqOn<LQFocusGainEvent>(this, onFocusGain);
+    lqOn<LQScrollEvent>(this, onScroll);
 }
 
 void LQWindow::run() {
@@ -73,6 +74,7 @@ bool LQWindow::alive() const {
 }
 
 void LQWindow::onFocusGain() { }
+void LQWindow::onScroll() { }
 
 void LQWindow::processInput(GLFWwindow* window) {
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS) {

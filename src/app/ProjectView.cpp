@@ -92,7 +92,6 @@ void UL_Project::toggleListView() {
     // }
 }
 
-#include <iostream>
 void UL_Project::searchCallback(std::vector<Project*>& projects) {
     // std::cout << "enter!!! "<< firstChild() << std::endl;
     // std::cout << "this " << this << std::endl;
@@ -182,34 +181,39 @@ SearchBar::SearchBar(LQNumber&& _x, LQNumber&& _y,
 
 ProjectView::ProjectView(LQNumber&& x, LQNumber&& y, LQNumber&& w, LQNumber&& h,
                          GLint color)
-: LQViewable(std::move(x), std::move(y), std::move(w), std::move(h), color)
+: LQViewport(std::move(x), std::move(y), std::move(w), std::move(h), color)
 {
+    appendChild(new LQViewable(0_px, 0_px, width(), 1_px, color));
+    static_cast<LQViewable*>(firstChild())->displayFlex();
     LQViewable *parent, *prev;
-    createTree(*this, parent, prev)
-    .add<DIV_Sorting>(25_px, 40_px)
-    .add<LQButton>(parent->width()-100_px, 25_px,
-                   50_px, 50_px, "list-view-icon.png")
-    .add<LQButton>(prev->left()-75_px, prev->top(),
-                   prev->width(), prev->height(), "grid-view-icon.png")
-    // search bar
-    .add<LQViewable>(prev->left()-525_px, prev->top(), 500_px, prev->height(), 0xE9E9E9).sub()
-        .add<IMG>(12.5f, 12.5f, 25.0f, 25.0f, 0xE9E9E9, "search-icon.png")
-        .add<LQTextArea>(prev->right()+12_px, 0.0f, parent->width()-25_px,
-                         parent->height(), 0xE9E9E9, "Rechercher...").super()
-    .add<UL_Project>(0.15f * parent->width(), 150_px, 0.70f * parent->width());
+    createTree(*firstChild(), parent, prev)
+        .add<DIV_Sorting>(25_px, 40_px)
+        .add<LQButton>(parent->width()-100_px, 25_px,
+                    50_px, 50_px, "list-view-icon.png")
+        .add<LQButton>(prev->left()-75_px, prev->top(),
+                    prev->width(), prev->height(), "grid-view-icon.png")
+        // search bar
+        .add<LQViewable>(prev->left()-525_px, prev->top(), 500_px, prev->height(), 0xE9E9E9).sub()
+            .add<IMG>(12.5f, 12.5f, 25.0f, 25.0f, 0xE9E9E9, "search-icon.png")
+            .add<LQTextArea>(prev->right()+12_px, 0.0f, parent->width()-25_px,
+                            parent->height(), 0xE9E9E9, "Rechercher...").super()
+        .add<UL_Project>(0.15f * parent->width(), 150_px, 0.70f * parent->width()); 
 
-    static_cast<LQTextArea*>(lastChild()->prevSibling()->lastChild())->setCallback(
+    auto* textArea = firstChild()->lastChild()->prevSibling()->lastChild();
+    static_cast<LQTextArea*>(textArea)->setCallback(
     [this](const std::string& input) {
+        auto* ul = static_cast<UL_Project*>(firstChild()->lastChild());
         if (input.empty()) {
             LQAppModel::itemQuery<Project, UL_Project, UL_Project::searchCallback>(
-                "project", static_cast<UL_Project*>(lastChild()));
+                "project", ul);
         }
         else {
             LQAppModel::itemQuery<Project, UL_Project, UL_Project::searchCallback>(
-                "project", static_cast<UL_Project*>(lastChild()),
+                "project", ul,
                 [input](Project* project) {
                     return project->nom.find(input) != std::string::npos;
                 });
         }
     });
+    recalc();
 };

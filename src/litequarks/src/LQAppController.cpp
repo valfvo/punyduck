@@ -202,26 +202,12 @@ void LQAppController::pollResponses() {
     }
 }
 
-template<class TEvent>
-bool LQAppController::hasCallback(void* target) {
-    auto event = std::make_pair(std::type_index(typeid(TEvent)), target);
-    return s_eventDispatcher.find(event) != s_eventDispatcher.end();
-}
-
 void LQAppController::setWindow(LQWindow* window) {
     s_window = window;
     if (!s_hover_focus) {
         s_hover_focus = s_window;
         s_focus = s_window;
     }
-}
-
-LQViewable* LQAppController::getEligibleFocus() {
-    LQViewable* eligible = s_hover_focus;
-    while (!hasCallback<LQFocusGainEvent>(eligible)) {
-        eligible = static_cast<LQViewable*>(eligible->parent());
-    }
-    return eligible;
 }
 
 void LQAppController::removeFocus(LQViewable* viewable) {
@@ -300,7 +286,7 @@ void LQAppController::mouse_button_callback(
     GLFWwindow* window, int button, int action, int mods)
 {
     if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS) {
-        auto eligible = getEligibleFocus();
+        auto eligible = getEligible<LQFocusGainEvent>();
         if (s_focus != eligible) {
             if (hasCallback<LQFocusLoseEvent>(s_focus)) {
                 s_eventQueue.push(new LQFocusLoseEvent(s_focus));
@@ -331,7 +317,8 @@ void LQAppController::character_callback(GLFWwindow* window, unsigned int codepo
 void LQAppController::scroll_callback(
     GLFWwindow* window, double xoffset, double yoffset)
 {
-    std::cout << yoffset << std::endl;
+    auto eligible = getEligible<LQScrollEvent>();
+    s_eventQueue.push(new LQScrollEvent(eligible, xoffset, yoffset));
 }
 
 void LQAppController::dataQueryCallback(LQDataQueryEvent& event) {

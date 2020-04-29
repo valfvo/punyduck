@@ -23,6 +23,10 @@ LQKeyEvent::LQKeyEvent(void* _target, int _key, int _action, int _mods)
 : LQEvent(typeid(LQKeyEvent), _target), key(_key), action(_action), mods(_mods)
 { }
 
+LQScrollEvent::LQScrollEvent(void* _target, float _xoffset, float _yoffset)
+: LQEvent(typeid(LQScrollEvent), _target), xoffset(_xoffset), yoffset(_yoffset)
+{ }
+
 LQDataQueryEvent::LQDataQueryEvent(void* _target, const std::string& _query)
 : LQEvent(typeid(LQDataQueryEvent), _target), query(_query) { }
 

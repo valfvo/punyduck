@@ -18,6 +18,10 @@ LQMathExpr::LQMathExpr(LQMathExpr&& other)
     other.m_first = other.m_last = nullptr;
 }
 
+LQMathExpr::~LQMathExpr() {
+    reset();
+}
+
 float LQMathExpr::eval() const {
     float value = m_constant;
     for (auto var = m_first; var; var = var->m_next) {
@@ -26,24 +30,17 @@ float LQMathExpr::eval() const {
     return value;
 }
 
-LQMathExpr::~LQMathExpr() {
-    reset();
-}
-
 void LQMathExpr::reset() {
     m_constant = 0.0f;
-    auto prev = m_first;
+    auto* prev = m_first;
     if (prev) {
         for (auto* p_var = prev->m_next; p_var; p_var = p_var->m_next) {
-            auto& refs = p_var->m_number->m_refs;
-            auto prev_it = refs.before_begin();
-            for (auto it = refs.begin(); it != refs.end(); ++it) {
-                if (*it == m_first->m_number) {
-                    refs.erase_after(prev_it);
-                    break;
-                }
-                prev_it = it++;
-            }
+            prev->m_number->removeRef(m_first->m_number);
+            delete prev;
+            prev = p_var;
+        }
+        if (prev) {
+            prev->m_number->removeRef(m_first->m_number);
             delete prev;
         }
         m_first = m_last = nullptr;

@@ -23,11 +23,13 @@ public:
     LQNumber(LQNumber::Kind kind);
     LQNumber(LQNumber&& other);
     LQNumber(const LQNumber& other) = delete;
+    ~LQNumber();
 
     template<class TQuark, void (TQuark::*callback)()=nullptr>
     void linkQuark(TQuark& quark);
 
     void recalc();
+    void removeRef(LQNumber* ref);
 
     float i() const;
     float f() const;

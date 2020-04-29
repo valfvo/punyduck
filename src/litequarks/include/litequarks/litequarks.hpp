@@ -6,6 +6,7 @@
 
 #include <litequarks/LQWindow.hpp>
 #include <litequarks/LQButton.hpp>
+#include <litequarks/LQViewport.hpp>
 
 #include <litequarks/LQTreeCreator.hpp>
 #include <litequarks/LQColor.hpp>
