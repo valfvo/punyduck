@@ -248,6 +248,11 @@ i{margin-right:16px;}
     font-size: 22px;
 }
 
+.stl{
+    line-height: 200%;
+    padding: 70px 0;
+}
+
 /*PROCARD_TEST*/
 .cardbox {
     box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
@@ -396,10 +401,14 @@ button.card:hover, a.card:hover {
     p{
         font-size: 12px;
     }
-    
+
+    .stl{
+        line-height: 100%;
+        padding: 50px 0;
+    }
 }
 
-@media(max-width: 1000px){
+@media(min-width:440px) and (max-width: 1000px){
     .title-base{
         text-align: center;
         font-family: Quicksand;
@@ -507,5 +516,125 @@ button.card:hover, a.card:hover {
 
     p{
         font-size: 8px;
+    }
+
+    .stl{
+        line-height: 100%;
+        padding: 40px 0;
+    }
+}
+
+@media(max-width:500px){
+    .title-base{
+        text-align: center;
+        font-family: Quicksand;
+        padding: 12px 24px;
+        font-size: 10px;
+        font-weight: 25;
+        letter-spacing:1px;
+        color: #f1f1f1;
+        text-shadow: 2px 2px 4px #000000;
+    }
+    
+    .title-display{
+        position:absolute;
+        top:25%;
+        left:50%;
+        transform:translate(-50%,-50%);
+        -ms-transform:translate(-50%,-50%);
+    }
+
+    ul{
+        height: auto;
+    }
+    li a{
+        font-size: 40%;
+    }
+
+    .button{
+        width: auto;
+        padding: 5px;
+        font-size: 45%;
+        margin-left: 40%;
+    }
+
+    .button span:after{
+        content: '\00bb';
+        position: absolute;
+        opacity: 0;
+        top: 0;
+        right: -10px;
+        transition: 0.5s;
+    }
+    
+    .button:hover span{
+        padding-right: 10px;
+    }
+
+    .pos{
+        position:absolute;
+        width: 30%;
+        height: 30%;
+        top:55%;
+        left:73%;
+        transform:translate(-50%,-50%);
+        -ms-transform:translate(-50%,-50%);
+    }
+
+    .descriptif{
+        font-family: Quicksand;
+        font-size: 6px;
+        text-align: center;
+        text-shadow: 2px 2px 4px #474747;
+        color: rgb(255, 255, 255);
+        padding: 20px;
+        width: 100%;
+    }
+    
+    .titre2{
+        font-size: 15px;
+        letter-spacing: 1px;
+    }
+    .parallax2{
+        height: 150px;
+    }
+    .parallax3{
+        height: 150px;
+    }
+
+    .par{
+        font-size: 6px;
+    }
+
+    .hs{
+        font-size: 6px;
+    }
+
+    .cardbox {
+        max-width: 100px;
+        margin-left: 4%;
+    }
+      
+    .titleCard {
+        font-size: 4px;
+    }
+      
+    button.card {
+        padding: 2px;
+        color: #3B4832;
+        width: 100%;
+        font-size: 6px;
+    }
+      
+    a.card {
+        font-size: 6px;
+    }
+
+    p{
+        font-size: 6px;
+    }
+    .stl{
+        line-height: 100%;
+        padding: 30px 0;
     }
 }
