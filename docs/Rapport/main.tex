@@ -182,22 +182,66 @@ Cependant, le langage Python de base ne permet pas de faire de la programmation 
 \chapter{Développement logiciel, Conception, Modélisation, Implémentation}
 \section{Présentation du développement}
 
-\section{Modélisation} %UML
+\section{Modélisation} %UML gros problème. dès que l'on rajoute des lignes, tout crash avec trois milles erreurs.
+%Incompréhensible, peux-être parce que sa déborde je n'ai pas trouver malgré plusieurs essaies. 
+
 \begin{center}
 \begin{tikzpicture}
-\umlclass[x=8, fill=grey!5]{LQViewable}{n : uint \\ t : float}{}
-\umlclass[y=-3, fill=grey!5]{LQSurface}{d : double}{\umlvirt{setB(b : B) : void je suis un test} \\ getB() : B}
-\umlclass[x=-2, fill=grey!5]{LQuark}{n : uint \\ s : string}{}
-\umlclass[x=2, fill=grey!5]{LQTexture}{n : uint}{}
-\umlclass[x=8, y=-6, fill=grey!5]{LQNumber}{n : uint}{}
-\umlclass[x=-2, y=-6, fill=grey!5]{LQMathVar}{n : uint}{}
-\umlclass[x=2, y=-6, fill=grey!5]{LQMathExpr}{n : uint}{}
-\umlinherit[geometry=-|]{LQuark}{LQSurface}
-\umlinherit[geometry=-|]{LQTexture}{LQSurface}
-\umlinherit[geometry=-|]{LQNumber}{LQViewable}
-\umlinherit[geometry=-|]{LQSurface}{LQViewable}
-\umlinherit[geometry=-|]{LQMathVar}{LQMathExpr}
-\umlinherit[geometry=-|]{LQMathExpr}{LQNumber}
+\umlclass[x=8, fill=grey!5]{LQViewable}{n : uint \\ t : float}{<<create>>LQViewable() \\}
+\umlclass[x=-4,y=-6, fill=grey!5]{LQSurface}{- m_VBO : GLuint\\
+    - m_VAO : GLuint\\ 
+    - m_FBO : GLuint\\
+    - m_shader : LQShader*\\ 
+    - m_x : LQNumber\\
+    - m_y : LQNumber\\ 
+    - m_width : LQNumber\\ 
+    - m_height : LQNumber\\ 
+    %- m_clearColor : LQColor\\
+    %- s_vertices[54] : GLfloat <<static>>\\
+    %- s_default_shader : LQShader* <<static>>
+    }{}
+
+\umlclass[x=-4, fill=grey!5]{LQuark}{- m_parent : LQuark*\\
+    - m_prevSibling : LQuark*\\
+    - m_nextSibling : LQuark*\\
+    - m_firstChild : LQuark*\\
+    - m_lastChild : LQuark*\\
+    - m_childrenCount : LQuark*\\}{
+    + parent() : LQuark* <<const>>\\
+    + firstChild() : LQuark* <<const>>\\
+    + lastChild() : LQuark* <<const>>\\
+    + nthChild(LQindex nth) : LQuark* <<const>>\\
+    + prevSibling() : LQuark* <<const>>\\
+    + nextSibling() : LQuark* <<const>>\\
+    + nthSibling(LQindex nth) : LQuark* <<const*>>\\
+    + childrenCount() : LQsize <<const>>}
+    
+\umlclass[x=3, fill=grey!5]{LQTexture}{- genTexture(): GLuint \\
+    - m_id : GLuint \\
+    - m_texWidth : GLuint \\
+    - m_texHeight : GLuint \\
+    - m_format : GLuint \\
+    - m_wrapS : GLuint \\
+    - m_wrapT : GLuint \\
+    - m_minFilter : GLuint \\
+    - m_magFilter : GLuint}{  
+    + <<create>>LQTexture()\\
+    + getId(): GLint <<const>>\\
+    + getWidth(): GLint <<const>>\\
+    + getHeight(): GLint <<const>>\\
+    + deleteTexture(LQTexture& texture): void<<static>>}
+
+\umlclass[x=8, y=-6, fill=grey!5]{LQNumber}{n : int}{}
+%\umlclass[x=6, y=-6, fill=grey!5]{LQMathVar}{n : int}{}
+%\umlclass[x=2, y=-9, fill=grey!5]{LQMathExpr}{n : int}{}
+
+
+%\umlinherit[geometry=-|]{LQuark}{LQSurface}
+%\umlinherit[geometry=-|]{LQTexture}{LQSurface}
+%\umlinherit[geometry=-|]{LQNumber}{LQViewable}
+%\umlinherit[geometry=-|]{LQSurface}{LQViewable}
+%\umlinherit[geometry=-|]{LQMathVar}{LQMathExpr}
+%\umlinherit[geometry=-|]{LQMathExpr}{LQNumber}
 \end{tikzpicture}
 \end{center}
 
@@ -356,11 +400,11 @@ Les interactions avec l'interface concernant le profil sont, la modification de 
     link/.style={-latex, line width=1.5pt, linkred},
     link label font=\scriptsize\bfseries,
     link label node/.append style={below left=-2pt and 0pt}
-  ]{1}{30}
+  ]{1}{15}
   \gantttitle[
     title label node/.append style={below left=7pt and -3pt}
   ]{SEMAINES:\quad1}{1}
-  \gantttitlelist{2,...,30}{1} \\
+  \gantttitlelist{2,...,15}{1} \\
   \ganttgroup{Préliminaire Projet}{1}{1} \\[grid]
   \ganttgroup[name = R]{Partie Réseaux}{2}{10} \\
   \ganttbar[progress=75,name=PR1A]{\textbf{PR 1.1} Activité A}{2}{8} \\
