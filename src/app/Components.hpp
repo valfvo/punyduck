@@ -21,6 +21,9 @@ public:
     // void toggleListView(GLfloat y, LQMetricExpr<LQViewable>& width, LQMetricExpr<LQViewable>& height);
     void toggleListView(GLfloat y, GLfloat width, GLfloat height);
     void toggleGridView(GLfloat x, GLfloat y);
+
+protected:
+    int m_id;
 };
 
 // class LI_ProjectPreview : public LQViewable {
@@ -86,4 +89,11 @@ class ProjectView : public LQViewport {
 public:
     ProjectView(LQNumber&& x, LQNumber&& y, LQNumber&& width, LQNumber&& height,
                 GLint color=0xD9D9D9);  // 0x36393f
+};
+
+class DropProjectView : public LQViewport {
+public:
+    DropProjectView(
+        LQNumber&& x, LQNumber&& y, LQNumber&& width, LQNumber&& height,
+        GLint color=0xD9D9D9);  // 0x36393f
 };

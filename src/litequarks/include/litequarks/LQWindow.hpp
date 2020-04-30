@@ -12,8 +12,9 @@ public:
     void update();
     bool alive() const;
 
-    void onFocusGain();
-    void onScroll();
+    void onEvent();
+
+    GLFWwindow* getGLFWwindow();
 
 private:
     void framebufferSizeCallback(GLFWwindow* window, int width, int height);

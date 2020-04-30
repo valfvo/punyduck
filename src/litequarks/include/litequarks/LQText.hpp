@@ -34,10 +34,6 @@ public:
     s_font;
 
 protected:
-    // m_text += codepoint
-    // renderedChar = renderText(codepoint, ...)
-    // width() += renderedChar.widthF()
-    // blit(renderedChar)
     std::u32string m_text;
     int m_baseline;
 

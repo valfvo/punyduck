@@ -21,7 +21,7 @@ def encodeBuffer(message): #Fonction qui renvoie la taille d'un message en binai
     return sizeBuffer_send
 
 def decodeBuffer(buffer): #Fonction qui décode un nombre encodé en binaire (appelée pour décoder la taille d'un message)
-    print("sizeBuffer_received : ", buffer)
+    # print("sizeBuffer_received : ", buffer)
     sizeBuffer_received = int.from_bytes(buffer, "big")
     # print("sizeBuffer_received : ", sizeBuffer_received)
     return sizeBuffer_received
@@ -63,7 +63,7 @@ async def receive_file(reader, oDir, name=None): #Fonction appelée pour recevoi
         os.makedirs(path2) #On crée les dossiers parents si ceux-ci n'existent pas
     except:
         pass
-    print("file received check ; path2 = ", path2, " nameFile = ", nameFile)
+    # print("file received check ; path2 = ", path2, " nameFile = ", nameFile)
     with open(path2+nameFile, "wb") as file:
         file.write(data) #On écrit les données binaire du fichier
 
@@ -99,16 +99,16 @@ async def receive_message(reader): #Fonction pour récupérer un message envoyé
 async def send_dir(pathDir, writer, name):
     """Fonction envoyant les fichiers d'un dossier de manière récursive. On lui passe en paramètre le chemin pour accéder au dossier originel,
     le writer, et le nom du dossier originel."""
-    print("send dir : ", pathDir)
+    # print("send dir : ", pathDir)
     if os.path.isdir(pathDir):
-        print(pathDir, "est un dossier")
+        # print(pathDir, "est un dossier")
         tree = os.listdir(pathDir)
         for fileordir in tree: #Pour chaque fichier/dossier du dossier originel :
-            print("dir : ", pathDir+'/'+fileordir)
+            # print("dir : ", pathDir+'/'+fileordir)
             await send_dir(pathDir+'/'+fileordir, writer, name)
             await writer.drain()
     elif os.path.isfile(pathDir):
-        print(pathDir, "est un fichier")
+        # print(pathDir, "est un fichier")
         await send_file(pathDir, writer, name)
     else:
         print("Veuillez entrer un chemin valide")
@@ -121,14 +121,11 @@ async def register(writer, reader, infos):
     #On récupère le login et le mot de passe saisis par le client
     print("Inscription en cours")
     infos = infos[1:].decode()
-    print("Infos = ", infos)
+    # print("Infos = ", infos)
     matchInfos = infos.split('|')
     login = matchInfos[0]
     password = matchInfos[1]
     email = matchInfos[2]
-    print("login = ", login)
-    print("password = ", password)
-    print("email = ", email)
     query = "INSERT INTO UserInfo (login, password, email, admin, uPathImage, uDescr) VALUES('%s', '%s', '%s', FALSE, 'Images/defaultpp.png', 'Cette page na pas de description')" % (login, ph.hash(password), email)
     
     try:
@@ -144,7 +141,7 @@ async def register(writer, reader, infos):
 async def login(writer, reader, infos):
     print("Connexion en cours")
     infos = infos[1:].decode()
-    print("Infos = ", infos)
+    # print("Infos = ", infos)
     matchInfos = infos.split('|')
     login = matchInfos[0]
     password = matchInfos[1]
@@ -173,13 +170,13 @@ async def getProject(writer, reader, idProjet):
     print("Réception d'un projet client")
     downloading = await reader.read(1) # Variable pour savoir s'il reste des fichiers à recevoir
     downloading = int.from_bytes(downloading, "big")
-    print("Downloading = ", downloading)
+    # print("Downloading = ", downloading)
     ddl = False
     while downloading == 0:
         await receive_file(reader, str(idProjet))
         downloading = await reader.read(1)
         downloading = int.from_bytes(downloading, "big")
-        print("Downloading = ", downloading)
+        # print("Downloading = ", downloading)
         ddl = True
     print("Project downloaded")
     return ddl
@@ -326,7 +323,7 @@ async def SQL(writer, query):
         infos = "dataReceive".encode() + b'\0' + model.encode() + b'\0' + \
                 nItems.to_bytes(4, 'big') + nAttributes + ordreIndice + infos
         # str + \0 + str + \0 + 4 bytes + 1 byte + (4 bytes + 4 * nbIndice bytes) + n bytes
-        print("nitem :", nItems.to_bytes(4, 'big'))
+        # print("nitem :", nItems.to_bytes(4, 'big'))
         # print("infos =", infos)
         await send_message(writer, infos)
 
@@ -394,18 +391,20 @@ async def handle_echo(reader, writer):
                 idLog = int.from_bytes(idLog, 'big')
 
                 print("Réception Image")
+                print("clientPathImage: ", clientPathImage)
                 if clientPathImage != "":
                     pathImage = str(idP)+"/PP"
                     await reader.read(1)
                     await receive_file(reader, pathImage, "pp.png")
+                    pathImage += "/pp.png"
                 else:
                     pathImage = "PP/defaultpp.png"
                 
                 #Enfin, on insère dans la table Projet une nouvelle ligne, avec les informations du nouveau projet
-                if ddl:
+                if ddl and idLog != 0:
                     print("Adding project to database...")
                     cur.execute("INSERT INTO Projet (nom, valide, tag, pDescr, pPathImage, pIdLog)\
-                    VALUES(%s, FALSE, %s, %s, %s, %s);", (nom, tag, descr, pathImage+"/pp.png", idLog))
+                    VALUES(%s, FALSE, %s, %s, %s, %s);", (nom, tag, descr, pathImage, idLog))
                 conn.commit()
                 print("END")
 

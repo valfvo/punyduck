@@ -19,6 +19,8 @@ public:
     void onKey(LQKeyEvent& event);
     void onChar(LQCharEvent& event);
 
+    std::string getContent() const;
+
 protected:
     LQText* m_placeholder;
     LQText* m_text;

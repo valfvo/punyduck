@@ -42,9 +42,10 @@ public:
     {
         LQViewable *parent, *prev;
         createTree(*this, parent, prev)
-        .add<LQText>("Accueil", 10_px, 2_em, parent->height(), 0xffffff)
-        .add<LQText>("Projets", prev->right()+10_px, 2_em, parent->height(), 0xffffff)
-        .add<LQText>("Collection", prev->right()+10_px, 2_em, parent->height(), 0xffffff);
+        // .add<LQText>("Accueil", 10_px, 2_em, parent->height(), 0xffffff)
+        .add<LQText>("Projets", 10_px, 2_em, parent->height(), 0xffffff)
+        .add<LQText>("Dépôt", prev->right()+10_px, 2_em, parent->height(), 0xffffff);
+        // .add<LQText>("Collection", prev->right()+10_px, 2_em, parent->height(), 0xffffff);
     }
 };
 
@@ -64,12 +65,16 @@ int main() {
     createTree(window, parent, prev)
     // .add<LQTextArea>(150_px, 150_px, 100_px, 25_px, 0xE9E9E9, "Rechercher...");
     .add<NavBar>(0.0f, 0.0f, parent->width(), 1_wu)
+    // .add<DropProjectView>(0.0f, prev->height(), parent->width(),
+                        //   parent->height() - prev->height(), 0xD9D9D9);
     .add<ProjectView>(0.0f, prev->height(), parent->width(),
                       parent->height() - prev->height(), 0xD9D9D9);
     // auto t = LQText::s_font.renderText(U"a", 0x000000, 200_px, 200_px, 1_em);
     // window.appendChild(&t);
     // LQAppModel::dataQuery("projectSELECT idProjet, nom, tag, pDescr, pPathImage, login FROM Projet, UserInfo WHERE pIdLog = idLog;");
-    LQAppModel::dataQuery("projectSELECT idProjet, nom, tag FROM Projet;");
+    LQAppController::pushEvent(new loginEvent("test", "test"));
+    LQAppModel::dataQuery("projectSELECT idProjet, nom, tag, pPathImage FROM Projet;");
+
     // int action;
     // std::cout << "Choissisez une action (1 login 2 register 3 upProjet 4 dlProject)" << std::endl;
     // std::cin >> action;

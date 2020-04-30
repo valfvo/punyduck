@@ -34,11 +34,11 @@ async def send_file(path, writer, oDir): #Fonction envoyant un fichier au serveu
                 if test:
                     pathServer += i+'/'
             pathServer = pathServer[:-1]
-            print("pathServer : ", pathServer, "path : ", path, "oDir : ", oDir)
+            # print("pathServer : ", pathServer, "path : ", path, "oDir : ", oDir)
             await send_message(writer, pathServer.encode())
 
             filesize = os.path.getsize(path)
-            print("filesize :", filesize.to_bytes(4, 'big'))
+            # print("filesize :", filesize.to_bytes(4, 'big'))
             writer.write(filesize.to_bytes(4, 'big')) #On envoie la taille du fichier
             loop = asyncio.get_running_loop()
             await loop.sendfile(writer.transport, file) #On envoie le fichier
@@ -55,14 +55,14 @@ async def receive_file(reader): #Fonction appelée pour recevoir un fichier envo
     path = path.split('/')
     #Dans le chemin du fichier, on sépare le nom du fichier du reste du chemin
     nameFile = path[-1]
-    path2 = ''
+    path2 = 'Projects/'
     for i in path[0:-1]:
         path2 += i + '/'
     try:
         os.makedirs(path2) #On crée les dossiers parents si ceux-ci n'existent pas
     except:
         pass
-    print("file received check ; path2 = ", path2, " nameFile = ", nameFile)
+    # print("file received check ; path2 = ", path2, " nameFile = ", nameFile)
     with open(path2+nameFile, "wb") as file:
         file.write(data) #On écrit les données binaire du fichier
 
@@ -104,12 +104,12 @@ async def receive_message(reader): #Fonction pour récupérer un message envoyé
 async def send_dir(pathDir, writer, oDir):
     """Fonction envoyant les fichiers d'un dossier de manière récursive. On lui passe en paramètre le chemin pour accéder au dossier originel,
     le writer, et le nom du dossier originel."""
-    print("send dir :", pathDir, "oDir :", oDir)
+    # print("send dir :", pathDir, "oDir :", oDir)
     if os.path.isdir(pathDir):
         # print(pathDir, "est un dossier")
         tree = os.listdir(pathDir)
         for fileordir in tree: #Pour chaque fichier/dossier du dossier originel :
-            print("dir : ", pathDir+'/'+fileordir)
+            # print("dir : ", pathDir+'/'+fileordir)
             await send_dir(pathDir+'/'+fileordir, writer, oDir)
             await writer.drain()
     elif os.path.isfile(pathDir):
@@ -121,11 +121,11 @@ async def send_dir(pathDir, writer, oDir):
 
 async def logicalResponse(writer, reader, event, size_to_read):
     result = await reader.read(size_to_read)
-    print("result : ", result)
+    # print("result : ", result)
     if result == int(0).to_bytes(size_to_read, 'big'):
         print(event+b'\0'+int(0).to_bytes(1, 'big'))
         gw.transmit_response(event+b'\0'+int(0).to_bytes(1, 'big'))
-        print("Mauvais login")
+        # print("Mauvais login")
     else:
         print(event+b'\0'+int(1).to_bytes(1, 'big'))
         gw.transmit_response(event+b'\0'+int(1).to_bytes(1, 'big'))
@@ -136,12 +136,11 @@ async def upProject(writer, path, oDir, idLog):
     await send_dir(path, writer, oDir) #Pour finir, on appelle la fonction send_dir() pour envoyer le projet au serveur
     writer.write(b'\x01') #On envoie un 1 pour indiquer qu'il n'y a plus rien à télécharger
     
-    print("idLog len : ", len(idLog))
     writer.write(idLog)
     print("PROJET ENVOYE")
 
 async def getProject(writer, reader):
-    print("Réception d'un projet client")
+    # print("Réception d'un projet client")
     downloading = await reader.read(1) # Variable pour savoir s'il reste des fichiers à recevoir
     downloading = int.from_bytes(downloading, "big")
     ddl = False
@@ -149,7 +148,7 @@ async def getProject(writer, reader):
         await receive_file(reader)
         downloading = await reader.read(1)
         downloading = int.from_bytes(downloading, "big")
-        print("Downloading = ", downloading)
+        # print("Downloading = ", downloading)
         ddl = True
     print("Project downloaded")
     return ddl
@@ -160,7 +159,7 @@ async def main():
     qui gère la connexion à son compte. Ensuite, on demande à l'utilisateur s'il souhaite envoyer ou recevoir un projet."""
     reader, writer = await asyncio.open_connection('127.0.0.1', 50002)
     connected = True
-    idLog = b''
+    idLog = b'\x00\00'
     while connected: #Tant qu'on est connecté au serveur, on demande si l'utilisateur veut envoyer ou recevoir un projet
         action = gw.poll_request()
         if action:
@@ -185,7 +184,7 @@ async def main():
             
             elif action.tobytes()[0] == 4:
                 checkName = await logicalResponse(writer, reader, "upProject".encode(), 1)
-                print("checkname : ", int.from_bytes(checkName, 'big'))
+                # print("checkname : ", int.from_bytes(checkName, 'big'))
                 if int.from_bytes(checkName, 'big'):
                     infos = ((action.tobytes())[1:]).decode()
                     matchInfos = infos.split('|')

@@ -145,14 +145,25 @@ void LQAppController::pollResponses() {
                 LQAppController::pushEvent(new tempActionEvent(action));
             }
         }
-        if(type == "upProject") {
+        if (type == "upProject") {
             int rep = data.parse<int8_t>();
-            if(rep == 0) {
-                std::cout << "Nom deja pris. Entrez nom, chemin : " << std::endl;
-                std::string nom, chemin, tag, descr, pathImage;
-                std::cin >> nom;
-                std::getline(std::cin, chemin);
-                LQAppController::pushEvent(new upProjectEvent(chemin, nom, tag, descr, pathImage)); // Dans la class bouton register
+            auto* valid = static_cast<LQViewable*>(
+                s_window->lastChild()->firstChild()->lastChild());
+            auto* error = static_cast<LQViewable*>(valid->prevSibling());
+
+            if (rep == 1) {  // name not taken
+                // window->DropProjectView->document->valid
+                error->hide();
+                valid->unhide();
+                // std::cout << "Nom deja pris. Entrez nom, chemin : " << std::endl;
+                // std::string nom, chemin, tag, descr, pathImage;
+                // std::cin >> nom;
+                // std::getline(std::cin, chemin);
+                // LQAppController::pushEvent(new upProjectEvent(chemin, nom, tag, descr, pathImage)); // Dans la class bouton register
+            }
+            else {
+                valid->hide();
+                error->unhide();
             }
         }
         if(type == "projectUploaded") {
@@ -191,11 +202,11 @@ void LQAppController::pollResponses() {
                 std::cout << "Erreur lors du telechargement du projet. Fin de programme" << std::endl;
             }
             else {
-                std::cout << "Projet telecharge." << std::endl;
-                int action;
-                std::cout << "Choissisez une action (1 login 2 register 3 upProjet 4 dlProject)" << std::endl;
-                std::cin >> action;
-                LQAppController::pushEvent(new tempActionEvent(action));
+                std::cout << "Projet telecharge (cpp)." << std::endl;
+                // int action;
+                // std::cout << "Choissisez une action (1 login 2 register 3 upProjet 4 dlProject)" << std::endl;
+                // std::cin >> action;
+                // LQAppController::pushEvent(new tempActionEvent(action));
             }
         }
         s_responses.pop();
@@ -231,6 +242,18 @@ void LQAppController::resetMousePosition() {
     s_focus = s_window;
 }
 
+void LQAppController::updateMousePosition() {
+    double mx, my;
+    glfwGetCursorPos(s_window->getGLFWwindow(), &mx, &my);
+    cursor_position_callback(s_window->getGLFWwindow(), mx, my);
+}
+
+void LQAppController::recalcMousePosition(float xoffset, float yoffset) {
+    prevRelX += xoffset;
+    prevRelY += yoffset;
+    updateMousePosition();
+}
+
 void LQAppController::cursor_position_callback(GLFWwindow* window, double mx, double my) {
     // std::cout << "\nmx my:"<< mx << " " << my << std::endl;
     float deltaX = mx - prevAbsX;
@@ -238,9 +261,10 @@ void LQAppController::cursor_position_callback(GLFWwindow* window, double mx, do
     prevRelX += deltaX;
     prevRelY += deltaY;
 
-    // std::cout << "deb:"<< prevRelX<<' '<<prevRelY <<' '<<prevAbsX<<' '<<prevAbsY<< std::endl;
 
     LQViewable* current = s_hover_focus;
+    // std::cout << "deb:"<< prevRelX<<' '<<prevRelY <<' '<<prevAbsX<<' '<<prevAbsY
+            //   <<" "<<current<< std::endl;
     // std::cout << "current:"<<current->xF()<<' '<<current->yF()<<' '<<current->widthF()<<' '<<current->heightF()<<std::endl;
     bool outCurrent = prevRelX < 0 || prevRelX > current->widthF() ||
                       prevRelY < 0 || prevRelY > current->heightF();
@@ -294,9 +318,8 @@ void LQAppController::mouse_button_callback(
             s_eventQueue.push(new LQFocusGainEvent(eligible));
             s_focus = eligible;
         }
-        if (hasCallback<LQClickEvent>(s_hover_focus)) {
-            s_eventQueue.push(new LQClickEvent(s_hover_focus, prevRelX, prevRelY));
-        }
+        auto* eligibleToClick = getEligible<LQClickEvent>();
+        s_eventQueue.push(new LQClickEvent(eligibleToClick, prevRelX, prevRelY));
     }
 }
 
@@ -319,6 +342,17 @@ void LQAppController::scroll_callback(
 {
     auto eligible = getEligible<LQScrollEvent>();
     s_eventQueue.push(new LQScrollEvent(eligible, xoffset, yoffset));
+}
+
+void LQAppController::drop_callback(
+    GLFWwindow* window, int count, const char** _paths)
+{
+    std::vector<std::string> paths;
+    for (int i = 0; i < count; ++i) {
+        paths.push_back(std::string(_paths[i]));
+    }
+    auto eligible = getEligible<LQDropEvent>();
+    s_eventQueue.push(new LQDropEvent(eligible, std::move(paths)));
 }
 
 void LQAppController::dataQueryCallback(LQDataQueryEvent& event) {

@@ -97,3 +97,7 @@ void LQTextArea::onChar(LQCharEvent& event) {
     }
     appendChild(m_text);
 }
+
+std::string LQTextArea::getContent() const {
+    return m_text ? LQText::s_convert.to_bytes(m_text->m_text) : "";
+}

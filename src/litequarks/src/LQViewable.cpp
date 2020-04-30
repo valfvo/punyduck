@@ -4,8 +4,8 @@
 LQViewable::LQViewable()
 : LQSurface(), m_flex(false), m_hidden(false)
 {
-    // m_width.linkQuark<LQViewable, resizeCallback>(*this);
-    // m_height.linkQuark<LQViewable, resizeCallback>(*this);
+    m_width.linkQuark<LQViewable, resizeWidthCallback>(*this);
+    m_height.linkQuark<LQViewable, resizeHeightCallback>(*this);
 }
 //   m_left(0.0f, this, LQNumber::Kind::coords, moveToX), m_top(LQMetricKind_Coords),
 //   m_w(LQMetricKind_Length), m_h(LQMetricKind_Length)
@@ -22,16 +22,16 @@ LQViewable::LQViewable(LQNumber&& x, LQNumber&& y,
 //   m_left(this, LQMetricKind_Coords), m_top(this, LQMetricKind_Coords),
 //   m_w(LQMetricKind_Length), m_h(LQMetricKind_Length)
 {
-    // m_width.linkQuark<LQViewable, resizeCallback>(*this);
-    // m_height.linkQuark<LQViewable, resizeCallback>(*this);
+    m_width.linkQuark<LQViewable, resizeWidthCallback>(*this);
+    m_height.linkQuark<LQViewable, resizeHeightCallback>(*this);
 }
 
 LQViewable::LQViewable(LQNumber&& x, LQNumber&& y, bool flex)
 : LQSurface(std::move(x), std::move(y), 0.0f, 0.0f),
   m_flex(flex), m_hidden(false)
 {
-    // m_width.linkQuark<LQViewable, resizeCallback>(*this);
-    // m_height.linkQuark<LQViewable, resizeCallback>(*this);
+    m_width.linkQuark<LQViewable, resizeWidthCallback>(*this);
+    m_height.linkQuark<LQViewable, resizeHeightCallback>(*this);
 }
 
 LQViewable::~LQViewable() {
@@ -62,20 +62,16 @@ void LQViewable::displayBlock() {
     m_flex = false;
 }
 
-#include <iostream>
 LQViewable& LQViewable::appendChild(LQViewable* child) {
     LQSurface::appendChild(child);
     if (flexible()) {
-        std::cout << "flex" << std::endl;
-        float newWidth = child->m_x.f() + child->m_width.f();
-        float newHeight = child->m_y.f() + child->m_height.f();
+        float newWidth = child->xF() + child->widthF();
+        float newHeight = child->yF() + child->heightF();
 
-        if (m_width.f() < newWidth) {
-            std::cout << "width !" << std::endl;
+        if (widthF() < newWidth) {
             width() = newWidth;
         }
-        if (m_height.f() < newHeight) {
-            std::cout << "height !" << std::endl;
+        if (heightF() < newHeight) {
             height() = newHeight;
         }
     }
@@ -96,6 +92,61 @@ void LQViewable::drawChildren() {
     }
 }
 
-// void LQViewable::resizeCallback() {
-//     LQSurface::resizeCallback();
-// }
+void LQViewable::resizeWidthCallback() {
+    LQSurface::resizeCallback();
+    auto* p_quark = parent();
+    auto* p_parent = static_cast<LQViewable*>(p_quark);
+    if (p_quark && p_parent->flexible()) {
+        float newWidth = xF() + widthF();
+
+        if (p_parent->widthF() < newWidth) {
+            p_parent->width() = newWidth;
+        }
+        else if (xF() + LQNumber::old() >= p_parent->widthF()) {
+            float newParentWidth = 0.0f, w = 0.0f;
+
+            for (auto* child = static_cast<LQViewable*>(p_parent->firstChild());
+                 child != nullptr;
+                 child = static_cast<LQViewable*>(child->nextSibling()))
+            {
+                w = child->xF() + child->widthF();
+                if (w > newParentWidth) {
+                    newParentWidth = w;
+                }
+            }
+
+            if (p_parent->widthF() > newParentWidth) {
+                p_parent->width() = newParentWidth;
+            }
+        }
+    }
+}
+
+void LQViewable::resizeHeightCallback() {
+    LQSurface::resizeCallback();
+    auto* p_quark = parent();
+    auto* p_parent = static_cast<LQViewable*>(p_quark);
+    if (p_quark && p_parent->flexible()) {
+        float newHeight = yF() + heightF();
+
+        if (p_parent->heightF() < newHeight) {
+            p_parent->height() = newHeight;
+        }
+        else if (yF() + LQNumber::old() >= p_parent->heightF()) {
+            float newParentHeight = 1.0f, h = 0.0f;
+
+            for (auto* child = static_cast<LQViewable*>(p_parent->firstChild());
+                 child != nullptr;
+                 child = static_cast<LQViewable*>(child->nextSibling()))
+            {
+                h = child->yF() + child->heightF();
+                if (h > newParentHeight) {
+                    newParentHeight = h;
+                }
+            }
+            if (p_parent->heightF() > newParentHeight) {
+                p_parent->height() = newParentHeight;
+            }
+        }
+    }
+}

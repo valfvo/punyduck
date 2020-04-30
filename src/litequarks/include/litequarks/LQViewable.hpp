@@ -27,7 +27,8 @@ public:
     LQViewable& appendChild(LQViewable* child);
 
     void drawChildren() override;
-    // void resizeCallback();
+    void resizeWidthCallback();
+    virtual void resizeHeightCallback();
     // margin
     // padding-top
 

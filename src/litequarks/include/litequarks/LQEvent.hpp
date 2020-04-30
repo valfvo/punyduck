@@ -60,6 +60,13 @@ public:
     const float yoffset;
 };
 
+class LQDropEvent : public LQEvent {
+public:
+    LQDropEvent(void* target, std::vector<std::string>&& paths);
+
+    const std::vector<std::string> paths;
+};
+
 class LQDataQueryEvent : public LQEvent {
 public:
     LQDataQueryEvent(void* target, const std::string& query);

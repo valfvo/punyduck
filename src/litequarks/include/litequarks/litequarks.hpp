@@ -7,6 +7,8 @@
 #include <litequarks/LQWindow.hpp>
 #include <litequarks/LQButton.hpp>
 #include <litequarks/LQViewport.hpp>
+#include <litequarks/LQDocument.hpp>
+#include <litequarks/LQDrop.hpp>
 
 #include <litequarks/LQTreeCreator.hpp>
 #include <litequarks/LQColor.hpp>

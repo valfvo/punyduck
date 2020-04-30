@@ -27,6 +27,9 @@ LQScrollEvent::LQScrollEvent(void* _target, float _xoffset, float _yoffset)
 : LQEvent(typeid(LQScrollEvent), _target), xoffset(_xoffset), yoffset(_yoffset)
 { }
 
+LQDropEvent::LQDropEvent(void* _target, std::vector<std::string>&& _paths)
+: LQEvent(typeid(LQDropEvent), _target), paths(std::move(_paths)) { }
+
 LQDataQueryEvent::LQDataQueryEvent(void* _target, const std::string& _query)
 : LQEvent(typeid(LQDataQueryEvent), _target), query(_query) { }
 

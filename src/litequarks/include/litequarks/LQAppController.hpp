@@ -9,6 +9,7 @@
 #include <unordered_map>
 #include <utility>  // std::pair
 #include <vector>
+#include <string>
 #include <cstdint>
 
 #include "LQWindow.hpp"
@@ -51,6 +52,10 @@ public:
 
     static void resetMousePosition();
 
+    static void updateMousePosition();
+
+    static void recalcMousePosition(float xoffset, float yoffset);
+
     static void cursor_position_callback(GLFWwindow* window, double mx, double my);
 
     static void mouse_button_callback(GLFWwindow* window, int button,
@@ -62,6 +67,8 @@ public:
     static void character_callback(GLFWwindow* window, unsigned int codepoint);
   
     static void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
+
+    static void drop_callback(GLFWwindow* window, int count, const char** paths);
 
     static void dataQueryCallback(LQDataQueryEvent& event);
 

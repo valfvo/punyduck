@@ -24,28 +24,27 @@ void LQViewport::onScroll(LQScrollEvent& event) {
         auto* grip = static_cast<LQViewable*>(track->firstChild());
 
         float viewportScrollAreaSize = document->heightF() - heightF();
+        float oldY = document->yF();
         document->y() = std::min(std::max(
-            document->yF() + event.yoffset * 15_px, -viewportScrollAreaSize), 0.0f);
+            document->yF() + event.yoffset * 25_px, -viewportScrollAreaSize), 0.0f);
+        float deltaY = document->yF() - oldY;
 
         float viewportPositionRatio = std::abs(document->yF()) / viewportScrollAreaSize;
         float trackScrollAreaSize = track->heightF() - grip->heightF();
         grip->y() = trackScrollAreaSize * viewportPositionRatio;
+        LQAppController::recalcMousePosition(0.0f, -deltaY);
     }
 }
 
 void LQViewport::recalc() {
     resizeCallback();
-    // std::cout << "le crash arrive !!!!!!!!!!!!!!!!!!!!!!!!!!" << std::endl;
-    // std::cout << "viewport: " << &m_width << ' ' << &m_height << std::endl;
     auto* old_track = firstChild()->nextSibling();
     if (old_track) {  // there is a track & grip
         removeLastChild();
-        // std::cout << "track: " << &static_cast<LQViewable*>(old_track)->m_x     
-                //   << ' ' << &static_cast<LQViewable*>(old_track)->m_height << std::endl;
         delete old_track->firstChild();
         delete old_track;
     }
-    // std::cout << "fin reset" << std::endl;
+
     auto* document = static_cast<LQViewable*>(firstChild());
     if (document->heightF() > heightF()) {  // scrollbar needed
         float trackSize = heightF();
@@ -58,10 +57,8 @@ void LQViewport::recalc() {
         float trackScrollAreaSize = trackSize - gripSize;
         float gripPositionOnTrack = trackScrollAreaSize * viewportPositionRatio;
 
-        appendChild(new LQViewable(width()-20_px, 0_px, 20_px, height()));
+        appendChild(new LQViewable(width()-20_px, 0_px, 20_px, height(), 0xE9E9E9));
         lastChild()->
-            appendChild(new LQViewable(0_px, gripPositionOnTrack, 20_px, gripSize, 0xff0000));
+            appendChild(new LQViewable(0_px, gripPositionOnTrack, 20_px, gripSize, 0xb5b5b5));
     }
-    // std::cout << "attention v" << std::endl;
-    // std::cout << "ah bah non ?!" << std::endl;
 }

@@ -31,6 +31,7 @@ LQWindow::LQWindow(int _width, int _height, char const* title)
     glfwSetKeyCallback(m_window, LQAppController::key_callback);
     glfwSetCharCallback(m_window, LQAppController::character_callback);
     glfwSetScrollCallback(m_window, LQAppController::scroll_callback);
+    glfwSetDropCallback(m_window, LQAppController::drop_callback);
 
     if (!gladLoadGLLoader(reinterpret_cast<GLADloadproc>(glfwGetProcAddress))) {
         std::clog << "failed to initialize GLAD" << std::endl;
@@ -49,8 +50,10 @@ LQWindow::LQWindow(int _width, int _height, char const* title)
     height() = m_texHeight =_height;
 
     LQAppController::setWindow(this);
-    lqOn<LQFocusGainEvent>(this, onFocusGain);
-    lqOn<LQScrollEvent>(this, onScroll);
+    lqOn<LQClickEvent>(this, onEvent);
+    lqOn<LQFocusGainEvent>(this, onEvent);
+    lqOn<LQScrollEvent>(this, onEvent);
+    lqOn<LQDropEvent>(this, onEvent);
 }
 
 void LQWindow::run() {
@@ -73,8 +76,11 @@ bool LQWindow::alive() const {
     return !glfwWindowShouldClose(m_window);
 }
 
-void LQWindow::onFocusGain() { }
-void LQWindow::onScroll() { }
+void LQWindow::onEvent() { }
+
+GLFWwindow* LQWindow::getGLFWwindow() {
+    return m_window;
+}
 
 void LQWindow::processInput(GLFWwindow* window) {
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
