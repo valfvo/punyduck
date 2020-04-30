@@ -2,6 +2,17 @@
 
 #include <string>
 
+#include <litequarks/LQViewport.hpp>
+
+class SignInView : public LQViewport {
+public:
+    SignInView(LQNumber&& x, LQNumber&& y, LQNumber&& width, LQNumber&& height,
+               int color=0xD9D9D9);
+
+    LQViewable* navbar;
+    LQViewable* viewport;
+};
+
 #include <litequarks/litequarks.hpp>
 #include "model.hpp"
 
@@ -11,6 +22,21 @@ public:
         GLint color, const std::string& path);
 
     void draw() override;
+};
+
+class PasswordArea : public LQTextArea {
+public:
+    PasswordArea(LQNumber&& x, LQNumber&& y, LQNumber&& width, LQNumber&& height,
+                 GLint color, const std::string& placeholder="",
+                 const std::function<void(const std::string&)>& callback = {});
+
+    void onKey(LQKeyEvent& event) override;
+    void onChar(LQCharEvent& event) override;
+
+    std::string getContent() const override;
+
+protected:
+    std::string m_password;
 };
 
 class LI_Project : public LQViewable {
@@ -26,11 +52,6 @@ protected:
     int m_id;
 };
 
-// class LI_ProjectPreview : public LQViewable {
-// public:
-//     LI_ProjectPreview(const Project* project, GLfloat x, GLfloat y, GLfloat width, GLfloat height);
-// };
-
 class UL_Project : public LQViewable {
 public:
     UL_Project(LQNumber&& x, LQNumber&& y, LQNumber&& width);
@@ -45,45 +66,10 @@ public:
     DIV_Sorting(LQNumber&& x, LQNumber&& y);
 };
 
-// class Trie : public LQViewable {
-// public:
-//     Trie(GLfloat x, GLfloat y);
-// };
-
 class SearchBar : public LQViewable {
 public:
     SearchBar(LQNumber&& x, LQNumber&& y, LQNumber&& width, LQNumber&& height);
 };
-
-// class ButtonMosaique : public LQViewable {
-// public:
-//     ButtonMosaique(GLfloat x, GLfloat y, UL_Project* ul);
-//     void toggleGridView(LQClickEvent& event);
-// private:
-//     UL_Project* m_ul;
-// };
-
-// class ButtonListe : public LQViewable {
-// public:
-//     ButtonListe(GLfloat x, GLfloat y, UL_Project* ul);
-
-//     void toggleListView(LQClickEvent& event);
-
-// private:
-//     UL_Project* m_ul;
-// };
-
-// class LI_Friend : public LQViewable {
-// public: 
-//     LI_Friend(const Friends* Friends, GLfloat x, GLfloat y, GLfloat width, GLfloat height);
-// };
-
-// class UL_Friends : public LQViewable {
-// public:
-//     UL_Friends(GLfloat x, GLfloat y, GLfloat width, GLfloat height);
-
-//     void addFriend(Friends* friends);
-// };
 
 class ProjectView : public LQViewport {
 public:

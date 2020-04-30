@@ -61,4 +61,9 @@ void LQViewport::recalc() {
         lastChild()->
             appendChild(new LQViewable(0_px, gripPositionOnTrack, 20_px, gripSize, 0xb5b5b5));
     }
+    else {
+        document->y() = 0.0f;
+        LQAppController::resetMousePosition();
+    }
+    
 }

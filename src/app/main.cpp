@@ -37,16 +37,43 @@ int SCREEN_HEIGHT = 720;
 
 class NavBar : public LQViewable {
 public:
-    NavBar(LQNumber&& x, LQNumber&& y, LQNumber&& w, LQNumber&& h)
-    : LQViewable(std::move(x), std::move(y), std::move(w), std::move(h), 0x2f3136)
+    NavBar(LQNumber&& x, LQNumber&& y, LQNumber&& w, LQNumber&& h,
+           LQViewable* projectView=nullptr, LQViewable* dropView=nullptr)
+    : LQViewable(std::move(x), std::move(y), std::move(w), std::move(h), 0x2f3136),
+      m_projectView(projectView), m_dropView(dropView)
     {
-        LQViewable *parent, *prev;
-        createTree(*this, parent, prev)
-        // .add<LQText>("Accueil", 10_px, 2_em, parent->height(), 0xffffff)
-        .add<LQText>("Projets", 10_px, 2_em, parent->height(), 0xffffff)
-        .add<LQText>("Dépôt", prev->right()+10_px, 2_em, parent->height(), 0xffffff);
-        // .add<LQText>("Collection", prev->right()+10_px, 2_em, parent->height(), 0xffffff);
+        // drop->left() + 0.30f * drop->width(), nom->bottom() + 35_px,
+        // 0.40f * drop->width(), 50_px, 0x2f3136,"Envoyer", 0xffffff,
+        // [drop, nom, tag]() {
+
+        auto* projectsButton =
+            new LQButton(10_px, 0_px, 100_px, height(), 0x2f3136, "Projets", 0xffffff,
+                [this]() {
+                    parent()->removeLastChild();
+                    static_cast<LQViewable*>(parent())->appendChild(m_projectView);
+                    LQAppController::resetMousePosition();
+                });
+        projectsButton->width() = 
+            static_cast<LQViewable*>(projectsButton->firstChild())->widthF();
+
+        auto* dropButton =
+            new LQButton(projectsButton->right()+10_px, 0_px, 100_px, height(), 0x2f3136,
+                        "Dépôt", 0xffffff,
+                [this]() {
+                    parent()->removeLastChild();
+                    static_cast<LQViewable*>(parent())->appendChild(m_dropView);
+                    LQAppController::resetMousePosition();
+                });
+        dropButton->width() = 
+            static_cast<LQViewable*>(dropButton->firstChild())->widthF();
+
+        appendChild(projectsButton);
+        appendChild(dropButton);
     }
+
+private:
+    LQViewable* m_projectView;
+    LQViewable* m_dropView;
 };
 
 int main() {
@@ -61,19 +88,26 @@ int main() {
     LQWindow window(SCREEN_WIDTH, SCREEN_HEIGHT, "Punyduck");
     window.setClearColor(0xffffff);
 
-    LQSurface *parent, *prev;
-    createTree(window, parent, prev)
-    // .add<LQTextArea>(150_px, 150_px, 100_px, 25_px, 0xE9E9E9, "Rechercher...");
-    .add<NavBar>(0.0f, 0.0f, parent->width(), 1_wu)
-    // .add<DropProjectView>(0.0f, prev->height(), parent->width(),
-                        //   parent->height() - prev->height(), 0xD9D9D9);
-    .add<ProjectView>(0.0f, prev->height(), parent->width(),
-                      parent->height() - prev->height(), 0xD9D9D9);
-    // auto t = LQText::s_font.renderText(U"a", 0x000000, 200_px, 200_px, 1_em);
-    // window.appendChild(&t);
+    auto* projectView = 
+        new ProjectView(0_px, 1_wu, window.width(), window.height() - 1_wu, 0xD9D9D9);
+    auto* dropView =
+        new DropProjectView(0_px, 1_wu, window.width(), window.height());
+
+    // LQSurface *parent, *prev;
+    // createTree(window, parent, prev)
+    auto* nav = new NavBar(0.0f, 0.0f, window.width(), 1_wu, projectView, dropView);
+    // window.appendChild(projectView);
+    auto* signInView =
+        new SignInView(0_px, 0_px, window.width(), window.height());
+    signInView->navbar = nav;
+    signInView->viewport = projectView;
+
+    window.appendChild(signInView);
+    // window.appendChild(new SignInView(0_px, 0_px, window.width(), window.height()));
+
     // LQAppModel::dataQuery("projectSELECT idProjet, nom, tag, pDescr, pPathImage, login FROM Projet, UserInfo WHERE pIdLog = idLog;");
-    LQAppController::pushEvent(new loginEvent("test", "test"));
-    LQAppModel::dataQuery("projectSELECT idProjet, nom, tag, pPathImage FROM Projet;");
+    LQAppModel::dataQuery("projectSELECT idProjet, nom, tag, login FROM Projet,"
+                          "UserInfo WHERE idLog = pIdLog;");
 
     // int action;
     // std::cout << "Choissisez une action (1 login 2 register 3 upProjet 4 dlProject)" << std::endl;

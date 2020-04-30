@@ -20,10 +20,11 @@ LI_Project::LI_Project(const Project* project, LQNumber&& x, LQNumber&& y,
     createTree(*this, parent, prev)
     .add<IMG>(1_em, 1_em, 3_em, 3_em, 0xE9E9E9, "defaultpp.png")
     .add<LQText>(project->nom, prev->right()+20_px, 3_em, 1_em, 0x595959)
-    .add<LQText>(project->tag, 0.30f * parent->width(), 3_em, 1_em, 0x356b34)
+    .add<LQText>(project->tag, 0.35f * parent->width(), 3_em, 1_em, 0x356b34)
+    .add<LQText>(project->auteur, 0.55f * parent->width(), 3_em, 1_em, 0x595959)
     .add<LQButton>(parent->width()-4_em, 1_em, 3_em, 3_em,
                    0xE9E9E9, "download-icon.png",
-        [this](){
+        [this]() {
             LQAppController::pushEvent(new dlProjectEvent(m_id));
         });
 }
@@ -151,8 +152,8 @@ DIV_Sorting::DIV_Sorting(LQNumber&& x, LQNumber&& y)
     setClearColor(0xD9D9D9);
     LQViewable *parent, *prev;
     createTree(*this, parent, prev)
-    .add<LQText>("Trier par :", 0.0f, 12.0f, 1_em, 0x595959)
-    .add<LQText>("plus récent", prev->right()+10_px, 12.0f, prev->height(), 0x356b34)
+    .add<LQText>("Trié par :", 0.0f, 12.0f, 1_em, 0x595959)
+    .add<LQText>("plus ancien", prev->right()+10_px, 12.0f, prev->height(), 0x356b34)
     .add<LQText>("Filtres :", prev->right()+25_px, 12.0f, prev->height(), 0x595959)
     .add<LQText>("tout", prev->right()+10_px, 12.0f, prev->height(), 0x356b34);
 }
@@ -209,7 +210,7 @@ ProjectView::ProjectView(LQNumber&& x, LQNumber&& y, LQNumber&& w, LQNumber&& h,
         .add<LQViewable>(prev->left()-525_px, prev->top(), 500_px, prev->height(), 0xE9E9E9).sub()
             .add<IMG>(12.5f, 12.5f, 25.0f, 25.0f, 0xE9E9E9, "search-icon.png")
             .add<LQTextArea>(prev->right()+12_px, 0.0f, parent->width()-25_px,
-                            parent->height(), 0xE9E9E9, "Rechercher...").super()
+                             parent->height(), 0xE9E9E9, "Rechercher...").super()
         .add<UL_Project>(0.15f * width(), 150_px, 0.70f * width());
         // .add<LQViewable>(0_px, parent->height()-5_em, 100_px, 5_em);
 
@@ -221,6 +222,9 @@ ProjectView::ProjectView(LQNumber&& x, LQNumber&& y, LQNumber&& w, LQNumber&& h,
         // firstChild()->lastChild()->prevSibling()->prevSibling()->lastChild();
     static_cast<LQTextArea*>(textArea)->setCallback(
     [this](const std::string& input) {
+        static_cast<LQViewable*>(firstChild())->y() = 0.0f;
+        LQAppController::resetMousePosition();
+
         auto* ul =
             static_cast<UL_Project*>(firstChild()->lastChild());
             // static_cast<UL_Project*>(firstChild()->lastChild()->prevSibling());

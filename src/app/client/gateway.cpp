@@ -6,7 +6,8 @@ static PyObject*
 gateway_poll_requests(PyObject* self) {
     char* request = p_gateway->pollRequests();
     if (request) {
-        return PyMemoryView_FromMemory(request, strlen(request), PyBUF_READ);
+        return PyMemoryView_FromMemory(
+            request, request[0] ? strlen(request) : 1, PyBUF_READ);
     }
     else {
         Py_RETURN_NONE;

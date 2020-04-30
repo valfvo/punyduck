@@ -431,7 +431,7 @@ async def handle_echo(reader, writer):
 
 
 async def main(): #Première fonction, qui "allume" le serveur
-    server = await asyncio.start_server(handle_echo, '127.0.0.1', 50002)
+    server = await asyncio.start_server(handle_echo, '127.0.0.1', 50003)
 
     addr = server.sockets[0].getsockname()
     print(f'Serving on {addr}')

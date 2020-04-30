@@ -82,8 +82,6 @@ public:
 
     static void dlProjectCallback(dlProjectEvent& event);
 
-    static void tempActionCallback(tempActionEvent& event);
-
 protected:
     static std::queue<LQEvent*>
     s_eventQueue;

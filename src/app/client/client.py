@@ -157,9 +157,11 @@ async def getProject(writer, reader):
 async def main():
     """Fonction principale, appelée au début du programme. Après avoir établi la connexion avec le serveur, elle appelle la fonction connexion
     qui gère la connexion à son compte. Ensuite, on demande à l'utilisateur s'il souhaite envoyer ou recevoir un projet."""
-    reader, writer = await asyncio.open_connection('127.0.0.1', 50002)
+    print("début python")
+    reader, writer = await asyncio.open_connection('192.168.0.20', 18545)
     connected = True
     idLog = b'\x00\00'
+    print("Connexion au serveur")
     while connected: #Tant qu'on est connecté au serveur, on demande si l'utilisateur veut envoyer ou recevoir un projet
         action = gw.poll_request()
         if action:

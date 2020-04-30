@@ -10,7 +10,7 @@ void initModelsConstructors() {
                 attr[4] ? data.parse<char*>() : "",  // tag
                 attr[5] ? data.parse<char*>() : "",  // descr
                 attr[6] ? data.parse<LQImageData>() : LQImageData{0, 0, 0, nullptr},  // img
-                attr[7] ? data.parse<char*>() : ""};  // auteur}
+                attr[9] ? data.parse<char*>() : ""};  // auteur}
             return p_project;
         });
 }

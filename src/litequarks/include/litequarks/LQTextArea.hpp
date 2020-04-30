@@ -16,10 +16,10 @@ public:
 
     void onFocusGain();
     void onFocusLose();
-    void onKey(LQKeyEvent& event);
-    void onChar(LQCharEvent& event);
+    virtual void onKey(LQKeyEvent& event);
+    virtual void onChar(LQCharEvent& event);
 
-    std::string getContent() const;
+    virtual std::string getContent() const;
 
 protected:
     LQText* m_placeholder;

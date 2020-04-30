@@ -102,7 +102,7 @@ public:
 
 class registerEvent : public LQEvent {
 public:
-    registerEvent(std::string login, std::string password, std::string email);
+    registerEvent(std::string login, std::string password, std::string email="e@mail.com");
 
     const std::string infos;
 };
