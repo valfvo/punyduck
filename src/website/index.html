@@ -4,7 +4,7 @@
 <title>PunyDuck</title>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<link rel=stylesheet href=MonSite.css type=text/css>
+<link rel=stylesheet href=punyduck.css type=text/css>
 <link href="http://maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 </head>
@@ -53,13 +53,13 @@
 
     <div class ="par">
         <div class ="par">
-            <img src="image5.png" alt="duck" style="width:35%;height: 35%;float:left;margin-left: 10%">
+            <img id="scr" src="image5.png" class="screen" alt="duck" style="width:35%;height: 35%;float:left;margin-left: 10%">
             <div class="stl">  
             La page pour s'enregistrer et pouvoir accéder à Punyduck<br>
             est simple, sobre et ne vous posera aucun problème pour vous y connectez.<br>
         </div></div>
         <div class ="par">
-            <img src="image6.png" alt="duck" style="width:35%;height: 35%;float:right;;margin-right: 10%">
+            <img id="scr2" src="image6.png" class="screen" alt="duck" style="width:35%;height: 35%;float:right;;margin-right: 10%">
             <div class="stl"> 
             La page projet détient l'ensemble des projets mis en ligne, avec la possiblité<br>
             d'en rechercher un bien spécifique, ou encore de trier l'ensemble des projets<br>
@@ -67,7 +67,7 @@
             Ensuite pour télécharger un projet, le petit boton vert est là pour ça.
         </div></div>
         <div class ="par">
-            <img src="image7.png" alt="duck" style="width:35%;height: 35%;float:left;;margin-left: 10%">
+            <img id="scr3" src="image7.png" class="screen" alt="duck" style="width:35%;height: 35%;float:left;;margin-left: 10%">
             <div class="stl">
             La page dépôts va vous permettre de déposer votre projet en lui attribuant son tag (doc, jeu,...).
         </div></div>
@@ -141,6 +141,35 @@
         <a href="#home" class="footer-button"><i class="fa fa-arrow-up" aria-hidden="true"></i>To the top</a>
         <p>Réalisé par <a href="https://fvostudio.com/" title="FVO" target="_blank">FVOSTUDIO</a></p>
     </footer>
+
+    <div>
+    <div id="Modal" class="modal">
+        <span id="close" class="close_Button">&times;</span>
+        <img class="modal-content" id="img">
+    </div>
+    <div id="Modal2" class="modal">
+        <span id="close2" class="close_Button">&times;</span>
+        <img class="modal-content" id="img2">
+    </div>
+    <div  id="Modal3" class="modal">
+        <span id="close3" class="close_Button">&times;</span>
+        <img class="modal-content" id="img3">
+    </div>
+    </div>
+  
+    <script>
+    var modal = document.getElementById("Modal");var img = document.getElementById("scr");var modalImg = document.getElementById("img");
+    var modal2 = document.getElementById("Modal2");var img2 = document.getElementById("scr2");var modalImg2 = document.getElementById("img2");
+    var modal3 = document.getElementById("Modal3");var img3 = document.getElementById("scr3");var modalImg3 = document.getElementById("img3");
+    img.onclick = function(){modal.style.display = "block";modalImg.src = this.src;}
+    img2.onclick = function(){modal2.style.display = "block";modalImg2.src = this.src;}
+    img3.onclick = function(){modal3.style.display = "block";modalImg3.src = this.src;}
+
+    var span1 = document.getElementById("close");var span2 = document.getElementById("close2");var span3 = document.getElementById("close3");
+    span1.onclick = function() {modal.style.display = "none"}
+    span2.onclick = function() {modal2.style.display = "none"}
+    span3.onclick = function() {modal3.style.display = "none"}
+    </script>
 
 </body>
 </html>
