@@ -2,7 +2,6 @@
 #include <litequarks/LQAppModel.hpp>
 #include <litequarks/LQRawData.hpp>
 
-#include <iostream>
 #include "../../app/components.hpp"
 
 std::queue<LQEvent*>
@@ -65,12 +64,10 @@ void LQAppController::init() {
 
 void LQAppController::finalize() {
     // TODO : undo lqON (here)
-    std::cout << "Finalize" << std::endl;
     std::lock_guard<std::mutex> lock(s_mutex);
     char* query = new char[1];
     query[0] = 0;
     s_queries.push(query);
-    std::cout << "query push" << std::endl;
 
     s_gatewayThread->join();
     delete s_gatewayThread;
@@ -102,7 +99,6 @@ void LQAppController::addObserver(
 void LQAppController::pollEvents() {
     while (!s_eventQueue.empty()) {
         auto event = s_eventQueue.front();
-        // std::cout << "event : " << (event->type).name() << std::endl;
         auto dispatch =
             s_eventDispatcher[std::make_pair(event->type, event->target)];
         dispatch(event);
@@ -116,14 +112,12 @@ void LQAppController::pollResponses() {
     while (!s_responses.empty()) {
         LQRawData data(s_responses.front());
         std::string type = data.parse<char*>();
-        std::cout << "type : " << type << std::endl;
         if(type == "dataReceive") {
             LQAppController::pushEvent(new LQDataReceivedEvent(data));
         }
         if (type == "login") {
             int rep = data.parse<int8_t>();
             if (rep == 0) {
-                std::cout << "Login ou password incorrect." << std::endl;
                 // window->SignInView->document->errorField
                 auto* errorSignUp = static_cast<LQViewable*>(
                     s_window->firstChild()->firstChild()->lastChild()->prevSibling());
@@ -132,23 +126,17 @@ void LQAppController::pollResponses() {
                 errorSignIn->unhide();
             }
             else {
-                std::cout << "Vous etes correctement connecte" << std::endl;
                 auto* signInView = static_cast<SignInView*>(s_window->firstChild());
                 s_window->removeFirstChild();
                 s_window->appendChild(signInView->navbar);
                 s_window->appendChild(signInView->viewport);
                 LQAppController::resetMousePosition();
                 delete signInView;
-            //     int action;
-            //     std::cout << "Choissisez une action (1 login 2 register 3 upProjet 4 dlProject)" << std::endl;
-            //     std::cin >> action;
-            //     LQAppController::pushEvent(new tempActionEvent(action));
             }
         }
         if (type == "register") {
             int rep = data.parse<int8_t>();
             if(rep == 0) {
-                std::cout << "Nom deja pris." << std::endl;
                 // window->SignInView->document->errorField
                 auto* errorSignUp = static_cast<LQViewable*>(
                     s_window->firstChild()->firstChild()->lastChild()->prevSibling());
@@ -157,16 +145,11 @@ void LQAppController::pollResponses() {
                 errorSignUp->unhide();
             }
             else {
-                std::cout << "Vous etes correctement inscrit" << std::endl;
                 // window->SignInView->document->hidden->icon->login;
                 auto* login = static_cast<LQTextArea*>(
                     s_window->firstChild()->firstChild()->firstChild()->nextSibling()->nextSibling());
                 auto * password = static_cast<LQTextArea*>(login->nextSibling());
                 s_eventQueue.push(new loginEvent(login->getContent(), password->getContent()));
-                // int action;
-                // std::cout << "Choissisez une action (1 login 2 register 3 upProjet 4 dlProject)" << std::endl;
-                // std::cin >> action;
-                // LQAppController::pushEvent(new tempActionEvent(action));
             }
         }
         if (type == "upProject") {
@@ -187,18 +170,17 @@ void LQAppController::pollResponses() {
         }
         if(type == "projectUploaded") {
             int rep = data.parse<int8_t>();
-            std::cout << "OUUUUI" << std::endl;
             if(rep == 0) {
-                std::cout << "Erreur lors de l'upload du projet. Fin de programme" << std::endl;
+                //Erreur upload projet
             }
         }
         if(type == "projectDownloaded") {
             int rep = data.parse<int8_t>();
             if(rep == 0) {
-                std::cout << "Erreur lors du telechargement du projet. Fin de programme" << std::endl;
+                //Erreur download projet
             }
             else {
-                std::cout << "Projet telecharge (cpp)." << std::endl;
+                //Projet téléchargé
             }
         }
         s_responses.pop();
@@ -247,7 +229,6 @@ void LQAppController::recalcMousePosition(float xoffset, float yoffset) {
 }
 
 void LQAppController::cursor_position_callback(GLFWwindow* window, double mx, double my) {
-    // std::cout << "\nmx my:"<< mx << " " << my << std::endl;
     if (my < 50 && prevAbsY >= 50) {  // mouse over navbar
         s_hover_focus = static_cast<LQViewable*>(s_window->firstChild());
         prevAbsX = prevRelX = mx;
@@ -260,27 +241,20 @@ void LQAppController::cursor_position_callback(GLFWwindow* window, double mx, do
     prevRelY += deltaY;
 
     LQViewable* current = s_hover_focus;
-    // std::cout << "deb:"<< prevRelX<<' '<<prevRelY <<' '<<prevAbsX<<' '<<prevAbsY
-            //   <<" "<<current<< std::endl;
-    // std::cout << "current:"<<current->xF()<<' '<<current->yF()<<' '<<current->widthF()<<' '<<current->heightF()<<std::endl;
     bool outCurrent = prevRelX < 0 || prevRelX > current->widthF() ||
                       prevRelY < 0 || prevRelY > current->heightF();
 
     while (outCurrent && current != s_window) {
-        // std::cout << current << ' ' << s_window << std::endl;
         prevRelX += current->xF();
         prevRelY += current->yF();
-        // std::cout << prevRelX << " " << prevRelY << std::endl;
         current = static_cast<LQViewable*>(current->parent());
-        // std::cout << "parent: " << current << std::endl;
         outCurrent = prevRelX < 0 || prevRelX > current->widthF() ||
                      prevRelY < 0 || prevRelY > current->heightF();
     }
 
-    // std::cout << "mid" << std::endl;
-
     s_hover_focus = current;
-    current = static_cast<LQViewable*>(current->firstChild()); // On recherche un fils correspondant à notre position
+    current = static_cast<LQViewable*>(current->firstChild());
+    // On recherche un fils correspondant à notre position
     while (current) {
         outCurrent =
             prevRelX < current->xF() || prevRelY < current->yF() ||
@@ -299,8 +273,6 @@ void LQAppController::cursor_position_callback(GLFWwindow* window, double mx, do
 
     prevAbsX = mx;
     prevAbsY = my;
-    // std::cout << "end " << mx << " " << my << std::endl;
-    // std::cout << "end:"<< prevRelX<<' '<<prevRelY <<' '<<prevAbsX<<' '<<prevAbsY<< std::endl;
 }
 
 void LQAppController::mouse_button_callback(

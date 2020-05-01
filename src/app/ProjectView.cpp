@@ -94,19 +94,12 @@ void UL_Project::toggleListView() {
 }
 
 void UL_Project::searchCallback(std::vector<Project*>& projects) {
-    // setClearColor(0xb5b3b3);
-    // std::cout << "enter!!! "<< firstChild() << std::endl;
-    // std::cout << "this " << this << std::endl;
-    // std::cout << firstChild() << "<- first" << std::endl;
     auto* prev = firstChild()->nextSibling();
-    // std::cout << "erlkghj!!!" << std::endl;
     if (prev) {
-        // std::cout << "non!!!" << std::endl;
         for (auto child = prev->nextSibling();
             child != nullptr;
             child = child->nextSibling())
         {
-            // std::cout << "nonwerlkgjhb!!!" << std::endl;
             delete prev;
             prev = child;
         }
@@ -127,9 +120,7 @@ void UL_Project::searchCallback(std::vector<Project*>& projects) {
         appendChild(bar);
     }
 
-    // std::cout << "sortie" << std::endl;
     for (auto project : projects) {
-    // std::cout << "purodjekto" << std::endl;
         addProject(project);
     }
 }
@@ -212,14 +203,11 @@ ProjectView::ProjectView(LQNumber&& x, LQNumber&& y, LQNumber&& w, LQNumber&& h,
             .add<LQTextArea>(prev->right()+12_px, 0.0f, parent->width()-25_px,
                              parent->height(), 0xE9E9E9, "Rechercher...").super()
         .add<UL_Project>(0.15f * width(), 150_px, 0.70f * width());
-        // .add<LQViewable>(0_px, parent->height()-5_em, 100_px, 5_em);
 
     static_cast<LQViewable*>(firstChild()->firstChild())->hide();
-    // static_cast<LQViewable*>(firstChild()->lastChild())->hide();
 
     auto* textArea = 
         firstChild()->lastChild()->prevSibling()->lastChild();
-        // firstChild()->lastChild()->prevSibling()->prevSibling()->lastChild();
     static_cast<LQTextArea*>(textArea)->setCallback(
     [this](const std::string& input) {
         static_cast<LQViewable*>(firstChild())->y() = 0.0f;
@@ -227,7 +215,6 @@ ProjectView::ProjectView(LQNumber&& x, LQNumber&& y, LQNumber&& w, LQNumber&& h,
 
         auto* ul =
             static_cast<UL_Project*>(firstChild()->lastChild());
-            // static_cast<UL_Project*>(firstChild()->lastChild()->prevSibling());
         if (input.empty()) {
             LQAppModel::itemQuery<Project, UL_Project, UL_Project::searchCallback>(
                 "project", ul);

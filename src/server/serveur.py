@@ -16,18 +16,15 @@ conn.autocommit = True
 
 def encodeBuffer(message): #Fonction qui renvoie la taille d'un message en binaire
     sizeBuffer_send = len(message).to_bytes(4, "big")
-    # print("Message = ", message, "sizeBuffer_send = ", sizeBuffer_send)
 
     return sizeBuffer_send
 
 def decodeBuffer(buffer): #Fonction qui décode un nombre encodé en binaire (appelée pour décoder la taille d'un message)
-    # print("sizeBuffer_received : ", buffer)
     sizeBuffer_received = int.from_bytes(buffer, "big")
-    # print("sizeBuffer_received : ", sizeBuffer_received)
     return sizeBuffer_received
 
 async def send_file(path, writer, name): #Fonction envoyant un fichier au serveur. On passe en paramètre le chemin du fichier, le writer, et le dossier originel du projet
-    writer.write(b'\x00') #On écrit un pour dire au client qu'il va recevoir un fichier
+    writer.write(b'\x00') #On envoie 0 pour dire au client qu'il va recevoir un fichier
     try:
         with open(path, "rb") as file:
             """On crée un string "pathServer" qui stockera le chemin à partir du dossier originel. Cela sera utile dans les cas où
@@ -63,7 +60,6 @@ async def receive_file(reader, oDir, name=None): #Fonction appelée pour recevoi
         os.makedirs(path2) #On crée les dossiers parents si ceux-ci n'existent pas
     except:
         pass
-    # print("file received check ; path2 = ", path2, " nameFile = ", nameFile)
     with open(path2+nameFile, "wb") as file:
         file.write(data) #On écrit les données binaire du fichier
 
@@ -99,19 +95,14 @@ async def receive_message(reader): #Fonction pour récupérer un message envoyé
 async def send_dir(pathDir, writer, name):
     """Fonction envoyant les fichiers d'un dossier de manière récursive. On lui passe en paramètre le chemin pour accéder au dossier originel,
     le writer, et le nom du dossier originel."""
-    # print("send dir : ", pathDir)
     if os.path.isdir(pathDir):
-        # print(pathDir, "est un dossier")
         tree = os.listdir(pathDir)
         for fileordir in tree: #Pour chaque fichier/dossier du dossier originel :
-            # print("dir : ", pathDir+'/'+fileordir)
             await send_dir(pathDir+'/'+fileordir, writer, name)
             await writer.drain()
     elif os.path.isfile(pathDir):
-        # print(pathDir, "est un fichier")
         await send_file(pathDir, writer, name)
     else:
-        print("Veuillez entrer un chemin valide")
 
 
 async def register(writer, reader, infos):
@@ -119,9 +110,7 @@ async def register(writer, reader, infos):
     en effectuant les requêtes SQL adéquates. Elle prend en paramètre action, qui est un booléen (0/1) envoyé par le client
     pour indiquer s'il souhaite se connecter ou s'inscrire, ainsi que le writer et le reader."""
     #On récupère le login et le mot de passe saisis par le client
-    print("Inscription en cours")
     infos = infos[1:].decode()
-    # print("Infos = ", infos)
     matchInfos = infos.split('|')
     login = matchInfos[0]
     password = matchInfos[1]
@@ -130,18 +119,13 @@ async def register(writer, reader, infos):
     
     try:
         cur.execute(query)
-        print("Pas d'erreur")
         return True
-    except Exception as e:
-        print(e)
-        print("Login invalide")
+    except:
         return False
 
 
 async def login(writer, reader, infos):
-    print("Connexion en cours")
     infos = infos[1:].decode()
-    # print("Infos = ", infos)
     matchInfos = infos.split('|')
     login = matchInfos[0]
     password = matchInfos[1]
@@ -151,7 +135,6 @@ async def login(writer, reader, infos):
     
     try:
         ph.verify(data[0], password) #On vérifie que le mot de passe saisie corresponde à celui récupéré (qui est hashé)
-        print("Bienvenue, ", login)
         cur.execute("SELECT idLog FROM UserInfo WHERE login = %s", (login,))
         idLog = cur.fetchone()[0]
         writer.write(idLog.to_bytes(2, 'big')) #On envoie au client le login pour lui indiquer qu'il s'est connecté
@@ -162,23 +145,18 @@ async def login(writer, reader, infos):
 
 
 def checkProjectName(nom):
-    print("Vérification du nom de projet")
     cur.execute("SELECT nom FROM Projet WHERE nom = %s", (nom,))
     return not (cur.fetchone() != None or nom == "Images")
 
 async def getProject(writer, reader, idProjet):
-    print("Réception d'un projet client")
     downloading = await reader.read(1) # Variable pour savoir s'il reste des fichiers à recevoir
     downloading = int.from_bytes(downloading, "big")
-    # print("Downloading = ", downloading)
     ddl = False
     while downloading == 0:
         await receive_file(reader, str(idProjet))
         downloading = await reader.read(1)
         downloading = int.from_bytes(downloading, "big")
-        # print("Downloading = ", downloading)
         ddl = True
-    print("Project downloaded")
     return ddl
    
 
@@ -252,8 +230,6 @@ async def SQL(writer, query):
             for data in datas:
                 for row in range(len(data)):
                     if row == 1 or row == 6:
-                        # infos += int(10).to_bytes(4, 'big')
-                        # infos += "1234567890".encode()
                         #img = width + height + format + len(data) + data
                         img = Image.open(data[row].replace("\\\\", "\\"))
                         infos += img.width.to_bytes(4, 'big')
@@ -315,16 +291,14 @@ async def SQL(writer, query):
                         infos += GL_RGBA if img.mode == "RGBA" else GL_RGB
                         infos += len(img.tobytes()).to_bytes(4, 'big')
                         infos += img.tobytes()
-                        # infos += "donneebinaireimage".encode()
                     else:
                         infos += data[row].encode() + b'\0'
                 nItems += 1
 
         infos = "dataReceive".encode() + b'\0' + model.encode() + b'\0' + \
                 nItems.to_bytes(4, 'big') + nAttributes + ordreIndice + infos
+
         # str + \0 + str + \0 + 4 bytes + 1 byte + (4 bytes + 4 * nbIndice bytes) + n bytes
-        # print("nitem :", nItems.to_bytes(4, 'big'))
-        # print("infos =", infos)
         await send_message(writer, infos)
 
 
@@ -334,28 +308,22 @@ async def handle_echo(reader, writer):
     envoie ou récupère un projet selon les demandes de l'utilisateur"""
     connexion = True
     while connexion:
-        # try:
-        # action = await receive_message(reader) #Variable pour savoir ce que l'utilisateur veut faire
-        action = await receive_message(reader)
-        print("action = ", action) if len(action) < 300 else "erreur action"
+        action = await receive_message(reader) #Variable pour savoir ce que l'utilisateur veut faire
         if action == 0: #Se déconnecter
             connexion = False
 
         elif action[0] == 1:
-            print("Requête demandée")
             query = action[1:].decode()
             await SQL(writer, query)
         
         elif action[0] == 2:
             result = await login(writer, reader, action)
             if not result:
-                print("Identifiants incorrects")
                 action = await receive_message(reader)
                 result = await login(writer, reader, action)
 
         elif action[0] == 3:
             result = await register(writer, reader, action)
-            print("result : ", result)
             if not result:
                 writer.write(b'\x00')
             else:
@@ -369,9 +337,7 @@ async def handle_echo(reader, writer):
             checkName = checkProjectName(nom)
             if not checkName:
                 writer.write(b'\x00') #On envoie 0 pour dire que le nom n'est pas disponible
-                print("Ce nom est déjà pris.")
             else:
-                print("Nom correct")
                 writer.write(b'\x01') #On envoie 1 pour dire que le nom est disponible
                 tag = matchInfos[2]
                 descr = matchInfos[3]
@@ -387,11 +353,8 @@ async def handle_echo(reader, writer):
                 
                 #On récupère ensuite le chemin du projet ainsi que le login de l'utilisateur
                 idLog = await reader.read(2)
-                print("Project saved by idLog : ", idLog)
                 idLog = int.from_bytes(idLog, 'big')
 
-                print("Réception Image")
-                print("clientPathImage: ", clientPathImage)
                 if clientPathImage != "":
                     pathImage = str(idP)+"/PP"
                     await reader.read(1)
@@ -406,11 +369,9 @@ async def handle_echo(reader, writer):
                     cur.execute("INSERT INTO Projet (nom, valide, tag, pDescr, pPathImage, pIdLog)\
                     VALUES(%s, FALSE, %s, %s, %s, %s);", (nom, tag, descr, pathImage, idLog))
                 conn.commit()
-                print("END")
 
 
         elif action[0] == 5: #Si l'utilisateur souhaite télécharger un projet
-            print("Send project to client")
             idProjet = int.from_bytes(action[1:], 'big')
             print("idProjet : ", idProjet)
             path = str(idProjet)
@@ -418,7 +379,6 @@ async def handle_echo(reader, writer):
             name = cur.fetchone()[0]
             await send_dir(path, writer, name)
             writer.write(b'\x01')
-            print('projet envoye')
 
         else:
             print("Error action.")

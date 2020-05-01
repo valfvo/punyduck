@@ -14,13 +14,7 @@ LQTextArea::LQTextArea(
 : LQViewable(std::move(_x), std::move(_y),
              std::move(_width), std::move(_height), color),
   m_placeholder(nullptr), m_text(nullptr), m_callback(callback)
-//   m_invoke([callback, target](const std::string& input) {
-//       (target->*callback)(input);
-//   })
 {
-    // m_width.linkQuark<LQSurface>(*this);
-    // m_height.linkQuark<LQSurface>(*this);
-
     if (!placeholder.empty()) {
         m_placeholder = new LQText(
             placeholder, 10_px, height() / 2.0f + 6_px, 1_em, 0x808080);
