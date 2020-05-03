@@ -15,10 +15,7 @@
 \usepackage{tikz-uml}
 \usepackage{url}
 \usepackage{rotating}
-<<<<<<< HEAD
 \usepackage{hyperref}
-=======
->>>>>>> 4661197567a56fb23484210dc9508a6e96f58acd
 
 \sloppy
 \hyphenpenalty 10000000
@@ -26,6 +23,7 @@
 \definecolor{groupgreen}{RGB}{53,107,52}
 \definecolor{darkgreen}{RGB}{35,68,35}
 \definecolor{linkred}{RGB}{165,0,33}
+
 
 \begin{document}
 
@@ -138,7 +136,6 @@ Ensuite, une fois les différentes parties du projet dégagées, pour bien défi
 %Partie 2 Partie technologies utilisées 1/2 pages
 \chapter{Technologies utilisées}
 \section{Langages}
- % idées à reformuler
 Pour la programmation de notre application, nous avons choisis assez naturellement d'utiliser le langage C/C++. En effet, c'est le langage que nous avons le plus étudié à l'université, avec lequel 3 des 5 membres du groupe avaient codé leur projet de Licence 1 CMI, et qui nous offrait un support puissant et efficace pour notre interface graphique. \\
 De plus le C++ nous a permis de coder en orienté objet, ce qui était une nécessitée pour la création de notre application. En effet, notre programme utilise énormément ce type de programmation : nous développeront ce point plus tard dans la partie 3 sur le développement logiciel. \\
 
@@ -154,12 +151,13 @@ Cependant, le langage Python de base ne permet pas de faire de la programmation 
 Pour réaliser notre projet nous avons utilisé des outils différents et spécifiques à chaque tache. \\
 
 Nous avons utilisé le système de gestion PostgreSQL\footnote{PSQL : \url{https://www.postgresql.org/}} pour gérer la base de donnée de notre serveur, ce système nous permettant d'utiliser des requête SQL en Python et ainsi de mettre en application les connaissances acquises cette année avec le module HLIN304. \\
+Pour pouvoir exécuter des requêtes SQL depuis le Python, nous avons employé le module psycopg2\footnote{psycopg2 : \url{https://www.psycopg.org/}} \\
 
 Pour la partie modélisation de l'application nous avons opté pour le Langage de Modélisation Unifié (UML) vu en cours, dans le module HLIN406. \\
 
 Toutes les communications du groupe ce sont faites sur le logiciel Discord\footnote{Discord : \url{https://discordapp.com/}}, un logiciel facilitant grandement les communications en groupes avec par exemple le partage d'écran, les groupes vocaux et textuels, le fait de pouvoir partager des morceaux de code directement dans le canal de discussion textuel etc.. \\
 
-Pour ce qui est du partage et des sauvegardes du code, nous avons utilisé Git (un logiciel de gestion de versions décentralisé) via un serveur GitHub\footnote{GitHub \url{https://github.com/}, notre projet : \url{https://github.com/valfvo/punyduck}} qui nous a permis de garder nos anciennes versions, de ne rien perdre en cours de route, et de pouvoir partager l'avancée du projet avec les autres étudiants du groupes et notre encadrante. \\
+Pour ce qui est du partage et des sauvegardes du code, nous avons utilisé Git (un logiciel de gestion de versions décentralisé) via un serveur GitHub\footnote{GitHub : \url{https://github.com/}, notre projet : \url{https://github.com/valfvo/punyduck}} qui nous a permis de garder nos anciennes versions, de ne rien perdre en cours de route, et de pouvoir partager l'avancée du projet avec les autres étudiants du groupes et notre encadrante. \\
 
 Pour ce qui est de l'éditeur de code utilisé, nous nous sommes tous penché sur Visual Studio Code\footnote{VSCode : \url{https://code.visualstudio.com/}} pour sa fiabilité et sa mise en page agréable. De plus, nous avons pu grâce à ce logiciel coder à plusieurs en même temps avec sa fonctionnalité de partage en temps réel. \\
 
@@ -178,9 +176,9 @@ Le développement du projet est séparé en trois parties :
 
 Le développement de l'application s'est déroulé en plusieurs étapes qui vont être développées points par points.
 
-\subsection{Apprentissage de l'utilsiation d'OpenGL}
+\subsection{Apprentissage de l'utilisation d'OpenGL}
 La première étape fut d'apprendre l'OpenGL, qui fut difficile à comprendre et à utiliser de par son bas niveau comparé aux librairies qu'on a l'habitude de voir en L1 et L2. \\
-La première partie de l'apprentissage d'OpenGL a été de pour dessiner un triangle d'une certaine couleur. Puis grâce à ce triangle de pouvoir dessiner un rectangle. Ainsi de suite nous avons pu dessiner toutes sortes de formes tel que les ronds et les cercles par exemple.
+La première partie de l'apprentissage d'OpenGL a été de pouvoir dessiner un triangle d'une certaine couleur. Puis grâce à ce triangle de pouvoir dessiner un rectangle. Ainsi de suite nous avons pu dessiner toutes sortes de formes, tel que les cercles par exemple.
 La deuxième partie a été de pouvoir coller des textures sur ces surfaces précédemment créées. Cette partie n'a pas posé réellement de problème.
 Pour la troisième partie, nous devions pouvoir mettre une surface dans une autre surface, comme dans la figure \ref{exsurface}.
 \begin{figure}
@@ -196,11 +194,11 @@ La dernière partie était de créer le texte, c'est-à-dire de pouvoir afficher
 
 La seconde étape du développement de l'application a été de modéliser en UML les différentes parties de l'application et ses mécanismes. \\
 %mieux argumenter ici
-Pour commencer il fallait trouver un système permettant de lier des éléments entre eux afin de pouvoir les superposer, créer de nouveaux éléments à partir d'anciens, de supprimer un élément et ses sous éléments qui le compose etc..
+Pour commencer, il fallait trouver un système permettant de lier des éléments entre eux afin de pouvoir les superposer, en créer des nouveaux à partir d'anciens, de supprimer un élément et ses sous éléments qui le compose etc..
 C'est pour cela que nous avons créé les "Quarks", un système où un élément a un  père et n fils (où n appartient à l'intervalle \(\left]0, +\infty\right[\)) et a accès à ses frères. Grâce à ce mécanisme, tous les problèmes cité précédemment ont été résolus. Ce système a donc été la base de toute l'application. \\
 Ensuite nous avons créé les différentes classes qui allaient nous servir pour l'implémentation. Comme par exemple : 
 %FAIRE LES EXPLICATIONS SUR LES CLASSES COMPLEXES ET SI BESOIN RAJOUTER D'AUTRES CLASSES 
-\begin{itemize}
+\begin{itemize}[label=$-$]
     \item "LQTexture" qui génère les textures
     \item "LQSurface" pour les surfaces
     \item "LQViewable" 
@@ -214,10 +212,41 @@ Ensuite nous avons créé les différentes classes qui allaient nous servir pour
 La troisième étape fut la phase d'implémentation. D'une part nous nous sommes occupés des classes en rapport avec d'OpenGL tels que "LQShader", "LQTexture" et "LQSurface".
 Par la suite nous avons coder les différentes classes en suivant l'UML précédemment réalisé.
 
-%ici jvous laisse faire jsp du tt quoi mettre
-Pour le côté serveur et base de donnée la première étape fut de ...
+\subsection{Création de l'interface graphique}
+L'interface graphique a été créée en plusieurs temps. Dans un premier temps il a fallu trouver une représentation graphique validée par tous les membres du groupe. Pour cela, nous avons fait la liste des différentes pages qui seraient dans l'application :
+%Je crois que vous avez pas fait les autres pages ? si oui rajoutez-les.
+\begin{description}
+    \item[Connexion :] une page permettant de s'inscrire et de se connecter à son compte ;
+    \item[Projet :] une page affichant tous les projets stockés sur le serveur, où on peut également les télécharger ;
+    \item[Dépôt :] une page pour pouvoir déposer ses projets sur l'application.
+\end{description}
+Puis on les a dessinés sur papier une par une pour que chaque membre du groupe ait une vision très précise de l'aspect visuel de l'application.
+Enfin, pour l'implémentation des pages nous avons utilisé le framework créé dans ce but. Il a fallu créer les différents composants de la page pour au final les assembler et former la page souhaitée (une page correspondant à une vue dans notre architecture MVC). \\
+Grâce au framework, on a pu lier toutes les pages (vues) entres elles et permettre ainsi la navigation entre les différentes pages de l'application.
+Par exemple pour la page "Projet", il a fallut créer cette suite d'éléments qui la composent :
+\begin{itemize}[label=$-$]
+    \item Une liste de bouton permettant de choisir comment trier les projets ("mieux notés", "plus récents"...)\footnote{\label{note}Cette fonctionnalité n'est pas encore implémentée, c'est donc pour l'instant une simple image}
+    \item Une barre de recherche pour accéder à un projet en écrivant son nom
+    \item Des boutons qui permettent de trier les projets sous forme de liste ou sous forme de mozaique avec les images des projets\textsuperscript{\ref{note}}
+    \item Les projets composés d'un nom, d'un "tag" (jeu, algorithme, application...) et d'une image
+\end{itemize}
+Une fois créés, nous avons du les assembler pour former la page. Pour cela, la classe "LQTreeCreator" du framework nous a grandement facilité la déclaration des composant et permis une meilleure structure pour la création des pages. C'est une structure d'arbre, chaque composant est un "Quark" qui a une référence sur son père, son précédent frère (prevSibling) et sur son prochain (nextSibling). 
+De plus, on peut accéder à la position des composants avec des méthodes spécifiquement créées telles que top(), right(), bottom(), left(). Ainsi nous avons pu placer et créer des composants en fonction de leur père ou des composants précédent ou suivant. \\
+Lors de la création des pages avec les composants, nous devions avoir accès au père et aux frères et aux fils. Pour cela les méthodes sub() et super() ont été créés. La méthode sub() permet d'accéder au fils de ce composant, amenant donc la possibilité de créer de nouveaux éléments à partir d'ancien déjà créés.
+Une fois le composant souhaité créé, nous pouvons vouloir revenir sur le composant père qui se trouve le plus souvent être la vue en elle-même. Pour cela, on fait appel à la méthode super().\\
+Cette structure doit nous faire penser à une structure d'arbre où l'on peut fixer des branches (composant) sur la racine ou sur la branche où l'on se situe.c'est-à-dire créer des branches à partir d'autres branches existantes et fixer cette nouvelle branche à un objet (soit la racine, soit la branche sur laquelle on se situe). 
 
-\section{Modélisation} %UML gros problème. dès que l'on rajoute des lignes, tout crash avec trois milles erreurs.
+\subsection{Communication réseau et base de donnée}
+\subsubsection{Réalisation d'un client et d'un serveur}
+La partie réseau de notre application s'est faite à part : en effet, elle utilisait un langage différent du reste (le Python) et devait s'exécuter dans un thread secondaire. Cette partie a donc commencé par l'apprentissage de la programmation en réseau via le module asyncio de Python. Ce module étant relativement simple d'utilisation, cette partie n'a pas posé beaucoup de problèmes. \\
+Une fois que les bases étaient maîtrisées, nous avons dû créer deux programmes communiquants : un client et un serveur. Le rôle du client était de transmettre les requêtes de l'application au serveur, qui lui devait les analyser, et envoyer une réponse adaptée au client, qui la transmettait à nouveau à l'application. Les requêtes que le serveur devait être capable de gérer étaient peu nombreuses : transfert de projet dans un sens ou dans l'autre (client vers serveur ou serveur vers client) avec ajout dans la base de donnée, inscription, connexion, et demande de données à la base de données. Ainsi, nous avons opté pour une solution extrêmement simple : pour chacune de ces cinq requêtes, nous associons un numéro (de 1 à 5), que nous insérons au début de la chaîne-requête au moment de sa création dans le C++. Une fois la chaîne envoyée au client python, celui-ci lit le premier octet (donc le numéro de la requête) et exécute la fonction associée. Dans le même temps, il envoie la chaîne au serveur qui fait exactement la même chose. Ainsi, chaque partie de notre système client-serveur sait ce qu'elle doit faire en fonction du besoin de l'application.
+
+\subsubsection{Interface Python/C++}
+Une fois le client et le serveur finis et leur fonctionnalités implémentées, nous devions faire communiquer le client avec l'application C++ afin qu'ils puissent se transmettre des informations. Pour cela, nous avons créé en C++ un module Python basique nommé « gateway » utilisant une classe ClientGateway. Cette classe contient deux attributs : deux std::queue de tableau de charactères, l'une stockant les requêtes à envoyer au serveur, l'autre stockant les réponses (m\_requests et m\_responses).\\
+Ainsi le module possède deux fonctions : « poll\_request » qui retourne le premier élément de m\_requests, et « transmit\_response » qui remplit m\_responses avec la chaîne passée en paramètre. Le client peut donc communiquer avec l'application de la manière suivante : à chaque tour de boucle, il appelle poll\_request pour voir s'il a reçu une action à exécuter, puis en cas de réponse du serveur, il transmet les informations nécessaire grâce à transmit\_response. De la même manière, lorsque l'application veut communiquer avec le client, elle remplit m\_requests ou regarde le contenu de m\_responses.\\
+Enfin, étant donné que l'application n'a pas accès directement à m\_requests et m\_responses puisqe que le module s'exécute dans un second thread, nous déclarons une instance de ClientGateway dans le contrôleur, puis nous exécutons dans le second thread la fonction de la classe qui lance le programme Python du client. Cette opération nous donne donc accès aux attributs de la ClientGateway du second thread directement depuis le contrôleur, dans le premier thread.
+
+\section{Modélisa tion} %UML gros problème. dès que l'on rajoute des lignes, tout crash avec trois milles erreurs.
 %Incompréhensible, peux-être parce que sa déborde je n'ai pas trouver malgré plusieurs essaies.
 %Je les remplis et après il faudra voir comment les placer pour pas que ça plante
 %Le problème provient sûrement quand un umlclass déborde sur un autre. /!\
@@ -238,27 +267,16 @@ Pour le côté serveur et base de donnée la première étape fut de ...
     %\umlstatic{-- s\_vertices[54] : GLfloat}\\
     %\umlstatic{-- s\_default\_shader : LQShader}
     }{
-<<<<<<< HEAD
     + blit(LQTexture texture, GLfloat x, GLfloat y, GLuint VAO) : void\\
     + fill(GLfloat r, GLfloat g, GLfloat b, GLfloat a=1.0f) : void\\
     + blit(const LQSurface surface) : void\\
     + fill(LQColor color) : void\\
-=======
-    + blit(LQTexture const& texture, GLfloat x, GLfloat y, GLuint VAO) : void\\
-    + fill(GLfloat r, GLfloat g, GLfloat b, GLfloat a=1.0f) : void\\
-    + blit(const LQSurface& surface) : void\\
-    + fill(LQColor const& color) : void\\
->>>>>>> 4661197567a56fb23484210dc9508a6e96f58acd
     + move(GLfloat x, GLfloat y) : void\\
     + move(glm::vec2 distance) : void\\
     + moveX(GLfloat x) : void\\
     + moveY(GLfloat y) : void\\
     + moveTo(GLfloat x, GLfloat y) : void\\
-<<<<<<< HEAD
     + moveTo(glm\::vec2 position) : void\\
-=======
-    + moveTo(glm::vec2 position) : void\\
->>>>>>> 4661197567a56fb23484210dc9508a6e96f58acd
     + moveToX(GLfloat x) : void\\
     + moveToY(GLfloat y) : void\\
     }
@@ -315,8 +333,9 @@ Pour le côté serveur et base de donnée la première étape fut de ...
 }
 
 %lien entre bloc
+\umlaggreg[mult=5, pos=0.8, angle1=40, angle2=50, loopsize=2cm]{LQuark}{LQuark}
 \umlinherit[geometry=-|]{LQuark}{LQSurface}
-\umlinherit[geometry=-|]{LQTexture}{LQSurface}
+\umlinherit[geometry=|-]{LQTexture}{LQSurface}
 \end{tikzpicture}
 \end{center}
 
@@ -345,7 +364,7 @@ Pour le côté serveur et base de donnée la première étape fut de ...
     + float() : operator \\
     \umlstatic{+ old() : float}
     }
-\umlclass[y=-8, fill=gray!5]{LQMathVar}{
+\umlclass[y=-9.5, fill=gray!5]{LQMathVar}{
     -- m\_number : LQNumber \\
     -- m\_coeff : float \\
     -- m\_next : LQMathVar
@@ -380,9 +399,15 @@ Pour le côté serveur et base de donnée la première étape fut de ...
     \umlvirt{+ operator*(float coeff) : LQMathExpr <<operator>>}\\
     \umlvirt{+ operator/(float coeff) : LQMathExpr <<operator>>}
     }
+    
+\umlclass[x=9, y=2.5, fill=gray!5]{LQuark}{...\\}{...\\}
 %lien
-\umlinherit[geometry=-|]{LQMathVar}{LQMathExpr}
-\umlinherit[geometry=|-]{LQMathExpr}{LQNumber}
+\umlaggreg[mult=1, pos=0.5, angle1=40, angle2=60, loopsize=2cm]{LQMathVar}{LQMathVar}
+\umlaggreg[mult=1, pos=0.8, angle1=40, angle2=50, loopsize=2cm]{LQNumber}{LQNumber}
+\umlassoc[geometry=--, mult=2]{LQMathVar}{LQMathExpr}
+\umlassoc[geometry=|-]{LQMathExpr}{LQNumber}
+\umlassoc[geometry=--]{LQMathVar}{LQNumber}
+\umlassoc[geometry=-|]{LQuark}{LQNumber}
 \end{tikzpicture}
 \end{center}
 
@@ -404,23 +429,15 @@ Pour le côté serveur et base de donnée la première étape fut de ...
     + displayFlex() : void\\
     %+ displayBlock() : void\\
     + appendChild(LQViewable child) :  LQViewable\\ 
-<<<<<<< HEAD
     + drawChildren() : void \\
     + resizeWidthCallback() : void\\
     \umlvirt{+ resizeHeightCallback() : void}
 }
 \umlclass[x=-3, y=-5, fill=gray!5]{LQSurface}{...}{...}
 \umlclass[x=3, y=-5, fill=gray!5]{LQNumber}{...}{...}
-=======
-    + ^drawChildren() : void \\
-    + resizeWidthCallback() : void\\
-    \umlvirt{+ resizeHeightCallback() : void}
-}
-\umlclass[x=-3, y=-5, fill=grey!5]{LQSurface}{...\\}{...\\}
-\umlclass[x=3, y=-5, fill=grey!5]{LQNumber}{...\\}{...\\}
->>>>>>> 4661197567a56fb23484210dc9508a6e96f58acd
-\umlinherit[geometry=-|]{LQNumber}{LQViewable}
-\umlinherit[geometry=-|]{LQSurface}{LQViewable}
+%\umlinherit[geometry=-|]{LQNumber}{LQViewable}
+\umlassoc[geometry=--, mult=5, align=center]{LQSurface}{LQNumber}
+\umlinherit[geometry=-|]{LQViewable}{LQSurface}
 \end{tikzpicture}
 \end{center}
 
@@ -452,7 +469,7 @@ Ainsi que les boutons d'action, lancer qui vas démarrer l'application, et insta
 En ce qui concerne la page de présentation du projet, on peux interagir avec la notations (données une notes ou envoyé un commentaire) mais également un lien qui va envoyé vers un forum existant en lien avec le projet. On a notamment accès au bouton suivre pour l'avoir dans notre collection et le bouton j'aime pour aimé un projet.\\
 Les interactions avec l'interface concernant le profil sont, la modification de fond et de l'image de profil ainsi que des autres paramètres (nom, prénom, mot de passe,...), l'accès au paramètre du client (langue,emplacement,...) et le bouton de déconnexion.
 
-\section{Format des données et procédure d'utilisation} % dnnées utilisées ou encore convention, décrire certaines procédures de lecture et de validation
+%\section{Format des données et procédure d'utilisation} % dnnées utilisées ou encore convention, décrire certaines procédures de lecture et de validation
 \section{Statistique} %nombres de classes/scripts/ lignes de code/ nombre de module
 
 %Partie 4 
@@ -464,19 +481,18 @@ Les interactions avec l'interface concernant le profil sont, la modification de 
 %.Partie 5 1/2 pages
 \chapter{Gestion du Projet}
 \section{Organisation et planification}
+Durant le développement de Punyduck, dès son début, on a décidé de se mettre dans le projet après le repas du midi,
+ou dès que l'occasion ce présentait. Étant toujours ensemble la plus part du temps, c'était donc de manière quotidienne que l'avancer du projet ce faisait. Quand le travaille ce faisait à distance via la plate-forme "discord", on faisait en sorte de garder toutes traces de ce qui avait été fait, et de ce qui restait à faire, ainsi que bien penser à mettre le git à jour pour chaque membres du projet.\\
+
+À chaque fin de mois du projet, une entrevu avec notre encadrante Mme Anne-Elisabeth BAERT afin de faire le point sur l'avancer du projet et de connaître ses priorités. Cela nous à permis de ne pas dériver et d'arriver jusqu'à l'aboutissement du projet. \\
+
+Le développement du projet à été découpé en trois partie (hors site web et rapport) qui sont, la partie réseau en python (le serveur du client, la base de données SQL et ses requêtes), la partie framework et frontwork. Le groupe à été séparer en deux groupe soit un pour la partie réseau et l'autre pour la partie framework. La dernière partie pour le frontwork a réuni les deux groupes afin de produire la liaison Client / Serveur et la mise en place de l'interface graphique grâce au framework.
+Également, le site web se faisant en parallèle du projet par un des membres du projet durant cette phase.\\
+
 \newpage
 \begin{rotate}{270}
 \begin{comment}
 %police du gantt au choix selon préférence
-\definecolor{bargreen}{RGB}{133,193,132}
-\definecolor{groupgreen}{RGB}{53,107,52}
-\definecolor{darkgreen}{RGB}{35,68,35}
-\definecolor{linkred}{RGB}{165,0,33}
-
-\renewcommand\sfdefault{phv}
-\renewcommand\mddefault{mc}
-\renewcommand\bfdefault{bc}
-
 \setganttlinklabel{s-s}{START-TO-START}
 \setganttlinklabel{f-s}{FINISH-TO-START}
 \setganttlinklabel{f-f}{FINISH-TO-FINISH}
@@ -536,7 +552,7 @@ Les interactions avec l'interface concernant le profil sont, la modification de 
   \ganttlink[link type=f-f,link label node/.append style=left]{PR1C}{PR1B}
 \end{ganttchart}
 \end{comment}
-%\begin{comment}
+
 \setganttlinklabel{s-s}{START-TO-START}
 \setganttlinklabel{f-s}{FINISH-TO-START}
 \setganttlinklabel{f-f}{FINISH-TO-FINISH}
@@ -550,31 +566,31 @@ Les interactions avec l'interface concernant le profil sont, la modification de 
         calendar week text = {W\currentweek{}},
         bar height = 0.6,
         bar top shift = 0.2,
-        bar label node/.append style={align=left,text width={width("Task1 ")}},
+        bar label node/.append style={align=left,text width={width("--------------------")}},
         bar incomplete/.append style={fill=cyan},
         progress label text = \relax
         link/.style={-latex, line width=1.5pt, linkred},
-        ]{2020-02-01}{2020-05-30}
+        ]{2020-01-25}{2020-05-10}
         \gantttitlecalendar{year, month=name, week} \\
-        \ganttbar[bar/.append style={fill=bargreen}]{Task1}{2020-02-01}{2020-02-05}\\
-        \ganttbar[bar/.append style={fill=bargreen}]{Task1}{2020-02-01}{2020-02-05}\\
-        \ganttbar[bar/.append style={fill=bargreen}]{Task1}{2020-02-01}{2020-02-05}\\
-        \ganttbar[bar/.append style={fill=bargreen}]{Task1}{2020-02-01}{2020-02-05}\\
-        \ganttbar[bar/.append style={fill=bargreen}]{Task1}{2020-02-01}{2020-02-05}\\
-        \ganttbar[bar/.append style={fill=bargreen}]{Task1}{2020-02-01}{2020-02-05}\\
-        \ganttbar[bar/.append style={fill=bargreen}]{Task1}{2020-02-01}{2020-02-05}\\
-        \ganttbar[bar/.append style={fill=bargreen}]{Task1}{2020-02-01}{2020-02-05}\\
-        \ganttbar[bar/.append style={fill=bargreen}]{Task1}{2020-02-01}{2020-02-05}\\
-        \ganttbar[bar/.append style={fill=bargreen}]{Task1}{2020-02-01}{2020-02-05}\\
-        \ganttbar[bar/.append style={fill=bargreen}]{Task1}{2020-02-01}{2020-02-05}\\
-        \ganttbar[bar/.append style={fill=bargreen}]{Task1}{2020-02-01}{2020-02-05}\\
-        \ganttbar[bar/.append style={fill=bargreen}, name=Task2]{Task2}{2020-04-15}{2020-04-27}\\
-        \ganttbar[bar/.append style={fill=bargreen}, name=SW]{Site Web}{2020-04-28}{2020-05-30}\\
-        \ganttvrule{2020-05-30}{2020-05-30}
-        
-        \ganttlink[link type=f-s]{Task2}{SW}
+        \ganttbar[bar/.append style={fill=groupgreen}, name=ATF]{Asyncio, transfert de fichier}{2020-01-25}{2020-02-24}\\
+        \ganttbar[bar/.append style={fill=groupgreen}, name=SQL]{SQL et base de données}{2020-02-25}{2020-03-20}\\
+        \ganttbar[bar/.append style={fill=groupgreen}]{Interface python/C++}{2020-03-18}{2020-04-01}\\
+        \ganttbar[bar/.append style={fill=darkgreen!60}]{Event et Callback}{2020-03-29}{2020-04-20}\\
+        \ganttbar[bar/.append style={fill=darkgreen!60}]{Interface graphique}{2020-04-26}{2020-05-01}\\
+        \ganttbar[bar/.append style={fill=bargreen}]{Task6}{2020-02-01}{2020-02-05}\\
+        \ganttbar[bar/.append style={fill=bargreen}]{Task7}{2020-02-01}{2020-02-05}\\
+        \ganttbar[bar/.append style={fill=bargreen}]{Task8}{2020-02-01}{2020-02-05}\\
+        \ganttbar[bar/.append style={fill=bargreen}]{Task9}{2020-02-01}{2020-02-05}\\
+        \ganttbar[bar/.append style={fill=bargreen}]{Task10}{2020-02-01}{2020-02-05}\\
+        \ganttbar[bar/.append style={fill=bargreen}]{Task11}{2020-02-01}{2020-02-05}\\
+        \ganttbar[bar/.append style={fill=bargreen}]{Task12}{2020-02-01}{2020-02-05}\\
+        \ganttbar[bar/.append style={fill=bargreen}]{Task13}{2020-02-01}{2020-02-05}\\
+        \ganttbar[bar/.append style={fill=bargreen}, name=SW]{Site Web}{2020-03-28}{2020-04-30}\\
+        \ganttbar[bar/.append style={fill=bargreen!50}]{Rapport}{2020-04-15}{2020-05-10}
+        \ganttvrule{2020-05-30}{2020-04-30}
+        %link
+        \ganttlink[link type=f-s]{ATF}{SQL}
     \end{ganttchart}
-%\end{comment}
 \end{rotate}
 
 %.Partie 6 1 page
@@ -585,9 +601,9 @@ Bilan partie front et framework
 Bilan des aides (cours, site, grâce à quoi, etc...)
 
 \vspace{1cm}
-\textbf{\huge{}{Conclusion}}\\
+\section*{Conclusion}
 
-Conclusion global, point négatif et positif plus terminer par les perspectives du client.
+Conclusion globale, point négatif et positif + terminer par les perspectives du client.
 
 %.Partie 7
 \chapter{Bibliographie et Annexes}
