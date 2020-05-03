@@ -10,12 +10,19 @@
 \usepackage{pgfgantt}
 \usepackage{comment} 
 \usepackage{amsmath}
-\usepackage{enumerate}
+\frenchbsetup{StandardLists=true}
+\usepackage{enumitem}
 \usepackage{tikz-uml}
 \usepackage{url}
+\usepackage{rotating}
+\usepackage{hyperref}
 
 \sloppy
 \hyphenpenalty 10000000
+\definecolor{bargreen}{RGB}{133,193,132}
+\definecolor{groupgreen}{RGB}{53,107,52}
+\definecolor{darkgreen}{RGB}{35,68,35}
+\definecolor{linkred}{RGB}{165,0,33}
 
 \begin{document}
 
@@ -71,6 +78,7 @@
 %Sommaire
 \begin{titlepage}
 \renewcommand{\contentsname}{Sommaire}
+\setcounter{tocdepth}{1}
 \large{\tableofcontents}
 \thispagestyle{empty}
 \end{titlepage}
@@ -81,136 +89,113 @@
 
 
 %Introduction 1/2 pages
-\chapter{Introduction} %Partie présentation
-Dans le cadre du TER de notre deuxième année à la faculté des sciences de Montpellier nous avons proposé un projet s'intitulant PunyDuck. C'est une plate-forme de distribution des projets des étudiants du département informatique.\\
+\chapter*{Introduction} %Partie présentation
+\addcontentsline{toc}{chapter}{Introduction}
+Dans le cadre du TER de notre deuxième année à la faculté des sciences de Montpellier nous avons proposé un projet s'intitulant PunyDuck. Le but de ce projet est la réalisation d'une plate-forme de distribution des projets des étudiants du département informatique.\\
 
 Le groupe de développement est composé de cinq personnes, Valentin \textsc{FONTAINE}, Paul \bsc{BUNEL}, Valentin \bsc{PERON}, Julien \bsc{LEBARON} et Esteban \bsc{BARON}. Nous sommes encadré par Mme Anne-Elisabeth \bsc{BAERT}.
 
-\subsubsection{\huge{Motivation}}
+\section*{Motivation}
 
 Le TER est un module qui apporte beaucoup aux étudiants en gestion de projet ainsi qu'en programmation. Seulement une fois terminés les projets ne sont pas valorisés et tombent dans l'oubli. Notre solution est de proposer une application permettant à chaque étudiants de déposer leurs projets pour les rendre visibles et téléchargeables par tous.
 
-\subsubsection{\huge{Approches}}
-Les différentes approches face à notre problématique ont étaient de créer une application en deux parties. D'une part nous avons conçu l'application en elle même et d'autre part le serveur et la base de donnée. Ces deux parties communiques ensembles part le biais d'une architecture logiciel MVC (Modèle-Vue-Contrôleur).
+\section*{Approches}
+Notre objectif final étant de produire une application fonctionnelle pouvant être utilisée par tous, nous avions besoin : d'une interface graphique décente, totalement opérationnelle et facilement modulable, ainsi que d'un système de communication efficace entre l'application et une base de donnée. Nous avons donc décidés de diviser le projet en trois partie : tout d'abord la conception d'un framework permettant la réalisation d'interfaces graphiques, puis la réalisation de l'interface graphique elle-même à partir de ce framework, et enfin la partie réseau permettant à l'application de communiquer avec un serveur distant. Ces trois parties communiquent ensembles part le biais d'une architecture logiciel MVC (Modèle-Vue-Contrôleur).\\
 Notre appplication est téléchargeable par tous depuis le site web \url{ https://fvostudio.com/punyduck/}.
 
-\subsubsection{\huge{Cahier des charges}}
-
-Objectifs : Créer une plateforme de distribution des projets des étudiants de la Faculté des
-sciences de l'Université de Montpellier.\\
-Différentes étapes\\
-\begin{itemize}
-    \item Mise en place d’un serveur qui servira d’intermédiaire entre les utilisateurs et la
-base de données.
+\section*{Cahier des charges}
+Le but de Punyduck est de proposer aux étudiants en informatique une plateforme de distribution de leurs différents projets. Cette plateforme devait être une application téléchargeable sur un site internet, et connectée à un serveur pour permettre l'échange de projets entre différents clients. \\
+Pour l'organisation du projet, nous l'avons tout d'abord divisé en plusieurs étapes : 
+\begin{itemize}[label=$-$]
+    \item Mise en place d’un serveur qui servira d’intermédiaire entre les utilisateurs et la base de données.
     \item Création d’un framework pour faciliter la réalisation de l’application.
     \item Conception de l’application graphique à l’aide du framework.
-    \item Connexion entre l’application et le serveur.
+    \item Connexion entre l’application graphique et le serveur.
     \item Création d’une base de données pour stocker les comptes des utilisateurs et les
 projets.
-    \item Mise en service d’un site internet permettant le téléchargement de l’application. 
+    \item Mise en service d’un site internet permettant le téléchargement de l’application.
 \end{itemize}
-\vspace{0.5cm}
-\large{\textbf{Cahier des charges :}}
-\begin{enumerate}[I]
+\newpage
+Ensuite, une fois les différentes parties du projet dégagées, pour bien définir chacune d'entre elles nous avons décidé du cahier des charges suivant :
+\begin{description}
 %I 
-    \item - Le serveur
-        \begin{itemize}
-        \item Fonctionnement asynchrone
-        \item Héberger de manière sécurisée les données des utilisateurs.
-        \item Les utilisateurs pourront télécharger les projets hébergés.
-        \item Doit pouvoir gérer la plupart des erreurs de réseau, comme la coupure de la
-        connexion lors d’un téléchargement.
-        \end{itemize}
+    \item[Le serveur :] Le serveur devra fonctionner de manière asynchrone (nous définiront ce principe dans la prochaine partie). Il pourra héberger de manière sécurisée les données des utilisateurs (nom, mots de passes, ...) et devra être capable de gérer la plupart des erreurs de réseau, comme les coupures de connexion lors d'un téléchargement.
 %II
-    \item - Le framework
-        \begin{itemize}
-        \item Ensemble de classes et fonctions qui serviront de base à la structure d’une nouvelle
-    application.
-        \item Son utilisation doit être facile avec assez de fonctionnalités déjà disponibles pour
-        pouvoir réduire les appels de fonctions bas niveau.
-        \item Permettre la plasticité des interfaces
-        \end{itemize}
+    \item[Le framework :] Le framework définira un ensemble de classes et fonctions qui serviront de base à la structure d'une nouvelle application. Son utilisation doit être facile avec assez de fonctionnalités déjà disponibles pour pouvoir réduire les appels de fonctions bas niveau. De plus, il devra également permettre la plasticité des interfaces.
 %III
-    \item - L’application
-        \begin{itemize}
-            \item Interface graphique permettant de naviguer facilement entre différents onglets
-        Possibilité d'accéder aux informations de son compte et de les modifier :
-        pseudonyme, adresse mail, âge, niveau, badges.
-            \item Personnalisation limitée : mode clair / sombre, position de certains éléments de la
-        fenêtre, couleur de l’arrière plan.
-        \end{itemize}
+    \item[L’application :] Notre application présentera une interface graphique permettant de naviguer facilement entre différents onglets, de communiquer avec le serveur, et de personnaliser un minimum l'apparence : mode clair / sombre, position de certains éléments de la fenêtre, couleur de l’arrière plan.
 %IV
-    \item - La base de données
-        \begin{itemize}
-            \item Stocke les données relatives aux comptes des utilisateurs ainsi que les projets.
-        Les données seront cryptées.
-        \end{itemize}
+    \item[La base de données :] Elle stockera les données relatives aux comptes des utilisateurs ainsi que les projets. Les données confidentielles (mots de passe) seront cryptées.
 %V
-    \item - Le site
-        \begin{itemize}
-            \item Une page pour télécharger l’application.
-            \item Design responsive et dynamique
-        \end{itemize}
-\end{enumerate}
+    \item[Le site :] Il sera constitué d'une unique page permettant de télécharger l'application. Il possèdera un design « responsive~ » et dynamique.
+\end{description}
+
+%Quelques définitions ici comme dans l'exemple de rapport ?
 
 %Partie 2 Partie technologies utilisées 1/2 pages
 \chapter{Technologies utilisées}
 \section{Langages}
  % idées à reformuler
-1 - Le choix du langage pour coder l'application a été le C/C++ pour sa fiabilité, son efficacité, et ..\\ 2 - De plus le C++ nous a permis de coder en orienté objet, ainsi permettant la réalisation de l'application. \\
-3 - Dans le cadre des UEs HLIN202 et HLIN302 nous avons programmer en C/C++ donc nous étions rassurés car nous avions des bases. \\
+Pour la programmation de notre application, nous avons choisis assez naturellement d'utiliser le langage C/C++. En effet, c'est le langage que nous avons le plus étudié à l'université, avec lequel 3 des 5 membres du groupe avaient codé leur projet de Licence 1 CMI, et qui nous offrait un support puissant et efficace pour notre interface graphique. \\
+De plus le C++ nous a permis de coder en orienté objet, ce qui était une nécessitée pour la création de notre application. En effet, notre programme utilise énormément ce type de programmation : nous développeront ce point plus tard dans la partie 3 sur le développement logiciel. \\
+
+Pour l'interface graphique, nous avons utilisé la bibliothèque OpenGL : une interface regroupant environ 250 fonctions différentes qui peuvent être utilisées pour afficher des scènes tridimensionnelles complexes à partir de simples primitives géométriques. Du fait de son ouverture, de sa souplesse d'utilisation et de sa disponibilité sur toutes les plates-formes, OpenGL est une des bibliothèque graphiques les plus utilisée par la majorité des applications scientifiques, industrielles ou artistiques 3D. \\
+L'utilisation de cette bibliothèque (associée à GLFW pour la gestion des fenêtres) était donc un choix assez basique puisqu'elle est très répandue, mais nous avons dû apprendre à l'utiliser : celle-ci est beaucoup plus complexe que les librairies que nous avions utilisées auparavant, comme SFML ou PyGame, de par son bas niveau. \\
 
 Pour gérer la partie réseau de notre application, nous n'avions pas besoin d'utiliser un langage puissant comme le C/C++, nous pouvions donc nous rabattre sur un langage moins performant mais plus facile d'accès.
 De ce fait, nous nous sommes dirigés vers le langage python, qui est un langage très simple d'utilisation, pratique pour débuter dans le domaine complexe de la programmation que représente la programmation en réseau. De surcroît il est plutôt efficace pour gérer les entrées sorties, notamment pour la lecture et l'écriture dans des fichiers, qui est une notion centrale dans notre projet.\\
 
-Cependant, le langage Python de base ne permet pas de faire de la programmation en réseau, nous avons donc du choisir une des nombreuses bibliothèques disponibles permettant de faire de la programmation réseau en Python. Après réflexion, nous avons opté pour le module « asyncio » pour deux raisons : premièrement, ce module offrait une interface de programmation en réseau de haut niveau donc plus simple d'utilisation, ce qui nous arrangeait particulièrement étant donné que nous sommes parfaitement novices dans ce domaine ; Deuxièmement, le gros point fort de ce module est le fait qu'il implémente une nouvelle manière de programmer~: la programmation asynchrone. La programmation asynchrone pour les entrées/sorties est une forme de programmation parallèle permettant d'exécuter d'autres parties d'un programme lorsque celui-ci est en attente d'une transmission de donnée, afin de grandement diminuer le temps d'exécution du programme.
+Cependant, le langage Python de base ne permet pas de faire de la programmation en réseau, nous avons donc du choisir une des nombreuses bibliothèques disponibles permettant de faire de la programmation réseau en Python. Après réflexion, nous avons opté pour le module « asyncio » pour deux raisons : premièrement, ce module offrait une interface de programmation en réseau de haut niveau donc plus simple d'utilisation, ce qui nous arrangeait particulièrement étant donné que nous sommes parfaitement novices dans ce domaine ; Deuxièmement, le gros point fort de ce module est le fait qu'il implémente une nouvelle manière de programmer~: la programmation asynchrone. La programmation asynchrone pour les entrées/sorties est une forme de programmation parallèle permettant d'exécuter d'autres parties d'un programme lorsque celui-ci est en attente d'une transmission de donnée, afin de grandement diminuer le temps d'exécution du programme. \\
 
 \section{Outils} %outils utilisés pourquoi ce choix avantages ? postgresql
-Pour réaliser notre projet nous avons utilisé des d'outils différents et spécifique à chaque tache. \\
+Pour réaliser notre projet nous avons utilisé des outils différents et spécifiques à chaque tache. \\
 
-Pour l'implémentation de l'application nous sommes parti sur le langage C++ dont nous connaissions les bases et qui nous à permis de programmer en "Orienté Objet". \\
-
-La partie serveur à été faite avec le langage Python pour sa facilité d'utilisation. Le domaine du réseau en informatique nous été inconnue sur le point de vue pratique, donc il nous fallait un langage simple et puissant dans ce domaine. \\
-
-La base de donnée nous avons choisi le système de gestion "PostgreSQL" pour les connaissances que nous avions sur le langage SQL du module HLIN304. \\
+Nous avons utilisé le système de gestion PostgreSQL\footnote{PSQL : \url{https://www.postgresql.org/}} pour gérer la base de donnée de notre serveur, ce système nous permettant d'utiliser des requête SQL en Python et ainsi de mettre en application les connaissances acquises cette année avec le module HLIN304. \\
 
 Pour la partie modélisation de l'application nous avons opté pour le Langage de Modélisation Unifié (UML) vu en cours, dans le module HLIN406. \\
 
-Toutes les communications du groupe ce sont faites sur le logiciel "Discord", un logiciel facilitant grandement les communications en groupes avec par exemple le partage d'écran, les groupes vocals et textuels, le fait de pouvoir envoyer du code en un langage particulier directement dans le canal de discussion textuel etc.. \\
+Toutes les communications du groupe ce sont faites sur le logiciel Discord\footnote{Discord : \url{https://discordapp.com/}}, un logiciel facilitant grandement les communications en groupes avec par exemple le partage d'écran, les groupes vocaux et textuels, le fait de pouvoir partager des morceaux de code directement dans le canal de discussion textuel etc.. \\
 
-Pour ce qui est des sauvegardes du projet, nous avons utilisé GIT (un logiciel de gestion de versions décentralisé) qui nous a permis de garder nos anciennes versions, de ne rien perdre en cours de route, et de pouvoir partager l'avancé du projet avec les autres étudiants du groupes et notre encadrante. \\
+Pour ce qui est du partage et des sauvegardes du code, nous avons utilisé Git (un logiciel de gestion de versions décentralisé) via un serveur GitHub\footnote{GitHub \url{https://github.com/}, notre projet : \url{https://github.com/valfvo/punyduck}} qui nous a permis de garder nos anciennes versions, de ne rien perdre en cours de route, et de pouvoir partager l'avancée du projet avec les autres étudiants du groupes et notre encadrante. \\
 
-Enfin, pour ce qui est de l'éditeur de code utilisé, nous nous sommes tous penché sur Visual Studio Code pour sa fiabilité et sa mise en page agréable. De plus, nous avons pu grâce à ce logiciel coder à plusieurs en même temps avec sa fonctionnalité de partage en temps réel.
+Pour ce qui est de l'éditeur de code utilisé, nous nous sommes tous penché sur Visual Studio Code\footnote{VSCode : \url{https://code.visualstudio.com/}} pour sa fiabilité et sa mise en page agréable. De plus, nous avons pu grâce à ce logiciel coder à plusieurs en même temps avec sa fonctionnalité de partage en temps réel. \\
+
+Enfin, nous avons utilisé le langage \LaTeX{} via la plateforme Overleaf\footnote{Overleaf : \url{https://www.overleaf.com/}} pour rédiger ce rapport.
 
 
 %Partie 3 Développement logiciel 5/10 pages
 \chapter{Développement logiciel, Conception, Modélisation, Implémentation}
 \section{Présentation du développement}
-Le développement du projet s'est fait en deux parties, le côté application d'une part, et le côté serveur et base de donnée d'autre part. \\
+Le développement du projet est séparé en trois parties : 
+\begin{itemize}[label=$-$, leftmargin=1.5cm]
+    \item le framework de l'interface graphique ;
+    \item l'interface graphique utilisant le framework ;
+    \item la communication réseau entre le client et le serveur.
+\end{itemize}
 
-Le développement de l'application s'est déroulé en plusieurs étapes. \\
-La première étape fut d'apprendre l'OpenGL, un ensemble normalisé de fonctions de calcul d'images 2D ou 3D, qui nous permettrais de pouvoir créer notre propre aspect graphique car les autres outils tel que SFML, QT et gtkmm par exemples ne proposaient pas de solution précise à nos problèmes.
-L'OpenGL a été difficile  à comprendre et à utiliser de son bas niveau comparé au langage qu'on a l'habitude de voir en L1 et L2. \\
+Le développement de l'application s'est déroulé en plusieurs étapes qui vont être développées points par points.
+
+\subsection{Apprentissage de l'utilsiation d'OpenGL}
+La première étape fut d'apprendre l'OpenGL, qui fut difficile à comprendre et à utiliser de par son bas niveau comparé aux librairies qu'on a l'habitude de voir en L1 et L2. \\
 La première partie de l'apprentissage d'OpenGL a été de pour dessiner un triangle d'une certaine couleur. Puis grâce à ce triangle de pouvoir dessiner un rectangle. Ainsi de suite nous avons pu dessiner toutes sortes de formes tel que les ronds et les cercles par exemple.
-La deuxième partie a été de pouvoir coller des textures sur ces surfaces précédemment créées. Cette partie n'a pas poser réellement de problème.
-Pour la troisième partie, nous devions pouvoir mettre une surface dans une autre surface comme ceci :
-\vspace{1cm}
-%FIGURES PAS AU BON ENDROIT
-\begin{figure}[!h]
+La deuxième partie a été de pouvoir coller des textures sur ces surfaces précédemment créées. Cette partie n'a pas posé réellement de problème.
+Pour la troisième partie, nous devions pouvoir mettre une surface dans une autre surface, comme dans la figure \ref{exsurface}.
+\begin{figure}
     \begin{center}
         \includegraphics[scale=0.3]{exempleSurface.jpg}
         \caption{Capture d'écran de notre premier essai d'une superposition de surfaces}
+        \label{exsurface}
     \end{center}
 \end{figure}
-Ceci était primordiale pour la réalisation de l'application graphique car cette simple tache à permis la superposition des éléments graphiques de l'application. \\
+Ceci était primordial pour la réalisation de l'application graphique car cette simple tache à permis la superposition des éléments graphiques de l'application. \\
 %plus argumenter sur le texte
 La dernière partie était de créer le texte, c'est-à-dire de pouvoir afficher du texte à l'écran. \\
 
 La seconde étape du développement de l'application a été de modéliser en UML les différentes parties de l'application et ses mécanismes. \\
 %mieux argumenter ici
 Pour commencer il fallait trouver un système permettant de lier des éléments entre eux afin de pouvoir les superposer, créer de nouveaux éléments à partir d'anciens, de supprimer un élément et ses sous éléments qui le compose etc..
-C'est pour cela qu'on à créer les "Quark", un système ou un élément a un seul père et n fils (où n appartient à l'intervalle [0, +infini[) et a accès à ses frères (précédent et suivant). Grâce à ce mécanisme, tous les problèmes cité précédemment ont été résolus. Ce système a donc été la base de toute l'application. \\
-Ensuite nous avons créer les différentes classes qui allaient nous servir pour l'implémentation. Comme par exemple : 
+C'est pour cela que nous avons créé les "Quarks", un système où un élément a un  père et n fils (où n appartient à l'intervalle \(\left]0, +\infty\right[\)) et a accès à ses frères. Grâce à ce mécanisme, tous les problèmes cité précédemment ont été résolus. Ce système a donc été la base de toute l'application. \\
+Ensuite nous avons créé les différentes classes qui allaient nous servir pour l'implémentation. Comme par exemple : 
 %FAIRE LES EXPLICATIONS SUR LES CLASSES COMPLEXES ET SI BESOIN RAJOUTER D'AUTRES CLASSES 
 \begin{itemize}
     \item "LQTexture" qui génère les textures
@@ -222,36 +207,21 @@ Ensuite nous avons créer les différentes classes qui allaient nous servir pour
     \item "LQButton" pour les boutons 
 \end{itemize}
 
+%plus argumenter ici
+La troisième étape fut la phase d'implémentation. D'une part nous nous sommes occupés des classes en rapport avec d'OpenGL tels que "LQShader", "LQTexture" et "LQSurface".
+Par la suite nous avons coder les différentes classes en suivant l'UML précédemment réalisé.
+
+%ici jvous laisse faire jsp du tt quoi mettre
+Pour le côté serveur et base de donnée la première étape fut de ...
+
 \section{Modélisation} %UML gros problème. dès que l'on rajoute des lignes, tout crash avec trois milles erreurs.
 %Incompréhensible, peux-être parce que sa déborde je n'ai pas trouver malgré plusieurs essaies.
 %Je les remplis et après il faudra voir comment les placer pour pas que ça plante
 %Le problème provient sûrement quand un umlclass déborde sur un autre. /!\
 
-\newpage 
 \begin{center}
 \begin{tikzpicture}
-\begin{comment}
-\umlclass[x=8, fill=gray!5]{LQViewable}{
-    -- m\_flex : bool\\ 
-    -- m\_hidden : bool
-}{
-    %+ <<create>>LQViewable();\\
-    + <<create>>LQViewable(LQNumber x, LQNumber y,
-               LQNumber width, LQNumber height,
-               GLint color=0x000000, const std::string iconPath="")\\
-    %+ <<create>>LQViewable(LQNumber x, LQNumber y, bool flex=true)\\
-    %+ hidden() : bool\\ 
-    + hide() : void\\
-    + unhide() : void\\
-    %+ flexible() : bool\\ 
-    + displayFlex() : void\\
-    %+ displayBlock() : void\\
-    + appendChild(LQViewable child) :  LQViewable\\ 
-    + ^drawChildren() : void \\
-    + resizeWidthCallback() : void\\
-    \umlvirt{+ resizeHeightCallback() : void}
-}
-\umlclass[x=-4,y=-6, fill=gray!5]{LQSurface}{
+\umlclass[x=-1,y=-10, fill=gray!5]{LQSurface}{
     -- m\_VBO : GLuint\\
     -- m\_VAO : GLuint\\ 
     -- m\_FBO : GLuint\\
@@ -264,10 +234,22 @@ Ensuite nous avons créer les différentes classes qui allaient nous servir pour
     %-- m\_clearColor : LQColor\\
     %\umlstatic{-- s\_vertices[54] : GLfloat}\\
     %\umlstatic{-- s\_default\_shader : LQShader}
-    }{}
-\end{comment}
+    }{
+    + blit(LQTexture texture, GLfloat x, GLfloat y, GLuint VAO) : void\\
+    + fill(GLfloat r, GLfloat g, GLfloat b, GLfloat a=1.0f) : void\\
+    + blit(const LQSurface surface) : void\\
+    + fill(LQColor color) : void\\
+    + move(GLfloat x, GLfloat y) : void\\
+    + move(glm::vec2 distance) : void\\
+    + moveX(GLfloat x) : void\\
+    + moveY(GLfloat y) : void\\
+    + moveTo(GLfloat x, GLfloat y) : void\\
+    + moveTo(glm\::vec2 position) : void\\
+    + moveToX(GLfloat x) : void\\
+    + moveToY(GLfloat y) : void\\
+    }
 
-\umlclass[x=-6, fill=gray!5]{LQuark}{
+\umlclass[x=-5, fill=gray!5]{LQuark}{
     -- m\_parent : LQuark \\
     -- m\_prevSibling : LQuark \\
     -- m\_nextSibling : LQuark \\
@@ -298,7 +280,7 @@ Ensuite nous avons créer les différentes classes qui allaient nous servir pour
     %+ swapChildren(LQuark first, LQuark second) : LQuark \\
     %+ swapChildren(LQindex first, LQindex second) : LQuark}
 }
-\umlclass[x=3, fill=gray!5]{LQTexture}{
+\umlclass[x=4.5, fill=gray!5]{LQTexture}{
     -- m\_id : GLuint \\
     -- m\_texWidth : GLuint \\
     -- m\_texHeight : GLuint \\
@@ -318,8 +300,15 @@ Ensuite nous avons créer les différentes classes qui allaient nous servir pour
     \umlstatic{+ deleteTexture(LQTexture texture): void}
 }
 
-\begin{comment}
-\umlclass[x=8, y=-6, fill=gray!5]{LQNumber}{
+%lien entre bloc
+\umlinherit[geometry=-|]{LQuark}{LQSurface}
+\umlinherit[geometry=-|]{LQTexture}{LQSurface}
+\end{tikzpicture}
+\end{center}
+
+\begin{center}
+\begin{tikzpicture}
+\umlclass[fill=gray!5]{LQNumber}{
     -- m\_quark : LQuark\\
     %-- (*m\_invoke)(LQuark*) : void \\ Trouver comment représenter une fonction en attribut UML
     -- m\_value : float \\
@@ -342,7 +331,7 @@ Ensuite nous avons créer les différentes classes qui allaient nous servir pour
     + float() : operator \\
     \umlstatic{+ old() : float}
     }
-\umlclass[x=6, y=-6, fill=gray!5]{LQMathVar}{
+\umlclass[y=-8, fill=gray!5]{LQMathVar}{
     -- m\_number : LQNumber \\
     -- m\_coeff : float \\
     -- m\_next : LQMathVar
@@ -352,8 +341,8 @@ Ensuite nous avons créer les différentes classes qui allaient nous servir pour
     + eval() : float \\
     + parentCoords(LQNumber number) : bool \\
     + compatible(LQNumber number) : bool
-    }
-\umlclass[x=2, y=-9, fill=gray!5]{LQMathExpr}{
+}
+\umlclass[x=10, y=-10, fill=gray!5]{LQMathExpr}{
     -- addCompatible(LQMathVar first, float coeff=1.0f) : void\\
     -- m\_first : LQMathVar \\
     -- m\_last : LQMathVar \\
@@ -377,14 +366,38 @@ Ensuite nous avons créer les différentes classes qui allaient nous servir pour
     \umlvirt{+ operator*(float coeff) : LQMathExpr <<operator>>}\\
     \umlvirt{+ operator/(float coeff) : LQMathExpr <<operator>>}
     }
-\end{comment}
-%lien entre bloc
-%\umlinherit[geometry=-|]{LQuark}{LQSurface}
-%\umlinherit[geometry=-|]{LQTexture}{LQSurface}
-%\umlinherit[geometry=-|]{LQNumber}{LQViewable}
-%\umlinherit[geometry=-|]{LQSurface}{LQViewable}
-%\umlinherit[geometry=-|]{LQMathVar}{LQMathExpr}
-%\umlinherit[geometry=-|]{LQMathExpr}{LQNumber}
+%lien
+\umlinherit[geometry=-|]{LQMathVar}{LQMathExpr}
+\umlinherit[geometry=|-]{LQMathExpr}{LQNumber}
+\end{tikzpicture}
+\end{center}
+
+\begin{center}
+\begin{tikzpicture}
+\umlclass[fill=gray!5]{LQViewable}{
+    -- m\_flex : bool\\ 
+    -- m\_hidden : bool
+}{
+    %+ <<create>>LQViewable();\\
+    + <<create>>LQViewable(LQNumber x, LQNumber y,
+               LQNumber width, LQNumber height,\\
+               GLint color=0x000000, const std::string iconPath="")\\
+    %+ <<create>>LQViewable(LQNumber x, LQNumber y, bool flex=true)\\
+    %+ hidden() : bool\\ 
+    + hide() : void\\
+    + unhide() : void\\
+    %+ flexible() : bool\\ 
+    + displayFlex() : void\\
+    %+ displayBlock() : void\\
+    + appendChild(LQViewable child) :  LQViewable\\ 
+    + drawChildren() : void \\
+    + resizeWidthCallback() : void\\
+    \umlvirt{+ resizeHeightCallback() : void}
+}
+\umlclass[x=-3, y=-5, fill=gray!5]{LQSurface}{...}{...}
+\umlclass[x=3, y=-5, fill=gray!5]{LQNumber}{...}{...}
+\umlinherit[geometry=-|]{LQNumber}{LQViewable}
+\umlinherit[geometry=-|]{LQSurface}{LQViewable}
 \end{tikzpicture}
 \end{center}
 
@@ -427,88 +440,19 @@ Les interactions avec l'interface concernant le profil sont, la modification de 
 
 %.Partie 5 1/2 pages
 \chapter{Gestion du Projet}
-\section{Organisation et planification} 
-%gantt en latex, les [progress=0] ne sont pas obligatoire. Il faut rassembler plusieurs commit en un.
-\begin{comment} %ça met en commentaire
+\section{Organisation et planification}
+\newpage
+\begin{rotate}{270}
+\begin{comment}
+%police du gantt au choix selon préférence
 \definecolor{bargreen}{RGB}{133,193,132}
 \definecolor{groupgreen}{RGB}{53,107,52}
 \definecolor{darkgreen}{RGB}{35,68,35}
-\definecolor{linkred}{RGB}{165,0,33} %rouge
+\definecolor{linkred}{RGB}{165,0,33}
 
-%police du gantt au choix selon préférence
-%\renewcommand\sfdefault{phv}
-%\renewcommand\mddefault{mc}
-%\renewcommand\bfdefault{bc}
-
-\setganttlinklabel{s-s}{START-TO-START}
-\setganttlinklabel{f-s}{FINISH-TO-START}
-\setganttlinklabel{f-f}{FINISH-TO-FINISH}
-\begin{ganttchart}[
-    canvas/.append style={fill=none, draw=black!25, line width=3pt},
-    hgrid style/.style={draw=black!5, line width=.75pt},
-    vgrid={*1{draw=black!5, line width=.75pt}},
-    today label font=\small\bfseries,
-    title/.style={draw=none, fill=none},
-    title label font=\bfseries\footnotesize,
-    title label node/.append style={below=7pt},
-    include title in canvas=false,
-    %Zone des sous parties d'un groupe
-    bar label font=\mdseries\small\color{black!90},
-    bar label node/.append style={left=1.8cm},
-    bar/.append style={draw=none, fill=darkgreen!60},
-    bar incomplete/.append style={fill=bargreen},
-    bar progress label font=\mdseries\footnotesize\color{black!70},
-    %tête de groupe (Réseau, framwork)
-    group incomplete/.append style={fill=groupgreen!85},
-    group/.append style={draw=none, fill=darkgreen},
-    group left shift=0,
-    group right shift=0,
-    group height=0.3,
-    group peaks tip position=0,
-    group label node/.append style={left=2.5cm},
-    group progress label font=\bfseries\small,
-    %zone rouge / avancement
-    link/.style={-latex, line width=1.5pt, linkred},
-    link label font=\scriptsize\bfseries,
-    link label node/.append style={below left=-2pt and 0pt}
-  ]{1}{15}
-  \gantttitle[
-    title label node/.append style={below left=7pt and -3pt}
-  ]{SEMAINES:\quad1}{1}
-  \gantttitlelist{2,...,15}{1} \\
-  \ganttgroup{Partie Réseaux}{1}{15} \\
-  \ganttbar[progress=75,name=PR1A]{\textbf{PR 1.1} Activité A}{1}{8} \\
-  \ganttbar[progress=67,name=PR1B]{\textbf{PR 1.2} Activité B}{1}{3} \\
-  \ganttbar[progress=50,name=PR1C]{\textbf{PR 1.3} Activité C}{4}{10} \\
-  \ganttbar[progress=0,name=PR1D]{\textbf{PR 1.4} Activité D}{4}{10} \\[grid]
-  \ganttgroup{Partie framework}{1}{25} \\
-  \ganttbar[progress=0]{\textbf{PFRA 2.1} Activité E}{4}{5} \\
-  \ganttbar[progress=0]{\textbf{PFRA 2.2} Activité F}{6}{8} \\
-  \ganttbar[progress=0]{\textbf{PFRA 2.3} Activité G}{9}{10}\\[grid]
-  \ganttgroup{Partie Rapport}{15}{25} \\
-  \ganttbar[progress=0]{\textbf{PRA 2.1} Activité K}{4}{5} \\
-  \ganttbar[progress=0]{\textbf{PRA 2.2} Activité L}{6}{8} 
-  
-  %link entre activitées
-  \ganttlink[link type=s-s]{PR1A}{PR1B}
-  \ganttlink[link type=f-s]{PR1B}{PR1C}
-  \ganttlink[
-    link type=f-f,
-    link label node/.append style=left
-  ]{PR1C}{PR1D}
-\end{ganttchart}
-\end{comment}
-
-%\begin{comment} %ça met en commentaire
-\definecolor{bargreen}{RGB}{133,193,132}
-\definecolor{groupgreen}{RGB}{53,107,52}
-\definecolor{darkgreen}{RGB}{35,68,35}
-\definecolor{linkred}{RGB}{165,0,33} %rouge
-
-%police du gantt au choix selon préférence
 \renewcommand\sfdefault{phv}
-%\renewcommand\mddefault{mc}
-%\renewcommand\bfdefault{bc}
+\renewcommand\mddefault{mc}
+\renewcommand\bfdefault{bc}
 
 \setganttlinklabel{s-s}{START-TO-START}
 \setganttlinklabel{f-s}{FINISH-TO-START}
@@ -517,6 +461,7 @@ Les interactions avec l'interface concernant le profil sont, la modification de 
     canvas/.append style={fill=none, draw=black!25, line width=3pt},
     hgrid style/.style={draw=black!5, line width=.75pt},
     vgrid={*1{draw=black!5, line width=.75pt}},
+    x unit=0.85cm,
     today label font=\small\bfseries,
     title/.style={draw=none, fill=none},
     title label font=\bfseries\footnotesize,
@@ -524,7 +469,7 @@ Les interactions avec l'interface concernant le profil sont, la modification de 
     include title in canvas=false,
     %Zone des sous parties d'un groupe
     bar label font=\mdseries\small\color{black!90},
-    bar label node/.append style={left=1.8cm},
+    bar label node/.append style={left=1cm},
     bar/.append style={draw=none, fill=darkgreen!60},
     bar incomplete/.append style={fill=bargreen},
     bar progress label font=\mdseries\footnotesize\color{black!70},
@@ -535,12 +480,12 @@ Les interactions avec l'interface concernant le profil sont, la modification de 
     group right shift=0,
     group height=0.3,
     group peaks tip position=0,
-    group label node/.append style={left=2.5cm},
+    group label node/.append style={left=1.5cm},
     group progress label font=\bfseries\small,
     %zone rouge / avancement
     link/.style={-latex, line width=1.5pt, linkred},
     link label font=\scriptsize\bfseries,
-    link label node/.append style={below left=-2pt and 0pt}
+    link label node/.append style={below left=-1pt and 0pt}
   ]{1}{15}
   \gantttitle[
     title label node/.append style={below left=7pt and -3pt}
@@ -567,9 +512,47 @@ Les interactions avec l'interface concernant le profil sont, la modification de 
   \ganttlink[link type=f-s]{R}{F}
   \ganttlink[link type=f-f,link label node/.append style=left]{PR1C}{PR1B}
 \end{ganttchart}
+\end{comment}
+%\begin{comment}
+\setganttlinklabel{s-s}{START-TO-START}
+\setganttlinklabel{f-s}{FINISH-TO-START}
+\setganttlinklabel{f-f}{FINISH-TO-FINISH}
+    \begin{ganttchart}[
+        hgrid,
+        vgrid={*{6}{draw=none},{dotted}},
+        vrule/.style={very thick, red},
+        x unit=0.160cm,
+        time slot format=isodate,
+        time slot unit=day,
+        calendar week text = {W\currentweek{}},
+        bar height = 0.6,
+        bar top shift = 0.2,
+        bar label node/.append style={align=left,text width={width("Task1 ")}},
+        bar incomplete/.append style={fill=cyan},
+        progress label text = \relax
+        link/.style={-latex, line width=1.5pt, linkred},
+        ]{2020-02-01}{2020-05-30}
+        \gantttitlecalendar{year, month=name, week} \\
+        \ganttbar[bar/.append style={fill=bargreen}]{Task1}{2020-02-01}{2020-02-05}\\
+        \ganttbar[bar/.append style={fill=bargreen}]{Task1}{2020-02-01}{2020-02-05}\\
+        \ganttbar[bar/.append style={fill=bargreen}]{Task1}{2020-02-01}{2020-02-05}\\
+        \ganttbar[bar/.append style={fill=bargreen}]{Task1}{2020-02-01}{2020-02-05}\\
+        \ganttbar[bar/.append style={fill=bargreen}]{Task1}{2020-02-01}{2020-02-05}\\
+        \ganttbar[bar/.append style={fill=bargreen}]{Task1}{2020-02-01}{2020-02-05}\\
+        \ganttbar[bar/.append style={fill=bargreen}]{Task1}{2020-02-01}{2020-02-05}\\
+        \ganttbar[bar/.append style={fill=bargreen}]{Task1}{2020-02-01}{2020-02-05}\\
+        \ganttbar[bar/.append style={fill=bargreen}]{Task1}{2020-02-01}{2020-02-05}\\
+        \ganttbar[bar/.append style={fill=bargreen}]{Task1}{2020-02-01}{2020-02-05}\\
+        \ganttbar[bar/.append style={fill=bargreen}]{Task1}{2020-02-01}{2020-02-05}\\
+        \ganttbar[bar/.append style={fill=bargreen}]{Task1}{2020-02-01}{2020-02-05}\\
+        \ganttbar[bar/.append style={fill=bargreen}, name=Task2]{Task2}{2020-04-15}{2020-04-27}\\
+        \ganttbar[bar/.append style={fill=bargreen}, name=SW]{Site Web}{2020-04-28}{2020-05-30}\\
+        \ganttvrule{2020-05-30}{2020-05-30}
+        
+        \ganttlink[link type=f-s]{Task2}{SW}
+    \end{ganttchart}
 %\end{comment}
-\section{Changements majeurs}%ceux effectués en cours de projet (changement d'idée, revoir un algo,...)
-
+\end{rotate}
 
 %.Partie 6 1 page
 \chapter{Bilan et Perspectives} %bilan et Conclusion, parler en onction du cahier des charges, les perspectives futur du projet et l'apport.
