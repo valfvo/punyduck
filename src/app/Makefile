@@ -4,7 +4,7 @@ CXX = g++
 # static compilation
 CXXFLAGS = -Wall -Wfatal-errors -MMD -static -mwindows
 
-LIBS_DIR = C:/Users/valfv/libs
+LIBS_DIR = libs
 INCLUDE_DIR = $(LIBS_DIR)/include
 LIB_DIR = $(LIBS_DIR)/lib
 SRC_DIR = $(LIBS_DIR)/src
