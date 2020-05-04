@@ -1,2 +1,3 @@
 release/* linguist-vendored
 src/app/libs/* linguist-vendored
+src/website/* linguist-vendored
