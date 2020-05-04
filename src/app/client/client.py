@@ -4,9 +4,6 @@ import os
 import re
 import sys
 import gateway as gw
-from argon2 import *
-
-ph = PasswordHasher()
 
 def encodeBuffer(message): #Fonction qui renvoie la taille d'un message en binaire
     sizeBuffer_send = len(message).to_bytes(4, "big")
@@ -138,6 +135,7 @@ async def main():
     """Fonction principale, appelée au début du programme. Après avoir établi la connexion avec le serveur, elle appelle la fonction connexion
     qui gère la connexion à son compte. Ensuite, on demande à l'utilisateur s'il souhaite envoyer ou recevoir un projet."""
     reader, writer = await asyncio.open_connection('88.122.55.128', 18545)
+    print('connection established')
     connected = True
     idLog = b'\x00\00'
     while connected: #Tant qu'on est connecté au serveur, on demande si l'utilisateur veut envoyer ou recevoir un projet
