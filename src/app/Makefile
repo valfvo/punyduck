@@ -1,8 +1,8 @@
 CXX = g++
 # dynamic compilation
-# CXXFLAGS = -Wall -Wfatal-errors -MMD
+CXXFLAGS = -Wall -Wfatal-errors -MMD
 # static compilation
-CXXFLAGS = -Wall -Wfatal-errors -MMD -static -mwindows
+# CXXFLAGS = -Wall -Wfatal-errors -MMD -static -mwindows
 
 LIBS_DIR = libs
 INCLUDE_DIR = $(LIBS_DIR)/include
