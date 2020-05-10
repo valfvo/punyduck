@@ -25,6 +25,7 @@
 \usepackage{xcolor}
 \usepackage{fancyhdr}
 \usepackage{fontspec}
+\usepackage{adjustbox}
 
 \sloppy
 \hyphenpenalty 10000000
@@ -225,7 +226,7 @@ Ensuite, une fois les différentes parties du projet dégagées, pour bien défi
 \chapter{Technologies utilisées}
 \section{Langages}
 Pour la programmation de notre application, nous avons choisis assez naturellement d'utiliser le langage C/C++. En effet, c'est le langage que nous avons le plus étudié à l'université, avec lequel 3 des 5 membres du groupe avaient codé leur projet de Licence 1 CMI, et qui nous offrait un support puissant et efficace pour notre interface graphique. \\
-De plus le C++ nous a permis de coder en orienté objet, ce qui était une nécessité pour la création de notre application. En effet, notre programme utilise énormément ce type de programmation : nous développeront ce point plus tard dans la partie \ref{struct} sur les structures de données. \\
+De plus le C++ nous a permis de coder en orienté objet, ce qui était une nécessité pour la création de notre application. En effet, notre programme utilise énormément ce type de programmation : nous développeront ce point plus tard dans la partie \ref{conception} sur la conception de l'application . \\
 
 Pour l'interface graphique, nous avons utilisé la bibliothèque OpenGL : une interface regroupant environ 250 fonctions différentes qui peuvent être utilisées pour afficher des scènes tridimensionnelles complexes à partir de simples primitives géométriques. Du fait de son ouverture, de sa souplesse d'utilisation et de sa disponibilité sur toutes les plates-formes, OpenGL est une des bibliothèque graphiques les plus utilisée par la majorité des applications scientifiques, industrielles ou artistiques 3D. \\
 L'utilisation de cette bibliothèque (associée à GLFW pour la gestion des fenêtres) était donc un choix assez basique puisqu'elle est très répandue, mais nous avons dû apprendre à l'utiliser : celle-ci est beaucoup plus complexe que les librairies que nous avions utilisées auparavant, comme SFML ou PyGame, de par son bas niveau. \\
@@ -251,90 +252,89 @@ Pour ce qui est de l'éditeur de code utilisé, nous nous sommes tous penché su
 Enfin, nous avons utilisé le langage \LaTeX{} via la plateforme Overleaf\footnote{Overleaf : \url{https://www.overleaf.com/}} pour rédiger ce rapport.
 
 %Partie 3 Développement logiciel 5/10 pages
-\chapter{Développement et conception de Punyduck}
-\section{Présentation du développement}
-Le développement du projet est séparé en trois parties : 
+\chapter{Conception de Punyduck}
+\label{conception}
+\section{L'architecture Modèle-Vue-Contrôleur}
+
+Nous avons commencé par séparer le projet en trois grandes parties avant d'entamer la conception :
 \begin{itemize}[label=$-$, leftmargin=1.5cm]
-    \item le framework de l'interface graphique ;
-    \item l'interface graphique utilisant le framework ;
-    \item la communication réseau entre le client et le serveur.
+    \setlength\itemsep{0em}
+    \item Le framework pour structurer l'application
+    \item L'application utilisant le framework
+    \item La communication réseau entre l'application et le serveur.
 \end{itemize}
 
-Le développement de l'application s'est déroulé en plusieurs étapes qui vont être développées points par points.
-
-\subsection{Apprentissage de l'utilisation d'OpenGL}
-La première étape fut d'apprendre l'OpenGL, qui fut difficile à comprendre et à utiliser de par son bas niveau comparé aux librairies qu'on a eu l'habitude de voir en L1 et L2. \\
-La première partie de l'apprentissage d'OpenGL a été de pouvoir dessiner un triangle d'une certaine couleur. Puis grâce à ce triangle de pouvoir dessiner un rectangle. Ainsi de suite nous avons pu dessiner toutes sortes de formes, tel que les cercles par exemple.
-La deuxième partie a été de pouvoir coller des textures sur ces surfaces précédemment créées. Cette partie n'a pas posé réellement de problèmes.
-Pour la troisième partie, nous devions pouvoir mettre une surface dans une autre surface, comme dans la figure \ref{exsurface}.
-\begin{figure}
-    \begin{center}
-        \includegraphics[scale=0.3]{exempleSurface.jpg}
-        \caption{Capture d'écran de notre premier essai d'une superposition de surfaces}
-        \label{exsurface}
-    \end{center}
-\end{figure}
-Ceci était primordial pour la réalisation de l'application graphique car cette simple tâche a permis la superposition des éléments graphiques de l'application. \\
-%plus argumenter sur le texte
-La dernière partie était de créer le texte, c'est-à-dire de pouvoir afficher du texte à l'écran. \\
-
-La seconde étape du développement de l'application a été de modéliser en UML les différentes parties de l'application et ses mécanismes. \\
-%mieux argumenter ici
-Pour commencer, il fallait trouver un système permettant de lier des éléments entre eux afin de pouvoir les superposer, en créer des nouveaux à partir d'anciens, de supprimer un élément et ses sous éléments qui le compose etc..
-C'est pour cela que nous avons créé les "Quarks", un système où un élément a un père et n fils (où n appartient à l'intervalle \(\left]0, +\infty\right[\)) et a accès à ses frères. Grâce à ce mécanisme, tous les problèmes cités précédemment ont été résolus. Ce système a donc été la base de toute l'application. \\
-Ensuite nous avons créé les différentes classes qui allaient nous servir pour l'implémentation. Comme par exemple : 
-%FAIRE LES EXPLICATIONS SUR LES CLASSES COMPLEXES ET SI BESOIN RAJOUTER D'AUTRES CLASSES 
-\begin{itemize}[label=$-$]
-    \item \verb!LQTexture! qui génère les textures
-    \item \verb!LQSurface! pour les surfaces
-    \item \verb!LQViewable! 
-    \item \verb!LQColor! pour la couleur
-    \item \verb!LQNumber! 
-    \item \verb!LQText! pour le texte
-    \item \verb!LQButton! pour les boutons 
+Par la suite nous avons opté pour une architecture \textit{Modèle-Vue-Contrôleur} (ou simplement \textit{MVC}) pour lier les différentes composantes du projet. En effet ce type d'architecture est plutôt populaire dans le développement d'interfaces graphiques car il permet une structure robuste et flexible avec une composition en trois modules:
+\begin{itemize}[label=$-$, leftmargin=1.5cm]
+    \setlength\itemsep{0em}
+    \item \textbf{Le modèle}, qui contient toutes les données et la logique pour manipuler ces dernières. Il représente une petite base de données et n'a pas à se préoccuper de savoir comment afficher ces données.
+    \item \textbf{La vue}, qui contient la représentation graphique des données du modèle sans avoir besoin de les détenir. Elle est une sorte de schéma que l'on peut ressortir dès que l'on veut afficher une donnée.
+    \item \textbf{Le contrôleur}, qui contient la logique pour interagir avec l'utilisateur et sert d'intermédiaire entre le modèle et la vue. Il constitue le << cerveau >> de l'application.
 \end{itemize}
 
-%plus argumenter ici
-La troisième étape fut la phase d'implémentation. D'une part nous nous sommes occupés des classes en rapport avec d'OpenGL tels que \verb!LQShader!, \verb!LQTexture! et \verb!LQSurface!.
-Par la suite nous avons codé les différentes classes en suivant l'UML précédemment réalisé.
+Dans une architecture \textit{MVC}, chaque module est indépendant et n'a qu'une fonction spécifique. Cela facilite énormément le développement car on peut se concentrer sur une seule tâche sans se soucier du reste. Pour implémenter le patron \textit{MVC} à notre application nous avons décidé de faire du framework le contrôleur et le modèle. Le framework sert également de base à la vue, qui est naturellement l'interface graphique. La partie réseau en Python sert à communiquer avec le serveur pour mettre à jour le modèle.
 
-\subsection{Création de l'interface graphique}
-L'interface graphique a été créée en plusieurs temps. Dans un premier temps il a fallu trouver une représentation graphique validée par tous les membres du groupe. Pour cela, nous avons fait la liste des différentes pages qui seraient dans l'application :
-%Je crois que vous avez pas fait les autres pages ? si oui rajoutez-les.
-\begin{description}
-    \item[Connexion :] une page permettant de s'inscrire et de se connecter à son compte ;
-    \item[Projet :] une page affichant tous les projets stockés sur le serveur, où on peut également les télécharger ;
-    \item[Dépôt :] une page pour pouvoir déposer ses projets sur l'application.
-\end{description}
-Puis nous les avons dessinés sur papier une par une, pour que chaque membre du groupe ait une vision très précise de l'aspect visuel de l'application.
-Enfin, pour l'implémentation des pages nous avons utilisé le framework créé dans ce but. Il a fallu créer les différents composants de la page pour au final les assembler et former la page souhaitée (une page correspondant à une vue dans notre architecture MVC). \\
-Grâce au framework, on a pu lier toutes les pages (vues) entres elles et permettre ainsi la navigation entre les différentes pages de l'application.
-Par exemple pour la page "Projet", il a fallut créer cette suite d'éléments qui la composent :
-\begin{itemize}[label=$-$]
-    \item Une liste de bouton permettant de choisir comment trier les projets ("mieux notés", "plus récents"...)\footnote{\label{note}Cette fonctionnalité n'est pas encore implémentée, c'est donc pour l'instant une simple image}
-    \item Une barre de recherche pour accéder à un projet en écrivant son nom
-    \item Des boutons qui permettent de trier les projets sous forme de liste ou sous forme de mozaique avec les images des projets\textsuperscript{\ref{note}}
-    \item Les projets composés d'un nom, d'un "tag" (jeu, algorithme, application...) et d'une image
+\section{Développement de Litequarks, le framework}
+\subsection{Début de la conception}
+
+L'écrasante majorité du développement de notre application a été consacré à la réalisation du framework, qui représente environ 75 \% du projet. La conception d'un tel framework a été particulièrement difficile. Effectivement, l'objectif est de créer un outil que nous allons nous-même utiliser pour faciliter la mise en place de l'interface graphique. Il ne doit donc pas seulement marcher à peu près, il doit marcher à tout les coups dans toute les situations, en plus d'être pratique et facile à prendre en main. La complexité de réalisation est à un tout autre niveau d'un simple exercice où l'on peut ne pas réussir, ici l'échec n'est pas une option.\\
+
+La première étape fut logiquement la conception, qui précède l'implémentation. C'est l'étape la plus difficile et la plus délicate. En effet si la conception n'est pas bonne, c'est toute l'implémentation et l'utilisation du framework qui seront pénalisés. Pour être sûr d'avoir une conception correcte nous avons décidé de consacrer la moitié du temps qui nous a été donné pour la réalisation du projet à la conception du framework, à savoir un mois et demi sur un total de trois mois.\\
+
+Avant même de parler d'interface graphique, nous avons tenté d'imaginer une structure adéquate et flexible qui sera facilement utilisable. Cependant << simple à utiliser >> ne rime pas avec << simple à concevoir >> car chacun a sa propre logique. Notre tentative nous a donc mené à l'élaboration des \verb!LQuark!, qui permettent la création de \textit{structures hiérarchisées hétérogènes}. Une très grosse partie du framework repose sur cette structure, et dont il tire son nom (Litequarks, ou le diminutif \verb!LQ!).\\
+
+\subsection{Des LQuark à l'interface graphique}
+
+Les \verb!LQuark! sont le coeur du framework. Ils sont extrêmement simples mais permettent la création de structures très organisées grâce à un système de hiérarchie. Chaque quark possède un parent et plusieurs enfants sans limite de nombre ou éventuellement aucun. Les enfants de mêmes parents ont également des liens vers l'enfant précédant et l'enfant suivant. Enfin chaque quark a la possibilité de rajouter ou supprimer des enfants. Cette structure est comparable à un arbre n-aire où chaque noeud a un lien vers 2 noeuds qui ont le même noeud parent.\\
+
+Une fois la structure des quarks terminée, nous nous sommes attelés à l'apprentissage de la bibliothèque graphique que nous avons utilisé, OpenGL. La prise en main fut assez longue et complexe. Effectivement avec OpenGL nous ne pouvons dessiner que de simples primitives graphiques, comme des traits ou des triangles. Il faut par exemple 2 triangles pour dessiner un rectangle. Pour simplifier cette utilisation peu commode, nous avons créé 2 classes :
+
+\begin{itemize}[label=$-$, leftmargin=1.5cm]
+    \setlength\itemsep{0em}
+    \item \verb!LQTexture!, qui représente les pixels d'un rectangle ou d'une image en mémoire. Elle encapsule également toutes les données nécessaire à OpenGL pour dessiner ces pixels à l'écran.
+    \item \verb!LQSurface!, qui représente une texture dans un espace en 2D. Une surface possède donc des coordonnées \textit{x} et \textit{y}, ainsi que différentes méthodes pour déplacer ces coordonnées et redimensionner la texture sous-jacente à la surface.
 \end{itemize}
-Une fois créés, nous avons du les assembler pour former la page. Pour cela, la classe \verb!LQTreeCreator! du framework nous a grandement facilité la déclaration des composant et permis une meilleure structure pour la création des pages. C'est une structure d'arbre, chaque composant est un "Quark" qui a une référence sur son père, son précédent frère (\verb!prevSibling!) et sur son prochain (\verb!nextSibling!). 
-De plus, on peut accéder à la position des composants avec des méthodes spécifiquement créées telles que \verb!top()!, \verb!right()!, \verb!bottom()!, \verb!left()!. Ainsi nous avons pu placer et créer des composants en fonction de leur père ou des composants précédent ou suivant. \\
-Lors de la création des pages avec les composants, nous devions avoir accès au père et aux frères et aux fils. Pour cela les méthodes \verb!sub()! et \verb!super()! ont été créés. La méthode \verb!sub()! permet d'accéder au fils de ce composant, amenant donc la possibilité de créer de nouveaux éléments à partir d'anciens déjà créés.
-Une fois le composant souhaité créé, nous pouvons vouloir revenir sur le composant père qui se trouve le plus souvent être la vue en elle-même. Pour cela, on fait appel à la méthode super().\\
-Cette structure doit nous faire penser à une structure d'arbre où l'on peut fixer des branches (composant) sur la racine ou sur la branche où l'on se situe.c'est-à-dire créer des branches à partir d'autres branches existantes et fixer cette nouvelle branche à un objet (soit la racine, soit la branche sur laquelle on se situe). 
 
-\subsection{Communication réseau et base de données}
-\subsubsection{Réalisation d'un client et d'un serveur}
-La partie réseau de notre application s'est faite à part : en effet, elle utilisait un langage différent du reste (le Python) et devait s'exécuter dans un thread secondaire. Cette partie a donc commencé par l'apprentissage de la programmation en réseau via le module asyncio de Python. Ce module étant relativement simple d'utilisation, cette partie n'a pas posé beaucoup de problèmes. \\
-Une fois que les bases étaient maîtrisées, nous avons dû créer deux programmes communiquants : un client et un serveur. Le rôle du client était de transmettre les requêtes de l'application au serveur, qui lui devait les analyser, et envoyer une réponse adaptée au client, qui la transmettait à nouveau à l'application. Les requêtes que le serveur devait être capable de gérer étaient peu nombreuses : transfert de projet dans un sens ou dans l'autre (client vers serveur ou serveur vers client) avec ajout dans la base de données, inscription, connexion, et demande de données à la base de données. Ainsi, nous avons opté pour une solution extrêmement simple : pour chacune de ces cinq requêtes, nous associons un numéro (de 1 à 5), que nous insérons au début de la chaîne-requête au moment de sa création dans le C++. Une fois la chaîne envoyée au client python, celui-ci lit le premier octet (donc le numéro de la requête) et exécute la fonction associée. Dans le même temps, il envoie la chaîne au serveur qui fait exactement la même chose. Ainsi, chaque partie de notre système client-serveur sait ce qu'elle doit faire en fonction du besoin de l'application.
+La classe \verb!LQSurface! hérite de \verb!LQTexture! mais aussi de \verb!LQuark!. C'est donc un autre pivot du framework car elle regroupe la praticité des quarks et l'utilisation facilité d'OpenGL par les textures. En combinant ainsi ces classes nous obtenons une structure particulièrement intéressante car nous pouvons désormais dessiner une surface sur autre surface très simplement. En effet grâce aux quarks chaque surface a des enfants et chaque enfant peut avoir des coordonnées relatives à son parent.\\
 
-\subsubsection{Interface Python/C++}
-Une fois le client et le serveur finis et leur fonctionnalités implémentées, nous devions faire communiquer le client avec l'application C++ afin qu'ils puissent se transmettre des informations. Pour cela, nous avons créé en C++ un module Python basique nommé « gateway » utilisant une classe \verb!ClientGateway!. Cette classe contient deux attributs : deux \verb!std::queue! de tableau de charactères, l'une stockant les requêtes à envoyer au serveur, l'autre stockant les réponses (\verb!m_requests! et \verb!m_responses!).\\
-Ainsi le module possède deux fonctions : \verb!poll_request! qui retourne le premier élément de \verb!m_requests!, et \verb!transmit_response! qui remplit \verb!m_responses! avec la chaîne passée en paramètre. Le client peut donc communiquer avec l'application de la manière suivante : à chaque tour de boucle, il appelle \verb!poll_request! pour voir s'il a reçu une action à exécuter, puis en cas de réponse du serveur, il transmet les informations nécessaire grâce à \verb!transmit_response!. De la même manière, lorsque l'application veut communiquer avec le client, elle remplit \verb!m_requests! ou regarde le contenu de \verb!m_responses!.\\
-Enfin, étant donné que l'application n'a pas accès directement à \verb!m_requests! et \verb!m_responses! puisque que le module s'exécute dans un second thread, nous déclarons une instance de \verb!ClientGateway! dans le contrôleur, puis nous exécutons dans le second thread la fonction de la classe qui lance le programme Python du client. Cette opération nous donne donc accès aux attributs de la \verb!ClientGateway! du second thread directement depuis le contrôleur, dans le premier thread.
+Par exemple, si une surface parent est en \verb!(100, 100)! et qu'elle a un enfant dont les coordonnées sont \verb!(50, 50)!, l'enfant aura une position absolue de \verb!(150, 150)!. Pouvoir placer ainsi des surfaces relativement à leur parent rend le placement d'éléments graphiques extrêmement simple et intuitif.\\
 
-\section{Modélisation}
-%Le newpage est la temporairement, car si on l'enlève, une page vide se forme, je n'ai pas encore trouver le moyen ou encore même la raison, cela n'étais pas le cas avant la barre du dessus 'Punyduck -- rapport de projet t.e.r'
-\newpage
+Pour compléter les surfaces, nous avons également implémenté une autre classe, \verb!LQViewable!. Assez légère, cette classe permet pourtant de faciliter davantage la création d'interfaces graphiques grâce à deux mécanismes. Le premier est la possibilité de << cacher >> un \verb!LQViewable!, c'est-à-dire qu'il est présent dans la structure des composants visuels mais n'est pas dessiné. Cela s'avère très pratique notamment pour afficher un message pour l'utilisateur, comme << votre projet est bien envoyé >> ou encore << veillez remplir tout les champs >>. Le second mécanisme est la capacité d'un \verb!LQViewable! a être flexible. Un élément flexible est un élément qui se redimensionne de lui-même pour toujours contenir tout ses fils. Ainsi suivant si un enfant est ajouté ou supprimé, il va s'agrandir ou se rétrécir.\\
+
+Vous retrouverez ci-dessous les diagrammes UML des différentes classes précédemment introduites.\\
+
+% --------------------- LQViewable ---------------------
+\begin{center}
+\begin{tikzpicture}
+\umlclass[fill=gray!5]{LQViewable}{
+    -- m\_flex : bool\\ 
+    -- m\_hidden : bool
+}{
+    %+ <<create>>LQViewable();\\
+    + <<create>>LQViewable(LQNumber x, LQNumber y,
+               LQNumber width, LQNumber height,\\
+               GLint color=0x000000, const std::string iconPath="")\\
+    %+ <<create>>LQViewable(LQNumber x, LQNumber y, bool flex=true)\\
+    %+ hidden() : bool\\ 
+    + hide() : void\\
+    + unhide() : void\\
+    %+ flexible() : bool\\ 
+    + displayFlex() : void\\
+    %+ displayBlock() : void\\
+    + appendChild(LQViewable child) :  LQViewable\\ 
+    + drawChildren() : void \\
+    + resizeWidthCallback() : void\\
+    \umlvirt{+ resizeHeightCallback() : void}
+}
+\umlclass[x=-3, y=-5, fill=gray!5]{LQSurface}{...}{...}
+\umlclass[x=3, y=-5, fill=gray!5]{LQNumber}{...}{...}
+\umlassoc[geometry=--, mult=5, align=center]{LQSurface}{LQNumber}
+\umlinherit[geometry=-|]{LQViewable}{LQSurface}
+\end{tikzpicture}
+\end{center}
+
+% --------------------- LQuark, LQTexture, LQSurface ---------------------
+\begin{adjustbox}{pagecenter}
 \begin{tikzpicture}
 \umlclass[x=-1,y=-10, fill=gray!5]{LQSurface}{
     -- m\_VBO : GLuint\\
@@ -420,7 +420,31 @@ Enfin, étant donné que l'application n'a pas accès directement à \verb!m_req
 \umlinherit[geometry=-|]{LQSurface}{LQuark}
 \umlinherit[geometry=|-]{LQSurface}{LQTexture}
 \end{tikzpicture}
+\end{adjustbox}
 
+\subsection{Les LQNumber, des nombres dépendants d'autres}
+
+Une autre clé de voûte du framework sont les \verb!LQNumber!. Ils permettent grâce à un système de trois classes d'avoir des nombres qui dépendent d'autres. Un tel système est plutôt pratique pour les quarks, car nous pouvons désormais créer des éléments dont la taille dépend de ses parents ou de ses voisins. C'est avec les \verb!LQNumber! que nous avons implémenté le \textit{responsive design} de notre application, qui permet aux éléments graphiques de s'adapter à n'importe quelle taille de fenêtre. Vous pouvez retrouver en annexe \ref{Projets} et \ref{resp1} des visuels montrant ce système. Les trois classes le composant sont :
+
+\begin{itemize}[label=$-$, leftmargin=1.5cm]
+    \setlength\itemsep{0em}
+    \item \verb!LQNumber!, qui est un nombre dépendant d'une expression. Il possède aussi une liste des nombres qui dépendent de lui. À chaque fois qu'un nombre est mis à jour, chaque nombre de sa liste est notifié et va alors recalculer sa nouvelle valeur en fonction de son expression.
+    \item \verb!LQMathExpr!, qui est une suite de variables avec une constante. Une expression possède par ailleurs des méthodes arithmétiques pour additionner, soustraire, multiplier ou diviser un expresssion par une autre expression ou une constante.
+    \item \verb!LQMathVar!, qui est simplement un \verb!LQNumber! couplé à un coefficient positif ou négatif.
+\end{itemize}
+
+Les diagrammes UML des \verb!LQNumber! sont présentés à la page suivante.
+
+\subsection{Fin du framework}
+
+Pour finaliser le framework nous avons créé plusieurs autres classes que nous avons utilisés pour composer l'interface graphique de notre application. Elles reposent toutes sur les \verb!LQViewable! : \verb!LQText! pour afficher du texte, \verb!LQTextArea! pour entrer du texte dans un champ, \verb!LQButton! pour créer des boutons cliquables, \verb!LQViewport! et \verb!LQDocument! pour mettre en place un système de barres de défilement et enfin \verb!LQDrop! pour pouvoir glisser-déposer un fichier ou dossier dans l'application.
+
+Nous n'entrerons pas dans les détails de ces classes pour garder un rapport d'une longueur acceptable.
+
+\newpage
+
+% --------------------- LQNumber ---------------------
+\begin{adjustbox}{pagecenter}
 \begin{tikzpicture}
 \umlclass[x=-2, fill=gray!5]{LQNumber}{
     -- m\_quark : LQuark\\
@@ -484,41 +508,58 @@ Enfin, étant donné que l'application n'a pas accès directement à \verb!m_req
 \umlclass[x=9, y=3, fill=gray!5]{LQuark}{...\\}{...\\}
 %lien
 \umlaggreg[mult=1, pos=0.5, angle1=40, angle2=60, loopsize=2cm]{LQMathVar}{LQMathVar}
-\umlaggreg[mult=1, pos=0.8, angle1=40, angle2=50, loopsize=2cm]{LQNumber}{LQNumber}
+\umlaggreg[mult=n, pos=0.8, angle1=40, angle2=50, loopsize=2cm]{LQNumber}{LQNumber}
 \umlassoc[geometry=--, mult=2]{LQMathVar}{LQMathExpr}
 \umlassoc[geometry=|-]{LQMathExpr}{LQNumber}
 \umlassoc[geometry=-|]{LQMathVar}{LQNumber}
 \umlassoc[geometry=-|]{LQuark}{LQNumber}
 \end{tikzpicture}
+\end{adjustbox}
 
-\begin{center}
-\begin{tikzpicture}
-\umlclass[fill=gray!5]{LQViewable}{
-    -- m\_flex : bool\\ 
-    -- m\_hidden : bool
-}{
-    %+ <<create>>LQViewable();\\
-    + <<create>>LQViewable(LQNumber x, LQNumber y,
-               LQNumber width, LQNumber height,\\
-               GLint color=0x000000, const std::string iconPath="")\\
-    %+ <<create>>LQViewable(LQNumber x, LQNumber y, bool flex=true)\\
-    %+ hidden() : bool\\ 
-    + hide() : void\\
-    + unhide() : void\\
-    %+ flexible() : bool\\ 
-    + displayFlex() : void\\
-    %+ displayBlock() : void\\
-    + appendChild(LQViewable child) :  LQViewable\\ 
-    + drawChildren() : void \\
-    + resizeWidthCallback() : void\\
-    \umlvirt{+ resizeHeightCallback() : void}
-}
-\umlclass[x=-3, y=-5, fill=gray!5]{LQSurface}{...}{...}
-\umlclass[x=3, y=-5, fill=gray!5]{LQNumber}{...}{...}
-\umlassoc[geometry=--, mult=5, align=center]{LQSurface}{LQNumber}
-\umlinherit[geometry=-|]{LQViewable}{LQSurface}
-\end{tikzpicture}
-\end{center}
+\section{Création de l'application}
+
+L'interface graphique a été créée en plusieurs temps. Dans un premier temps il a fallu trouver une représentation graphique validée par tous les membres du groupe. Pour cela, nous avons fait la liste des différentes pages qui seraient dans l'application :
+
+\begin{itemize}[label=$-$, leftmargin=1.5cm]
+    \setlength\itemsep{0em}
+    \item \textbf{Connexion} : une page permettant de s'inscrire ou se connecter à son compte
+    \item \textbf{Projets} : une page affichant tous les projets stockés sur le serveur distant. C'est sur cette page que nous pouvons rechercher et télécharger un projet en particulier.
+    \item \textbf{Dépôt} : une page pour pouvoir déposer ses projets sur l'application.
+\end{itemize}
+
+Par la suite nous les avons dessinés sur papier une par une, pour que chaque membre du groupe ait une vision très précise de l'aspect visuel de l'application. Enfin, nous avons utilisé le framework pour créer et agencer les composants spéfiques au visuel que nous voulions obtenir. Chacune des pages représente une << Vue >> dans l'architecture MVC décrite précédemment.\\
+
+Par exemple pour la page << Projets >>, Nous avons conçu (liste non-exhaustive) :
+\begin{itemize}[label=$-$]
+    \item Une liste de boutons permettant de choisir comment trier les projets ("mieux notés", "plus récents", "plus anciens", ...)\footnote{\label{note}Cette fonctionnalité n'est pas encore implémentée, c'est donc pour l'instant une simple image}
+    \item Une barre de recherche pour limiter la liste des résultats. Ainsi la recherche "ab" donne la liste de tout les projets dont le nom contient "ab"
+    \item Des boutons qui permettent d'afficher les projets sous forme de liste ou sous forme de grille avec les images des projets\textsuperscript{\ref{note}}
+    \item Une liste où chaque ligne correspond à un projet avec son nom, son << tag >> qui est sa catégorie (jeu, algorithme, logiciel...) et son image
+\end{itemize}
+
+Pour composer nos << Vues >> encore plus rapidement, nous avons créé une classe \verb!LQTreeCreator!. Cette classe permet de mettre à jour deux variables \verb!parent! et \verb!prev! à chaque nouvel élément ajouté à l'arbre des quarks pour pouvoir faire référence au parent et à l'élément précédent lors de la création d'un nouvel élément. De plus, les méthodes \verb!sub()! et \verb!super()! permettent de passer du quark parent au quark enfant ou inversement. Voici un exemple d'utilisation typique du framework pour créer un composant visuel :\\
+
+\begin{lstlisting}[style=cpp, label=exv]
+LQViewable *parent, *prev;
+createTree(*this, parent, prev)
+.add<LQViewable>(parent->x(), parent->y(), parent->width(), parent->height()).sub()
+    .add<LQViewable>(10_px, 10_px, 50_px, 50_px)
+    .add<LQViewable>(0_px, 0_px, prev->width(), parent->height()).super()
+.add<LQViewable>(25_px, 25_px, 100_px, 200_px);
+\end{lstlisting}
+
+\newpage
+
+\section{Communication réseau et base de données}
+\subsection{Réalisation d'un client et d'un serveur}
+La partie réseau de notre application s'est faite à part : en effet, elle utilisait un langage différent du reste (le Python) et devait s'exécuter dans un thread secondaire. Cette partie a donc commencé par l'apprentissage de la programmation en réseau via le module asyncio de Python. Ce module étant relativement simple d'utilisation, cette partie n'a pas posé beaucoup de problèmes. \\
+Une fois que les bases étaient maîtrisées, nous avons dû créer deux programmes communiquants : un client et un serveur. Le rôle du client était de transmettre les requêtes de l'application au serveur, qui lui devait les analyser, et envoyer une réponse adaptée au client, qui la transmettait à nouveau à l'application. Les requêtes que le serveur devait être capable de gérer étaient peu nombreuses : transfert de projet dans un sens ou dans l'autre (client vers serveur ou serveur vers client) avec ajout dans la base de données, inscription, connexion, et demande de données à la base de données. Ainsi, nous avons opté pour une solution extrêmement simple : pour chacune de ces cinq requêtes, nous associons un numéro (de 1 à 5), que nous insérons au début de la chaîne-requête au moment de sa création dans le C++. Une fois la chaîne envoyée au client python, celui-ci lit le premier octet (donc le numéro de la requête) et exécute la fonction associée. Dans le même temps, il envoie la chaîne au serveur qui fait exactement la même chose. Ainsi, chaque partie de notre système client-serveur sait ce qu'elle doit faire en fonction du besoin de l'application.
+
+\subsection{Interface Python/C++}
+Une fois le client et le serveur finis et leur fonctionnalités implémentées, nous devions faire communiquer le client avec l'application C++ afin qu'ils puissent se transmettre des informations. Pour cela, nous avons créé en C++ un module Python basique nommé « gateway » utilisant une classe \verb!ClientGateway!. Cette classe contient deux attributs : deux \verb!std::queue! de tableau de charactères, l'une stockant les requêtes à envoyer au serveur, l'autre stockant les réponses (\verb!m_requests! et \verb!m_responses!).\\
+Ainsi le module possède deux fonctions : \verb!poll_request! qui retourne le premier élément de \verb!m_requests!, et \verb!transmit_response! qui remplit \verb!m_responses! avec la chaîne passée en paramètre. Le client peut donc communiquer avec l'application de la manière suivante : à chaque tour de boucle, il appelle \verb!poll_request! pour voir s'il a reçu une action à exécuter, puis en cas de réponse du serveur, il transmet les informations nécessaire grâce à \verb!transmit_response!. De la même manière, lorsque l'application veut communiquer avec le client, elle remplit \verb!m_requests! ou regarde le contenu de \verb!m_responses!.\\
+Enfin, étant donné que l'application n'a pas accès directement à \verb!m_requests! et \verb!m_responses! puisque que le module s'exécute dans un second thread, nous déclarons une instance de \verb!ClientGateway! dans le contrôleur, puis nous exécutons dans le second thread la fonction de la classe qui lance le programme Python du client. Cette opération nous donne donc accès aux attributs de la \verb!ClientGateway! du second thread directement depuis le contrôleur, dans le premier thread.
+
 \section{Fonctionnalités de l'interface}
 Au lancement de l'application Punyduck, une page d'accueil s'affiche\footnote{\label{note2}Les visuels des différentes pages de l'application sont disponibles en annexe \ref{visuels}} pour se connecter ou s'inscrire, avec un identifiant et un mot de passe. Une fois connecté, l’interface principale s'affiche, nous amenant sur la page « Projets ». \\
 L'interface graphique est composé de plusieurs fenêtres, chacune spécifique. Pour les deux fenêtres principales une barre de navigation s'affiche en haut, contenant des liens vers la page « Projet », où l'ensemble des projets mis en ligne seront affichés, et la page « Dépot » qui servira à déposer un projet. \\
@@ -527,12 +568,12 @@ L'interface des projets\textsuperscript{\ref{note2}} permet de naviguer à trave
 La page dépot\textsuperscript{\ref{note2}}, elle, permet à ceux qui souhaitent déposer leur propre projet sur la plateforme de le faire : il suffit de cliquer sur l'onglet "dépôt", glisser et déposer votre dossier ou fichier dans la zone correspondante, lui attribuer un nom puis un tag et enfin l'envoyer en ayant bien remplis tout les champs demandés.
 
 \newpage
-\section{Statistique} %nombres de classes/scripts/ lignes de code/ nombre de module
-Nous allons maintenant regarder notre projet d’un point de vu des statistiques :\\
-Le code de PunyDuck cumule plus de 5400 lignes de code, dont plus de 4000 concernant uniquement le Framework. Ce Framework est composé de 28 élément et, on le voit sur la figure \ref{stats}, ils représentent les trois quart du projet en termes de ligne . Le serveur est composé de 441 lignes de code, le client python 310, le makefile 48, et l'interface graphique 687. Il y a 12 classes utilisées dans ce projet sans compter celles du framework.\\
+\section{Statistiques} %nombres de classes/scripts/ lignes de code/ nombre de module
+Nous allons maintenant regarder Punyduck d’un point de vue des statistiques :\\
+Le code cumule plus de 5400 lignes de code, dont plus de 4000 concernant uniquement le framework. Ce framework est composé de 28 élément et, on le voit sur la figure \ref{stats}, il représente les trois quart du projet. Le serveur est composé de 441 lignes de code, le client Python 310, et l'interface graphique de l'application (définition des << Vues >>) 687. Il y a 12 classes utilisées dans ce projet sans compter celles du framework.\\
 Le site web est composé d’un fichier html de 175 lignes de code, d’un fichier css de 702 lignes de code et 7 illustrations. \\
-Nous avons également réalisé un module en python qui a aidé pour la réalisation de l'application.\\
-Concernant le github, il y a 140 commits en tout, les premiers datant du 19 janvier et les derniers du 10 mai.
+Nous avons également réalisé un module en python qui a aidé pour la réalisation de l'application, et plus précisément pour faire communiquer le Python avec le C++ .\\
+Concernant le github, il y environ 140 commits en tout, les premiers datant du 19 janvier et les derniers du 10 mai.
 \vspace{2cm}
 \begin{figure}[h]
     \centering
@@ -542,27 +583,25 @@ Concernant le github, il y a 140 commits en tout, les premiers datant du 19 janv
 \end{figure}
 
 %Partie 4 
-\chapter{Algorithmes et Structures de Données}
-\section{Présentation des principales structures de données}
-\label{struct}
-% Parler de s_eventDispatcher, s_modelObserver, autres ?
-\section{Présentation des principaux algorithmes}
-Notre application comporte peu d'algorithme poussés, elle est surtout réfléchie au niveau de la communication entre les différentes structures de données qui la composent. Nous allons tout de même présenter ici deux algorithme que nous avons jugés intéressant : la fonction du contrôleur qui s'occupe de savoir, à chaque déplacement du curseur, sur quel élément (\verb!LQViewable!) de la fenêtre il se trouve, et la fonction du serveur qui reçoit les requêtes SQL et renvoie une réponse adapté.
-\subsection{Fonction de position du curseur}
+\chapter{Présentation d'algorithmes}
+
+Nous allons vous présenter ici deux algorithmes que nous avons jugés intéressants : la fonction du contrôleur qui s'occupe de savoir, à chaque déplacement du curseur, sur quel élément (\verb!LQViewable!) de la fenêtre il se trouve, et la fonction du serveur qui reçoit les requêtes SQL et renvoie une réponse adaptée.
+\section{Fonction de position du curseur}
 La classe \verb!LQAppController! possède un attribut \verb!s_hover_focus! qui est un pointeur vers le dernier \verb!LQViewable! sur lequel s'est positionné le curseur (initialisé sur la fenêtre de l'application lors du lancement du programme).
 La méthode \verb!cursor_position_callback! de cette classe est une callback appelée par le module GLFW à chaque déplacement du curseur. Elle prend en paramètre un pointeur vers un objet \verb!GLFWwindow! représentant la fenêtre de l'application, ainsi que les coordonnées absolues du curseur $m_x$ et $m_y$, en nombre réel. Cette méthode calcule sur quel \verb!LQViewable! s'est déplacé le curseur, puis positionne l'attribut \verb!s_hover_focus! du contrôleur sur ce viewable. \\
-Etant donné qu'un viewable peut être situé dans un autre élément, et que sa position est relative par rapport à celle de son parent, et non absolue, il nous a fallu trouver une méthode efficace pour retrouver le viewable dans lequel se trouve le curseur. \\
+Étant donné qu'un \verb!LQViewable! peut être situé dans un autre élément, et que sa position est relative par rapport à celle de son parent, et non absolue, il nous a fallu trouver une méthode efficace pour retrouver le \verb!LQViewable! dans lequel se trouve le curseur. \\
 
-Le fonctionnement de la fonction est donc le suivant\footnote{Tout le long de l'explication de l'algorithme, nous considèrerons les coordonnées en abscisse et en ordonnée comme une seule variable pour plus de simplicité, bien que dans notre programme elles soient séparées en deux variables $x$ et $y$.} : à chaque appel de la fonction, on sauvegarde dans des attributs de la classe \verb!LQAppController! les dernières position absolues et relative (par rapport à \verb!s_hover_focus!) du curseur. Ensuite, nous calculons le déplacement $\Delta$ de la souris :
+Le fonctionnement de la fonction est donc le suivant\footnote{Tout le long de l'explication de l'algorithme, nous considèrerons les coordonnées en abscisse et en ordonnée comme une seule variable pour plus de simplicité, bien que dans notre programme elles soient séparées en deux variables $x$ et $y$.} : à chaque appel de la fonction, on sauvegarde dans des attributs de la classe \verb!LQAppController! les dernières positions absolues et relatives (par rapport à \verb!s_hover_focus!) du curseur. Ensuite, nous calculons le déplacement $\Delta$ de la souris :
 \[\Delta = m - prevAbs, \text{ avec $prevAbs$ la dernière position absolue du curseur}\]
 Ensuite, nous ajoutons ce déplacement $\Delta$ sur nos anciennes coordonnées relatives à \verb!s_hover_focus!, afin d'obtenir la nouvelle position relative du curseur par rapport au dernier \verb!LQViewable!. Grâce à cela, nous pouvons définir un booléen important :
 \[outCurrent = (prevRel < 0) \vee (prevRel > dim)\]
-avec $prevRel$ la position relative du curseur et $dim$ les dimension d'un viewable, ici \verb!s_hover_focus!. \\
-Ce booléen nous permet de savoir, selon un viewable, si notre curseur se situe à l'intérieur de celui-ci ou à l'extérieur (en supposant avoir les bonnes coordonnées relative).
-Une fois que ceci est fait, il ne nous reste plus qu'à vérifier si notre curseur est toujours dans \verb!s_hover_focus! : si oui, alors on parcours tous ses fils récursivement pour savoir si l'on se trouve dans l'un d'eux ; si non, alors on remonte les parents de \verb!s_hover_focus! jusqu'à trouver celui dans lequel nous sommes, puis nous parcourons également tous ses fils récursivement afin de trouver l'élément le plus précis dans lequel se trouve le curseur. À chaque déplacement dans l'arbre des éléments, nous devons également ajouter ou retirer à $prevRel$ les coordonnées relatives du dernier viewable qu'on a testé, afin que notre booléen $outCurrent$ soit bien calculé avec les bonnes données. \\
-Cet algorithme est de complexité $O(n+m)$ dans le pire des cas, avec $n$ le nombre de \verb!LQViewable! dans l'arbre et $m$ le nombre de fils du viewable dans lequel le curseur se trouve ; mais sa complexité « amortie » est de $O(p)$ avec $p$ le nombre de fils de \verb!s_hover_focus!. L'implantation en C++ de cet algorithme est disponible en annexe \ref{cpc}
+avec $prevRel$ la position relative du curseur et $dim$ les dimension d'un \verb!LQViewable!, ici \verb!s_hover_focus!. \\
+Ce booléen nous permet de savoir, selon un \verb!LQViewable!, si notre curseur se situe à l'intérieur de celui-ci ou à l'extérieur (en supposant avoir les bonnes coordonnées relatives).
+Une fois que ceci est fait, il ne nous reste plus qu'à vérifier si notre curseur est toujours dans \verb!s_hover_focus! : si oui, alors nous parcourons tous ses fils récursivement pour savoir si l'on se trouve dans l'un d'eux ; si non, alors on remonte les parents de \verb!s_hover_focus! jusqu'à trouver celui dans lequel nous sommes, puis nous parcourons également tous ses fils récursivement afin de trouver l'élément le plus précis dans lequel se trouve le curseur. À chaque déplacement dans l'arbre des éléments, nous devons également ajouter ou retirer à $prevRel$ les coordonnées relatives du dernier \verb!LQViewable! que l'on a testées, afin que notre booléen $outCurrent$ soit bien calculé avec les bonnes données. \\
+Cet algorithme est de complexité $O(n+m)$ dans le pire des cas, avec $n$ le nombre de \verb!LQViewable! dans l'arbre et $m$ le nombre de fils du \verb!LQViewable! dans lequel le curseur se trouve ; mais sa complexité « amortie » est de $O(p)$ avec $p$ le nombre de fils de \verb!s_hover_focus!. L'implémentation en C++ de cet algorithme est disponible en annexe \ref{cpc}
 
-\subsection{Fonction de gestion des requêtes SQL}
+\newpage
+\section{Fonction de gestion des requêtes SQL}
 Quand le serveur reçoit une requête SQL de la part du client, il doit la traiter avant de l'envoyer à la base de données, puis traiter la réponse avant de la renvoyer au client. Tout ceci se fait dans une fonction, que nous allons décrire ici. \\
 Tout d'abord, le but de cette fonction est le suivant : elle reçoit en paramètre une chaîne de caractères contenant une requête SQL, et elle envoie au client un \verb!bytearray! contenant, dans l'ordre :
 \begin{enumerate}
@@ -595,11 +634,11 @@ idColonnes = {
 
 Ensuite, la première étape est de savoir si la requête est de type « \verb!SELECT * FROM ...!~» ou si elle demande des attributs précis de la base de données, par exemple «~\verb!SELECT idProjet, nom, tag, login FROM Projet, UserInfo WHERE idLog = pIdLog;!~». \\
 
-Dans le premier cas, la fonction exécute la requête dans la base de données et reçoit un tableau de \verb!tuples! en retour, chaque \verb!tuple! correspondant à une ligne de la base de données. On parcours donc chaque élément de ce tableau bidimensionnel, et en fonction de sa position dans le \verb!tuple!, on agit différemment : en effet, on n'ajoute pas la même chose dans la chaîne finale en fonction de si on reçoit une chaîne de caractère, un entier ou un chemin vers une image. Une fois que tous les éléments sont ajoutés à la chaîne finale, il ne reste plus qu'à ajouter les données manquante au début de la chaîne, comme décrit juste avant ("dataReceive", nom du modèle, nombre d'items, etc.). \\
+Dans le premier cas, la fonction exécute la requête dans la base de données et reçoit un tableau de \verb!tuples! en retour, chaque \verb!tuple! correspondant à une ligne de la base de données. On parcours donc chaque élément de ce tableau bidimensionnel, et en fonction de sa position dans le \verb!tuple!, on agit différemment : en effet, on ajoute pas la même chose dans la chaîne finale en fonction de si on reçoit une chaîne de caractère, un entier ou un chemin vers une image. Une fois que tous les éléments sont ajoutés à la chaîne finale, il ne reste plus qu'à ajouter les données manquantes au début de la chaîne, comme décrit juste avant ("dataReceive", nom du modèle, nombre d'items, etc.). \\
 
 Dans le deuxième cas, c'est plus complexe : avant d'envoyer la requête à la base de données, il faut remettre les attributs dans le même ordre que dans le dictionnaire \verb!idColonnes! (\ref{idc}) afin que le client puisse lire la réponse dans le bon ordre. \\
 Pour cela, nous avons implenté en Python l'algorithme triFusion étudié en cours d'algorithmique HLIN301 et HLIN401. En effet, l'objectif est de reconstruire la requête SQL dans le bon ordre avant de l'envoyer à la base de données : nous isolons donc les attributs de la requête dans un tableau grâce à des expressions régulières :
-\begin{lstlisting}[style=py, caption=serveur.py : expressions régulières, label=idc]
+\begin{lstlisting}[style=py, caption=serveur.py : expressions régulières, label=re]
     match = re.search(r'^SELECT (.*) FROM .*;', query)
     if match != None:
         # On remet les attributs dans l'ordre afin de les recevoir correctement, et que le
@@ -609,36 +648,35 @@ Pour cela, nous avons implenté en Python l'algorithme triFusion étudié en cou
 puis on appelle notre fonction \verb!triFusion! sur le tableau d'attributs (la fonction est adaptée pour pouvoir trier le tableau de chaîne de caractère par rapport au dictionnaire \verb!idColonnes!). Le tableau d'attributs est donc dans le bon ordre après cette opération, nous n'avons plus qu'à reconstruire la requête à partir de ce tableau et à l'exécuter dans la base de données. \\
 Une fois que ceci est fait, le reste est essentiellement la même chose que dans le premier cas. \\
 
-Cette fonction s'exécute en temps $O(nm)$ avec $n$ le nombre d'item renvoyé par la base de données et $m$ le nombre d'attributs pour chaque item. Le code Python de cette fonction est disponible en annexe \ref{sql}
+Cette fonction s'exécute en temps $O(nm)$ avec $n$ le nombre d'items renvoyé par la base de données et $m$ le nombre d'attributs pour chaque item. Le code Python de cette fonction est disponible en annexe \ref{sql}
 
 %.Partie 5 1/2 pages
 \chapter{Gestion du Projet}
 \section{Organisation et planification}
 Durant le développement de Punyduck, dès son début, nous avons décidé d'avancer le projet après les repas du midi,
-ou dès que l'occasion se présentait. Étant toujours ensemble la plupart du temps, c'était donc de manière quotidienne que se faisait l'avancée du projet. Quand le travail se faisait à distance via la plate-forme "discord", nous faisions en sorte de garder toutes traces de ce qui avait été fait, et de ce qui restait à faire, ainsi que de bien penser à mettre le git à jour pour chaque membre du projet.\\
+ou dès que l'occasion se présentait. Étant toujours ensemble la plupart du temps, c'était donc de manière quotidienne que se faisait l'avancée du projet. Quand le travail se faisait à distance via la plate-forme "Discord", nous faisions en sorte de garder toutes traces de ce qui avait été fait, et de ce qui restait à faire, ainsi que de bien penser à mettre le git à jour pour chaque membre du projet.\\
 
 À chaque fin de mois, nous organisions une entrevue avec notre encadrante Mme Anne-Elisabeth \textsc{Baert} afin de faire le point sur l'avancée du projet et de connaître ses priorités. Cela nous a permis de ne pas dériver et d'arriver jusqu'à l'aboutissement du projet. \\
 
-Le développement du projet à été découpé en trois partie (hors site web et rapport) qui sont : la partie réseau en Python (le serveur/client et la base de données PostgreSQL), la partie framework et l'interface de notre application. Le groupe à été séparé au départ en deux groupes : un pour la partie réseau et l'autre pour la partie framework. La dernière partie a réuni les deux groupes afin de produire la liaison Python/C++ et la mise en place de l'interface graphique grâce au framework. \\
+Le développement du projet à été découpé en trois parties (hors site web et rapport) qui sont : la partie réseau en Python (le serveur/client et la base de données PostgreSQL), la partie framework et l'interface de notre application. Le groupe à été séparé au départ en deux groupes : un pour la partie réseau et l'autre pour la partie framework. La dernière partie a réuni les deux groupes afin de produire la liaison Python/C++ et la mise en place de l'interface graphique grâce au framework. \\
 
-Une fois l'ensemble de l'application finie et fonctionnelle, nous avons mit le serveur en ligne afin que l'on puisse lancer l'application de n'importe où. \\
+Une fois l'ensemble de l'application finie et fonctionnelle, nous avons mis le serveur en ligne afin que l'on puisse lancer l'application de n'importe où. \\
 Également, le site web se faisait en parallèle du projet par Valentin \textsc{Peron} durant cette phase.\\
 
+\newpage
 \section{Changements majeurs}
 L'organisation initiale du projet s'est vue considérablement changée tout au long du projet. En premier lieu, nous avons dû gérer la programmation de l'application avec seulement 3 membres du groupes sur les 5. Les tâches ont donc été au départ répartie de la manière suivante : Valentin \textsc{Fontaine} s'occupait du framework, Esteban \textsc{Baron} des débuts de l'interface graphique utilisant le framework, et Paul \textsc{Bunel} de la partie réseau en Python. \\
 Puis, une fois ces parties bien avancées, nous avons commencé à mettre en place l'architecture MVC de notre application. À partir de là, nous n'étions plus que deux à nous occuper du code de l'application : ainsi, Valentin \textsc{Fontaine}, aidé par Paul \textsc{Bunel}, se sont donc occupés de l'implémentation de l'architecture MVC, ainsi que de la majorité de l'interface graphique de l'application. \\
-Le diagramme de Gantt final du projet est disponnible à la figure \ref{Gantt}.
+Le diagramme de Gantt final du projet est disponible à la figure \ref{Gantt}.
 
 \newpage
-%\vspace{-2cm}
+\thispagestyle{empty}
+
+\begin{figure}[t]
 \begin{rotate}{270}
-  %link entre activitées
-  %\ganttlink[link type=s-s]{PR1A}{PR1B}
-  %\ganttlink[link type=f-s]{R}{F}
-  %\ganttlink[link type=f-f,link label node/.append style=left]{PR1C}{PR1B}
-\setganttlinklabel{s-s}{START-TO-START}
-\setganttlinklabel{f-s}{FINISH-TO-START}
-\setganttlinklabel{f-f}{FINISH-TO-FINISH}
+    \setganttlinklabel{s-s}{START-TO-START}
+    \setganttlinklabel{f-s}{FINISH-TO-START}
+    \setganttlinklabel{f-f}{FINISH-TO-FINISH}
     \begin{ganttchart}[
         hgrid,
         vgrid={*{6}{draw=none},{dotted}},
@@ -649,8 +687,7 @@ Le diagramme de Gantt final du projet est disponnible à la figure \ref{Gantt}.
         calendar week text = {W\currentweek{}},
         bar height = 0.6,
         bar top shift = 0.2,
-        bar label node/.append style={align=left,text width={width("--------------------")}},
-        bar incomplete/.append style={fill=cyan},
+        bar label node/.append style={align=left,text width={width("-------------------------------")}}, %largeur de la légende
         progress label text = \relax
         link/.style={-latex, line width=1.5pt, linkred},
         ]{2020-01-25}{2020-05-10}
@@ -658,37 +695,39 @@ Le diagramme de Gantt final du projet est disponnible à la figure \ref{Gantt}.
         \ganttbar[bar/.append style={fill=groupgreen}, name=ATF]{Asyncio, transfert de fichier}{2020-01-25}{2020-02-24}\\
         \ganttbar[bar/.append style={fill=groupgreen}, name=SQL]{SQL et base de données}{2020-02-25}{2020-03-20}\\
         \ganttbar[bar/.append style={fill=groupgreen}]{Interface python/C++}{2020-03-18}{2020-04-01}\\
+        \ganttbar[bar/.append style={fill=darkgreen!60}, name=CF]{Conception du framework}{2020-01-25}{2020-03-10}\\
+        \ganttbar[bar/.append style={fill=darkgreen!60}, name=IF]{Implémentation du framework}{2020-03-11}{2020-04-11}\\
+        \ganttbar[bar/.append style={fill=darkgreen!60}, name=UF]{Utilisation du framework}{2020-04-12}{2020-04-30}\\
         \ganttbar[bar/.append style={fill=darkgreen!60}]{Event et Callback}{2020-03-29}{2020-04-20}\\
-        \ganttbar[bar/.append style={fill=darkgreen!60}]{Interface graphique}{2020-04-26}{2020-05-01}\\
-        \ganttbar[bar/.append style={fill=darkgreen!60}]{Task6}{2020-02-01}{2020-02-05}\\
-        \ganttbar[bar/.append style={fill=darkgreen!60}]{Task7}{2020-02-01}{2020-02-05}\\
-        \ganttbar[bar/.append style={fill=darkgreen!60}]{Task8}{2020-02-01}{2020-02-05}\\
-        \ganttbar[bar/.append style={fill=darkgreen!60}]{Task9}{2020-02-01}{2020-02-05}\\
-        \ganttbar[bar/.append style={fill=darkgreen!60}]{Task10}{2020-02-01}{2020-02-05}\\
-        \ganttbar[bar/.append style={fill=darkgreen!60}]{Task11}{2020-02-01}{2020-02-05}\\
-        \ganttbar[bar/.append style={fill=darkgreen!60}]{Task12}{2020-02-01}{2020-02-05}\\
-        \ganttbar[bar/.append style={fill=darkgreen!60}, name=SW]{Site Web}{2020-03-28}{2020-04-30}\\
+        \ganttbar[bar/.append style={fill=darkgreen!60}]{Interface graphique}{2020-04-26}{2020-04-30}\\
+        \ganttbar[bar/.append style={fill=bargreen}, name=SW]{Site Web}{2020-04-12}{2020-04-30}\\
         \ganttbar[bar/.append style={fill=bargreen!50}]{Rapport}{2020-04-15}{2020-05-10}
         \ganttvrule{2020-05-30}{2020-04-30}
         %link
         \ganttlink[link type=f-s]{ATF}{SQL}
+        \ganttlink[link type=f-s]{CF}{IF}
+        \ganttlink[link type=f-s]{IF}{UF}
+        \ganttlink[link type=s-s]{UF}{SW}
     \end{ganttchart}
 \end{rotate}
-\begin{figure}[b]
+
+% \begin{figure}[b]
+    % \setlength{\abovecaptionskip}{20pt plus 3pt minus 2pt}
     \centering
-    \caption{Diagramme de Gantt pour notre projet}
+    \vspace*{21cm}
+    \caption{Diagramme de Gantt du projet}
     \label{Gantt}
 \end{figure}
+
+
 %.Partie 6
 \chapter{Bilan et Perspectives} %bilan et Conclusion, parler en onction du cahier des charges, les perspectives futur du projet et l'apport.
-Le bilan pour la fin de projet est positive, bien que les objectifs du cahier des charges n'aient pas du tout été tous atteints, nous avons quand même énormément appris grâce à ce projet, et avons produit une application dont nous sommes fiers même avec une équipe réduite pour le développement. \\
+Le bilan pour la fin de projet est positive, bien que les objectifs du cahier des charges n'aient tous atteints par manque d'investissement de certains, nous avons quand même énormément appris grâce à ce projet, et avons produit une application dont nous sommes fiers même avec une équipe réduite pour le développement. \\
 Grâce au développement de cette application, nous avons pu mettre en pratique les enseignements de plusieurs modules de licence : le module HLIN304 - Systèmes d'information et bases de données 1 pour les requêtes SQL, les modules de programmation impérative pour le développement en C++, le module HLIN406 - Modélisation et programmation par objet 1 pour la programmation orientée objet et le diagramme UML du framework, ainsi que les modules d'Algorithmique et de complexité pour l'étude de la complexité de nos principaux algorithmes. \\
-De plus, nous avons réalisé cette application en partant du bas niveau pour le côté graphique, ce qui nous a permit de comprendre certaines mécaniques lors de la réalisation d'une telle application ; et nous avons pour la première fois fait de la programmation en réseau et en multithread.
+De plus, nous avons réalisé cette application en partant du bas niveau pour le côté graphique, ce qui nous a permit de comprendre certaines mécaniques lors de la réalisation d'une telle application ; et nous avons pour la première fois fait de la programmation en réseau et en \textit{multithread}.
 
 \section*{Perspectives}
-Après la fin de ce projet, nous avons encore beaucoup de choses à améliorer pour l'application : plus de personnalisation de l'interface graphique, amélioration du framework, augmenter la sécurité du serveur, etc. Nous comptons donc continuer le développement du projet durant l'été qui suit, afin de produire une application aboutie, avec un maximum de fonctionnalité implentées sur les 3 plans framework/interface graphique/réseau.
-
-% Développer le fait qu'on va sûrement continuer le projet durant l'été
+Après la fin de ce projet, nous avons encore beaucoup de choses à améliorer pour l'application : plus de personnalisation de l'interface graphique, amélioration du framework, augmenter la sécurité du serveur, etc. Nous comptons donc continuer le développement du projet durant l'été qui suit, afin de produire une application plus aboutie, avec un maximum de fonctionnalités implentées sur les 3 plans framework / application / réseau.
 
 %.Partie 7
 \part*{Annexes}
@@ -699,21 +738,27 @@ Après la fin de ce projet, nous avons encore beaucoup de choses à améliorer p
 \label{visuels}
 \begin{figure}[!h]
     \centering 
-    \includegraphics[scale=0.2]{punyduck-img-1.png}
+    \includegraphics[scale=0.3]{punyduck-img-1.png}
     \caption{Capture d'écran de l'interface de connexion}
     \label{Connexion}
 \end{figure}
 \begin{figure}
     \centering
-    \includegraphics[scale=0.2]{punyduck-img-2.png}
+    \includegraphics[scale=0.3]{punyduck-img-2.png}
     \caption{Capture d'écran de la page projets}
     \label{Projets}
 \end{figure}
 \begin{figure}
     \centering
-    \includegraphics[scale=0.2]{punyduck-img-4.png}
+    \includegraphics[scale=0.3]{punyduck-img-4.png}
     \caption{Capture d'écran de l'interface de dépôt}
     \label{Depot}
+\end{figure}
+\begin{figure}
+    \centering
+    \includegraphics[scale=0.4]{punyduck-img-6.png}
+    \caption{Exemple du \textit{responsive design} de la page << Projets >> }
+    \label{resp1}
 \end{figure}
 
 \chapter{Principaux algorithmes}
@@ -721,12 +766,6 @@ Après la fin de ce projet, nous avons encore beaucoup de choses à améliorer p
 Callback appelée lors d'un déplacement du curseur, calculant le \verb!LQViewable! sur lequel le curseur se positionne.
 \begin{lstlisting}[style=cpp, caption=LQAppController::cursor\_position\_callback, label=cpc]
 void LQAppController::cursor_position_callback(GLFWwindow* window, double mx, double my) {
-    if (my < 50 && prevAbsY >= 50) { // Si la souris est sur la navbar, pas besoin de calculer
-        s_hover_focus = static_cast<LQViewable*>(s_window->firstChild());
-        prevAbsX = prevRelX = mx;
-        prevAbsY = prevRelY = my;
-        return;
-    }
     float deltaX = mx - prevAbsX;
     float deltaY = my - prevAbsY;
     prevRelX += deltaX;
@@ -736,7 +775,8 @@ void LQAppController::cursor_position_callback(GLFWwindow* window, double mx, do
     bool outCurrent = prevRelX < 0 || prevRelX > current->widthF() ||
                       prevRelY < 0 || prevRelY > current->heightF();
 
-    while (outCurrent && current != s_window) { // On cherche dans quel parent de s_hover_focus nous sommes
+    // On cherche dans quel parent de s_hover_focus nous sommes
+    while (outCurrent && current != s_window) {
         prevRelX += current->xF();
         prevRelY += current->yF();
         current = static_cast<LQViewable*>(current->parent());
@@ -867,7 +907,8 @@ async def SQL(writer, query):
 
             for data in datas:
                 for row in range(len(data)): # On agit differemment en fonction du type de donnees
-                    if idColonnes[rows[row]] == 0 or idColonnes[rows[row]] == 2 or idColonnes[rows[row]] == 7 or idColonnes[rows[row]] == 8:
+                    if idColonnes[rows[row]] == 0 or idColonnes[rows[row]] == 2 or
+                    idColonnes[rows[row]] == 7 or idColonnes[rows[row]] == 8:
                         infos += data[row].to_bytes(4, 'big')
                     elif idColonnes[rows[row]] == 6 or idColonnes[rows[row]] == 13:
                         fp = open(data[row], 'rb')
