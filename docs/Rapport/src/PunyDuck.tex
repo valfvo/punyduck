@@ -1,11 +1,15 @@
-\documentclass{report}
-
+\documentclass[twoside]{report}
+\usepackage{perpage}
+\MakePerPage{footnote}
 %\usepackage[latin1]{inputenc}
-\usepackage[utf8x]{inputenc}
+% \usepackage[utf8x]{inputenc}
 \usepackage[T1]{fontenc}
 \usepackage[french]{babel}
-\usepackage[cm]{fullpage}
-\usepackage[pdftex]{graphicx}
+% \usepackage[cm]{fullpage}
+\usepackage[left=0.15\paperwidth, right=0.15\paperwidth]{geometry}
+% \usepackage[margin=1.15in]{geometry}
+\usepackage[xetex]{graphicx}
+% \usepackage[pdftex]{graphicx}
 \usepackage{setspace}
 \usepackage{pgfgantt}
 \usepackage{comment} 
@@ -19,6 +23,8 @@
 \usepackage{appendix}
 \usepackage{listings}
 \usepackage{xcolor}
+\usepackage{fancyhdr}
+\usepackage{fontspec}
 
 \sloppy
 \hyphenpenalty 10000000
@@ -27,6 +33,9 @@
 \definecolor{darkgreen}{RGB}{35,68,35}
 \definecolor{linkred}{RGB}{165,0,33}
 \definecolor{comment}{gray}{0.5}
+
+\definecolor{fvo-green}{HTML}{1DBF73}
+\definecolor{fvo-gray}{HTML}{212529}
 
 %{Typewriter/teletype family},
 \lstdefinestyle{cpp} {
@@ -55,13 +64,23 @@ numbersep=10pt,
 numberstyle=\tiny\color{comment},
 }
 
-\pagestyle{plain}
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[LE]{Valentin \textsc{Fontaine}, Paul \textsc{Bunel}, Esteban \textsc{Baron}, Valentin \textsc{Peron}, Julien \textsc{Lebaron}}
+\fancyhead[RO]{\textsc{Punyduck} — Rapport de projet T.E.R.}
+\fancyfoot[C]{\thepage}
+
+\newfontfamily\Montserrat{Montserrat}
+
+% \usepackage{calc}
+% \setlength\leftmargin{.15*\paperwidth}
+% \setlength\rightmargin{.15*\paperwidth}
+
+% \pagestyle{plain}
 
 
 % TODO : Refaire partie 2.1.1 et 2.1.2 (mieux expliciter framework + décrire ce que l'on fait pour créer une vue)
-        % Mettre image des vues de la partie 2.3 dans les annexes
-        % Faire les statistique partie 2.4 (Julien)
-        % Faire la partie 3 (3.2 + 3.3 = Paul, 3.1 = ?val?)
+        % Faire la partie 3.1 = ?val?
         % Partie 5
         % Relecture des fautes
 
@@ -69,63 +88,94 @@ numberstyle=\tiny\color{comment},
 
 %page de garde
 \begin{titlepage}
-
+\Montserrat
 %logo de la fds, de l'UM et des infos
-\includegraphics[scale=0.5]{logoFDS.png}
-\hfill
-\includegraphics[scale=0.2]{logoInfo.jpg}
-\vspace{1cm}
+% \includegraphics[scale=0.5]{logoFDS.png}
+% \hfill
+% \includegraphics[scale=0.2]{logoInfo.jpg}
+% \vspace{1cm}
 
 \begin{center}
 %au dessus du titre
-\textsc{\Large{Rapport de projet T.E.R}} \\
-\vspace{1cm}
-\textsc{\Large{Projet Informatique HLIN405}} 
-\vspace{1.5cm}
+\textsc{\Huge{Punyduck}}\\
+
+\vspace*{0.3cm}
+\rule{2cm}{0.1pt}\\
+\vspace*{0.3cm}
+
+\textsc{\LARGE{Une plateforme de distribution de projets\\ \vspace{0.1cm} en ligne}}
+% \vspace{1cm}
 
 %titre
-\doublespacing{\textsc{\huge{PunyDuck}}} \\
-\vspace{2cm}
-\includegraphics[scale=0.5]{logoPunyDuck.jpg}
-\vfill
+% \textsc{\huge{\textbf{Punyduck}}}\\
+\vspace{0.8cm}
+\textsc{Réalisé par :}\\
+\vspace{0.2cm}
+\includegraphics[scale=0.35]{fvologo1.png}\\
+\vspace{0.2cm}
+\large{\textbf{\color{fvo-green}FVO\color{fvo-gray}STUDIO}}
+
+\vspace{1cm}
+\textsc{\Large{Rapport de projet T.E.R.}}\\
+\vspace{0.2cm}
+\textsc{\Large{Projet Informatique - HLIN405}} 
+% \vspace{2cm}
+% \includegraphics[scale=0.5]{logoPunyDuck.jpg}
+% \vfill
 \end{center}
 
 %noms/prenoms + Encadrante
-\begin{minipage}[t]{8.5cm}
-	\begin{flushleft}
-	    \large{\textbf{Etudiants :}}
-	    \begin{itemize}[label=]
-	        \item \large{Valentin \bsc{FONTAINE}}
-	        \item \large{Paul  \bsc{BUNEL}} 
-	        \item \large{Esteban \bsc{BARON}}
-	        \item \large{Valentin \bsc{PERON}}
-	        \item \large{Julien \bsc{LEBARON}}
-	    \end{itemize}
-		\vspace{0.5cm}
-		\large{\textbf{Encadrante :}}
-		\large{Anne-Elisabeth \bsc{BAERT}} \\
-	\end{flushleft}
-\end{minipage}
+% \begin{minipage}[t]{8.5cm}
+% 	\begin{flushleft}
+
+\vspace{1.7cm}
+\large{\textbf{Étudiants :}}
+\begin{itemize}[label=]
+    \setlength\itemsep{0em}
+    \item \large{Valentin \textsc{Fontaine}}
+    \hfill \large{Valentin \textsc{Peron}}
+    \item \large{Paul \textsc{Bunel}} 
+    \hfill \large{Julien \textsc{Lebaron}}
+    \item \large{Esteban \textsc{Baron}}
+\end{itemize}
+
+\vspace{0.5cm}
+\large{\textbf{Encadrante :}}
+\large{M\textsuperscript{me} Anne-Elisabeth \textsc{Baert}}
 \hfill
+\large{\textbf{Année :} 2019-2020}
+
+% 	\end{flushleft}
+% \end{minipage}
+% \hfill
 %année universitaire
-\begin{minipage}[t]{8cm}
-	\begin{flushright} 
-		\large{\textbf{Année :} 2020} 
-	\end{flushright}
-\end{minipage}
+% \begin{minipage}[t]{8cm}
+% 	\begin{flushright} 
+% 		\large{\textbf{Année :} 2020}
+% 	\end{flushright}
+% \end{minipage}
+
+%logo de la fds, de l'UM et des infos
+\vspace{0.8cm}
+\begin{center}
+\includegraphics[scale=0.6]{logoFDS.png}
+\end{center}
+
+% \hfill
+% \includegraphics[scale=0.2]{logoInfo.jpg}
+
 \end{titlepage}
 
 %Sommaire
-\begin{titlepage}
-\renewcommand{\contentsname}{Sommaire}
+% \renewcommand{\contentsname}{Sommaire}
+\setcounter{page}{1}
 \setcounter{tocdepth}{1}
-\large{\tableofcontents}
-\thispagestyle{empty}
-\end{titlepage}
+\tableofcontents
+% \large{\tableofcontents}
+% \thispagestyle{empty}
 
 %renommer les chapitres en parties
 \renewcommand{\chaptername}{Partie}
-
 
 
 %Introduction 1/2 pages
@@ -140,11 +190,11 @@ Le groupe de développement est composé de cinq personnes, Valentin \textsc{FON
 Le TER est un module qui apporte beaucoup aux étudiants en gestion de projet ainsi qu'en programmation. Seulement une fois terminés les projets ne sont pas valorisés et tombent dans l'oubli. Notre solution est de proposer une application permettant à chaque étudiants de déposer leurs projets pour les rendre visibles et téléchargeables par tous.
 
 \section*{Approches}
-Notre objectif final étant de produire une application fonctionnelle pouvant être utilisée par tous, nous avions besoin : d'une interface graphique décente, totalement opérationnelle et facilement modulable, ainsi que d'un système de communication efficace entre l'application et la base de données. Nous avons donc décidé de diviser le projet en trois partie : tout d'abord la conception d'un framework permettant la réalisation d'interfaces graphiques, puis la réalisation de l'interface graphique elle-même à partir de ce framework, et enfin la partie réseau permettant à l'application de communiquer avec un serveur distant. Ces trois parties communiquent ensembles part le biais d'une architecture logiciel MVC (Modèle-Vue-Contrôleur).\\
+Notre objectif final étant de produire une application fonctionnelle pouvant être utilisée par tous, nous avions besoin : d'une interface graphique décente, totalement opérationnelle et facilement modulable, ainsi que d'un système de communication efficace entre l'application et la base de données. Nous avons donc décidé de diviser le projet en trois partie : tout d'abord la conception d'un framework permettant la réalisation d'interfaces graphiques, puis la réalisation de l'interface graphique elle-même à partir de ce framework, et enfin la partie réseau permettant à l'application de communiquer avec un serveur distant. Ces trois parties communiquent ensembles part le biais d'une architecture logicielle Modèle-Vue-Contrôleur (MVC).\\
 Notre appplication est téléchargeable par tous depuis le site web \url{ https://fvostudio.com/punyduck/}.
 
 \section*{Cahier des charges}
-Le but de Punyduck est de proposer aux étudiants en informatique une plateforme de distribution de leurs différents projets. Cette plateforme devait être une application téléchargeable sur un site internet, et connectée à un serveur pour permettre l'échange de projets entre différents clients. \\
+Le but de Punyduck est de proposer aux étudiants en informatique une plateforme de distribution de leurs différents projets. Cette plateforme doit être une application téléchargeable sur un site internet, et connectée à un serveur pour permettre l'échange de projets entre différents clients. \\
 Pour l'organisation du projet, nous l'avons tout d'abord divisé en plusieurs étapes : 
 \begin{itemize}[label=$-$]
     \item Mise en place d’un serveur qui servira d’intermédiaire entre les utilisateurs et la base de données.
@@ -155,11 +205,10 @@ Pour l'organisation du projet, nous l'avons tout d'abord divisé en plusieurs é
 projets.
     \item Mise en service d’un site internet permettant le téléchargement de l’application.
 \end{itemize}
-\newpage
 Ensuite, une fois les différentes parties du projet dégagées, pour bien définir chacune d'entre elles nous avons décidé du cahier des charges suivant :
 \begin{description}
 %I 
-    \item[Le serveur :] Le serveur devra fonctionner de manière asynchrone (nous définiront ce principe dans la prochaine partie). Il pourra héberger de manière sécurisée les données des utilisateurs (nom, mots de passes, ...) et devra être capable de gérer la plupart des erreurs de réseau, comme les coupures de connexion lors d'un téléchargement.
+    \item[Le serveur :] Le serveur devra fonctionner de manière asynchrone (nous définiront ce principe dans la partie \ref{asyncio}). Il pourra héberger de manière sécurisée les données des utilisateurs (nom, mots de passes, ...) et devra être capable de gérer la plupart des erreurs de réseau, comme les coupures de connexion lors d'un téléchargement.
 %II
     \item[Le framework :] Le framework définira un ensemble de classes et de fonctions qui serviront de base à la structure d'une nouvelle application. Son utilisation doit être facile avec assez de fonctionnalités déjà disponibles pour pouvoir réduire les appels de fonctions bas niveau. De plus, il devra également permettre la plasticité des interfaces.
 %III
@@ -176,15 +225,14 @@ Ensuite, une fois les différentes parties du projet dégagées, pour bien défi
 \chapter{Technologies utilisées}
 \section{Langages}
 Pour la programmation de notre application, nous avons choisis assez naturellement d'utiliser le langage C/C++. En effet, c'est le langage que nous avons le plus étudié à l'université, avec lequel 3 des 5 membres du groupe avaient codé leur projet de Licence 1 CMI, et qui nous offrait un support puissant et efficace pour notre interface graphique. \\
-De plus le C++ nous a permis de coder en orienté objet, ce qui était une nécessité pour la création de notre application. En effet, notre programme utilise énormément ce type de programmation : nous développeront ce point plus tard dans la partie 3 sur le développement logiciel. \\
+De plus le C++ nous a permis de coder en orienté objet, ce qui était une nécessité pour la création de notre application. En effet, notre programme utilise énormément ce type de programmation : nous développeront ce point plus tard dans la partie \ref{struct} sur les structures de données. \\
 
 Pour l'interface graphique, nous avons utilisé la bibliothèque OpenGL : une interface regroupant environ 250 fonctions différentes qui peuvent être utilisées pour afficher des scènes tridimensionnelles complexes à partir de simples primitives géométriques. Du fait de son ouverture, de sa souplesse d'utilisation et de sa disponibilité sur toutes les plates-formes, OpenGL est une des bibliothèque graphiques les plus utilisée par la majorité des applications scientifiques, industrielles ou artistiques 3D. \\
 L'utilisation de cette bibliothèque (associée à GLFW pour la gestion des fenêtres) était donc un choix assez basique puisqu'elle est très répandue, mais nous avons dû apprendre à l'utiliser : celle-ci est beaucoup plus complexe que les librairies que nous avions utilisées auparavant, comme SFML ou PyGame, de par son bas niveau. \\
 
 Pour gérer la partie réseau de notre application, nous n'avions pas besoin d'utiliser un langage puissant comme le C/C++, nous pouvions donc nous rabattre sur un langage moins performant mais plus facile d'accès.
 De ce fait, nous nous sommes dirigés vers le langage python, qui est un langage très simple d'utilisation, pratique pour débuter dans le domaine complexe de la programmation que représente la programmation en réseau. De surcroît il est plutôt efficace pour gérer les entrées sorties, notamment pour la lecture et l'écriture dans des fichiers, qui est une notion centrale dans notre projet.\\
-
-Cependant, le langage Python de base ne permet pas de faire de la programmation en réseau, nous avons donc du choisir une des nombreuses bibliothèques disponibles permettant de faire de la programmation réseau en Python. Après réflexion, nous avons opté pour le module « asyncio » pour deux raisons : premièrement, ce module offrait une interface de programmation en réseau de haut niveau donc plus simple d'utilisation, ce qui nous arrangeait particulièrement étant donné que nous sommes parfaitement novices dans ce domaine ; Deuxièmement, le gros point fort de ce module est le fait qu'il implémente une nouvelle manière de programmer~: la programmation asynchrone. La programmation asynchrone pour les entrées/sorties est une forme de programmation parallèle permettant d'exécuter d'autres parties d'un programme lorsque celui-ci est en attente d'une transmission de donnée, afin de grandement diminuer le temps d'exécution du programme. \\
+Cependant, le langage Python de base ne permet pas de faire de la programmation en réseau, nous avons donc du choisir une des nombreuses bibliothèques disponibles permettant de faire de la programmation réseau en Python. \label{asyncio} Après réflexion, nous avons opté pour le module « asyncio » pour deux raisons : premièrement, ce module offrait une interface de programmation en réseau de haut niveau donc plus simple d'utilisation, ce qui nous arrangeait particulièrement étant donné que nous sommes parfaitement novices dans ce domaine ; Deuxièmement, le gros point fort de ce module est le fait qu'il implémente une nouvelle manière de programmer~: la programmation asynchrone. La programmation asynchrone pour les entrées/sorties est une forme de programmation parallèle permettant d'exécuter d'autres parties d'un programme lorsque celui-ci est en attente d'une transmission de donnée, afin de grandement diminuer le temps d'exécution du programme. \\
 
 \section{Outils} %outils utilisés pourquoi ce choix avantages ? postgresql
 Pour réaliser notre projet nous avons utilisé des outils différents et spécifiques à chaque tâche. \\
@@ -202,9 +250,8 @@ Pour ce qui est de l'éditeur de code utilisé, nous nous sommes tous penché su
 
 Enfin, nous avons utilisé le langage \LaTeX{} via la plateforme Overleaf\footnote{Overleaf : \url{https://www.overleaf.com/}} pour rédiger ce rapport.
 
-
 %Partie 3 Développement logiciel 5/10 pages
-\chapter{Développement logiciel, Conception, Modélisation, Implémentation}
+\chapter{Développement et conception de Punyduck}
 \section{Présentation du développement}
 Le développement du projet est séparé en trois parties : 
 \begin{itemize}[label=$-$, leftmargin=1.5cm]
@@ -286,8 +333,8 @@ Ainsi le module possède deux fonctions : \verb!poll_request! qui retourne le pr
 Enfin, étant donné que l'application n'a pas accès directement à \verb!m_requests! et \verb!m_responses! puisque que le module s'exécute dans un second thread, nous déclarons une instance de \verb!ClientGateway! dans le contrôleur, puis nous exécutons dans le second thread la fonction de la classe qui lance le programme Python du client. Cette opération nous donne donc accès aux attributs de la \verb!ClientGateway! du second thread directement depuis le contrôleur, dans le premier thread.
 
 \section{Modélisation}
-
-\begin{center}
+%Le newpage est la temporairement, car si on l'enlève, une page vide se forme, je n'ai pas encore trouver le moyen ou encore même la raison, cela n'étais pas le cas avant la barre du dessus 'Punyduck -- rapport de projet t.e.r'
+\newpage
 \begin{tikzpicture}
 \umlclass[x=-1,y=-10, fill=gray!5]{LQSurface}{
     -- m\_VBO : GLuint\\
@@ -373,11 +420,9 @@ Enfin, étant donné que l'application n'a pas accès directement à \verb!m_req
 \umlinherit[geometry=-|]{LQSurface}{LQuark}
 \umlinherit[geometry=|-]{LQSurface}{LQTexture}
 \end{tikzpicture}
-\end{center}
 
-\begin{center}
 \begin{tikzpicture}
-\umlclass[fill=gray!5]{LQNumber}{
+\umlclass[x=-2, fill=gray!5]{LQNumber}{
     -- m\_quark : LQuark\\
     %-- (*m\_invoke)(LQuark*) : void \\ Trouver comment représenter une fonction en attribut UML
     -- m\_value : float \\
@@ -400,7 +445,7 @@ Enfin, étant donné que l'application n'a pas accès directement à \verb!m_req
     + float() : operator \\
     \umlstatic{+ old() : float}
     }
-\umlclass[y=-9.5, fill=gray!5]{LQMathVar}{
+\umlclass[x=7, y=-11, fill=gray!5]{LQMathVar}{
     -- m\_number : LQNumber \\
     -- m\_coeff : float \\
     -- m\_next : LQMathVar
@@ -411,7 +456,7 @@ Enfin, étant donné que l'application n'a pas accès directement à \verb!m_req
     + parentCoords(LQNumber number) : bool \\
     + compatible(LQNumber number) : bool
 }
-\umlclass[x=10, y=-10, fill=gray!5]{LQMathExpr}{
+\umlclass[x=7, y=-2.5, fill=gray!5]{LQMathExpr}{
     -- addCompatible(LQMathVar first, float coeff=1.0f) : void\\
     -- m\_first : LQMathVar \\
     -- m\_last : LQMathVar \\
@@ -436,16 +481,15 @@ Enfin, étant donné que l'application n'a pas accès directement à \verb!m_req
     \umlvirt{+ operator/(float coeff) : LQMathExpr <<operator>>}
     }
     
-\umlclass[x=9, y=2.5, fill=gray!5]{LQuark}{...\\}{...\\}
+\umlclass[x=9, y=3, fill=gray!5]{LQuark}{...\\}{...\\}
 %lien
 \umlaggreg[mult=1, pos=0.5, angle1=40, angle2=60, loopsize=2cm]{LQMathVar}{LQMathVar}
 \umlaggreg[mult=1, pos=0.8, angle1=40, angle2=50, loopsize=2cm]{LQNumber}{LQNumber}
 \umlassoc[geometry=--, mult=2]{LQMathVar}{LQMathExpr}
 \umlassoc[geometry=|-]{LQMathExpr}{LQNumber}
-\umlassoc[geometry=--]{LQMathVar}{LQNumber}
+\umlassoc[geometry=-|]{LQMathVar}{LQNumber}
 \umlassoc[geometry=-|]{LQuark}{LQNumber}
 \end{tikzpicture}
-\end{center}
 
 \begin{center}
 \begin{tikzpicture}
@@ -475,44 +519,32 @@ Enfin, étant donné que l'application n'a pas accès directement à \verb!m_req
 \umlinherit[geometry=-|]{LQViewable}{LQSurface}
 \end{tikzpicture}
 \end{center}
-
 \section{Fonctionnalités de l'interface}
-%Je parle de ce qui devait être fait (j'ai pas mis les notification, ni personnalisation) si quelque chose ne peux être fait ou n'est pas fait d'ici la fin, enlever directement la partie en question.
-Lorsque vous lancerez le client Punyduck vous aurez une interface vous acceuillant dans laquelle vous pourrez vous connectez, avec votre identifiant et votre mot de passe, ou vous inscrire (figure \ref{Connexion}). Une fois connecté vous vous trouverez devant l’interface principale, tout les projets sur PunyDuck seront alors à votre disposition.
+Au lancement de l'application Punyduck, une page d'accueil s'affiche\footnote{\label{note2}Les visuels des différentes pages de l'application sont disponibles en annexe \ref{visuels}} pour se connecter ou s'inscrire, avec un identifiant et un mot de passe. Une fois connecté, l’interface principale s'affiche, nous amenant sur la page « Projets ». \\
+L'interface graphique est composé de plusieurs fenêtres, chacune spécifique. Pour les deux fenêtres principales une barre de navigation s'affiche en haut, contenant des liens vers la page « Projet », où l'ensemble des projets mis en ligne seront affichés, et la page « Dépot » qui servira à déposer un projet. \\
 
-L'interface graphique est composé de plusieurs fenêtres, chacune spécifique. Pour les deux fenêtre principales, on a une barre de navigation contenant des liens pour :
-\vspace{0.5cm}
-\begin{itemize}
-    \item Les "Projets", où l'ensemble des projets mis en ligne seront affichés. 
-    \item Le "Dépôt" vas servir à faire une demande de dépôt de projet, afin qu'il soit vérifié avant mise en ligne (pour éviter les dépôt de virus ou autre).
-    \item Icônes basique telle que réduire, agrandir et fermer.
-\end{itemize}
-\vspace{0.5cm}
-
-L'interface des projets permet de naviguer à travers les différents projets mis en ligne sur la plateforme et de les rechercher par leur nom ou tag (via la barre de recherche). Pour télécharger un projet, cela se fait simplement via le bouton à droite du tag du projet comme on peut le voir à la figure \ref{Projets}.\\
-%Mettre image en annexe (utiliser \appendix)
-Pour la page dépôt (figure \ref{Depot}), pour ceux qui souhaitent déposer leur propre projet sur la plateforme, il suffit de cliquer sur l'onglet "dépôt", glisser et déposer votre projet (le dossier) à l'endroit indiqué, lui attribuer un nom puis un tag et enfin l'envoyer en ayant bien remplis tout les champs demandés.
-\\
+L'interface des projets\textsuperscript{\ref{note2}} permet de naviguer à travers les différents projets mis en ligne sur la plateforme et de les rechercher par leur nom (via la barre de recherche). Pour télécharger un projet, cela se fait simplement via le bouton à droite du tag du projet.\\
+La page dépot\textsuperscript{\ref{note2}}, elle, permet à ceux qui souhaitent déposer leur propre projet sur la plateforme de le faire : il suffit de cliquer sur l'onglet "dépôt", glisser et déposer votre dossier ou fichier dans la zone correspondante, lui attribuer un nom puis un tag et enfin l'envoyer en ayant bien remplis tout les champs demandés.
 
 \newpage
-%\section{Format des données et procédure d'utilisation} % dnnées utilisées ou encore convention, décrire certaines procédures de lecture et de validation
 \section{Statistique} %nombres de classes/scripts/ lignes de code/ nombre de module
 Nous allons maintenant regarder notre projet d’un point de vu des statistiques :\\
-Le code du logiciel PunyDuck cumule plus de 5400 lignes de code, dont plus de 4000 concernant uniquement les Frameworks. Ces Frameworks sont aux nombres de 28 et, on le vois sur la figure 2.2, ils représentent les trois quart du projet en termes de ligne . Le serveur plus la base de données cumule eux 441 lignes de code, le client 310, le makefile 48, le view 687. Il y a 12 classes utilisées dans ce projet sans compter les frameworks.\\
-Le site web est composé d’un fichier html de 175 lignes de code, d’un fichier css de 702 lignes de code et 7 illustrations.
-
+Le code de PunyDuck cumule plus de 5400 lignes de code, dont plus de 4000 concernant uniquement le Framework. Ce Framework est composé de 28 élément et, on le voit sur la figure \ref{stats}, ils représentent les trois quart du projet en termes de ligne . Le serveur est composé de 441 lignes de code, le client python 310, le makefile 48, et l'interface graphique 687. Il y a 12 classes utilisées dans ce projet sans compter celles du framework.\\
+Le site web est composé d’un fichier html de 175 lignes de code, d’un fichier css de 702 lignes de code et 7 illustrations. \\
 Nous avons également réalisé un module en python qui a aidé pour la réalisation de l'application.\\
-Concernant le github, il y a 140 commits en tout, les premiers datant du 19 janvier et les derniers de mai.
+Concernant le github, il y a 140 commits en tout, les premiers datant du 19 janvier et les derniers du 10 mai.
+\vspace{2cm}
 \begin{figure}[h]
     \centering
     \includegraphics[scale=0.6]{camenbertstatPNDK.JPG}
     \caption{Proportion des lignes de code par rapport au partie du projet}
-    \label{fig:my_label}
+    \label{stats}
 \end{figure}
 
 %Partie 4 
 \chapter{Algorithmes et Structures de Données}
 \section{Présentation des principales structures de données}
+\label{struct}
 % Parler de s_eventDispatcher, s_modelObserver, autres ?
 \section{Présentation des principaux algorithmes}
 Notre application comporte peu d'algorithme poussés, elle est surtout réfléchie au niveau de la communication entre les différentes structures de données qui la composent. Nous allons tout de même présenter ici deux algorithme que nous avons jugés intéressant : la fonction du contrôleur qui s'occupe de savoir, à chaque déplacement du curseur, sur quel élément (\verb!LQViewable!) de la fenêtre il se trouve, et la fonction du serveur qui reçoit les requêtes SQL et renvoie une réponse adapté.
@@ -523,12 +555,12 @@ Etant donné qu'un viewable peut être situé dans un autre élément, et que sa
 
 Le fonctionnement de la fonction est donc le suivant\footnote{Tout le long de l'explication de l'algorithme, nous considèrerons les coordonnées en abscisse et en ordonnée comme une seule variable pour plus de simplicité, bien que dans notre programme elles soient séparées en deux variables $x$ et $y$.} : à chaque appel de la fonction, on sauvegarde dans des attributs de la classe \verb!LQAppController! les dernières position absolues et relative (par rapport à \verb!s_hover_focus!) du curseur. Ensuite, nous calculons le déplacement $\Delta$ de la souris :
 \[\Delta = m - prevAbs, \text{ avec $prevAbs$ la dernière position absolue du curseur}\]
-Ensuite, nous appliquons ce déplacement $\Delta$ sur nos anciennes coordonnées relatives à \verb!s_hover_focus!, afin d'obtenir la nouvelle position relative du curseur par rapport au dernier \verb!LQViewable!. Grâce à cela, nous pouvons définir un booléen important :
+Ensuite, nous ajoutons ce déplacement $\Delta$ sur nos anciennes coordonnées relatives à \verb!s_hover_focus!, afin d'obtenir la nouvelle position relative du curseur par rapport au dernier \verb!LQViewable!. Grâce à cela, nous pouvons définir un booléen important :
 \[outCurrent = (prevRel < 0) \vee (prevRel > dim)\]
 avec $prevRel$ la position relative du curseur et $dim$ les dimension d'un viewable, ici \verb!s_hover_focus!. \\
 Ce booléen nous permet de savoir, selon un viewable, si notre curseur se situe à l'intérieur de celui-ci ou à l'extérieur (en supposant avoir les bonnes coordonnées relative).
-Une fois que ceci est fait, il ne nous reste plus qu'à vérifier si notre curseur est toujours dans \verb!s_hover_focus! : si oui, alors on parcours tous ses fils récursivement pour savoir si l'on se trouve dans l'un d'eux ; si non, alors on remonte les parents de \verb!s_hover_focus! jusqu'à trouver celui dans lequel nous sommes, puis nous parcourons également tous ses fils récursivement afin de trouver l'élément le plus précis dans lequel se trouve le curseur. À chaque déplacement dans l'arbre des éléments, nous devons également ajouter ou retirer à $prevRel$ les coordonnées relatives du dernier viewable qu'on a testé, afin que notre booléen $outCurrent$ teste bien avec les bonnes données. \\
-Cet algorithme est de complexité $O(n+m)$, avec $n$ la longueur du plus long chemin de l'arbre et $m$ le nombre de fils du noeud avec le plus de fils. L'implantation en C++ de cet algorithme est disponible en annexe \ref{cpc}
+Une fois que ceci est fait, il ne nous reste plus qu'à vérifier si notre curseur est toujours dans \verb!s_hover_focus! : si oui, alors on parcours tous ses fils récursivement pour savoir si l'on se trouve dans l'un d'eux ; si non, alors on remonte les parents de \verb!s_hover_focus! jusqu'à trouver celui dans lequel nous sommes, puis nous parcourons également tous ses fils récursivement afin de trouver l'élément le plus précis dans lequel se trouve le curseur. À chaque déplacement dans l'arbre des éléments, nous devons également ajouter ou retirer à $prevRel$ les coordonnées relatives du dernier viewable qu'on a testé, afin que notre booléen $outCurrent$ soit bien calculé avec les bonnes données. \\
+Cet algorithme est de complexité $O(n+m)$ dans le pire des cas, avec $n$ le nombre de \verb!LQViewable! dans l'arbre et $m$ le nombre de fils du viewable dans lequel le curseur se trouve ; mais sa complexité « amortie » est de $O(p)$ avec $p$ le nombre de fils de \verb!s_hover_focus!. L'implantation en C++ de cet algorithme est disponible en annexe \ref{cpc}
 
 \subsection{Fonction de gestion des requêtes SQL}
 Quand le serveur reçoit une requête SQL de la part du client, il doit la traiter avant de l'envoyer à la base de données, puis traiter la réponse avant de la renvoyer au client. Tout ceci se fait dans une fonction, que nous allons décrire ici. \\
@@ -561,12 +593,20 @@ idColonnes = {
 }
 \end{lstlisting}
 
-Ensuite, la première étape est de savoir si la requête est de type « \verb!SELECT * FROM ...!~ » ou si elle demande des attributs précis de la base de données, par exemple «~ \verb!SELECT idProjet, nom, tag, login FROM Projet, UserInfo WHERE idLog = pIdLog;! ». \\
+Ensuite, la première étape est de savoir si la requête est de type « \verb!SELECT * FROM ...!~» ou si elle demande des attributs précis de la base de données, par exemple «~\verb!SELECT idProjet, nom, tag, login FROM Projet, UserInfo WHERE idLog = pIdLog;!~». \\
 
 Dans le premier cas, la fonction exécute la requête dans la base de données et reçoit un tableau de \verb!tuples! en retour, chaque \verb!tuple! correspondant à une ligne de la base de données. On parcours donc chaque élément de ce tableau bidimensionnel, et en fonction de sa position dans le \verb!tuple!, on agit différemment : en effet, on n'ajoute pas la même chose dans la chaîne finale en fonction de si on reçoit une chaîne de caractère, un entier ou un chemin vers une image. Une fois que tous les éléments sont ajoutés à la chaîne finale, il ne reste plus qu'à ajouter les données manquante au début de la chaîne, comme décrit juste avant ("dataReceive", nom du modèle, nombre d'items, etc.). \\
 
 Dans le deuxième cas, c'est plus complexe : avant d'envoyer la requête à la base de données, il faut remettre les attributs dans le même ordre que dans le dictionnaire \verb!idColonnes! (\ref{idc}) afin que le client puisse lire la réponse dans le bon ordre. \\
-Pour cela, nous avons implenté en Python l'algorithme triFusion étudié en cours d'algorithmique HLIN301 et HLIN401. En effet, l'objectif est de reconstruire la requête SQL dans le bon ordre avant de l'envoyer à la base de données : nous isolons donc les attributs de la requête dans un tableau grâce aux expressions régulières, puis on appelle notre fonction \verb!triFusion! sur ce tableau (la fonction est adaptée pour pouvoir trier le tableau de chaîne de caractère par rapport au dictionnaire \verb!idColonnes!). Le tableau d'attributs est donc dans le bon ordre après cette opération, nous n'avons plus qu'à reconstruire la requête à partir de ce tableau et à l'exécuter dans la base de données. \\
+Pour cela, nous avons implenté en Python l'algorithme triFusion étudié en cours d'algorithmique HLIN301 et HLIN401. En effet, l'objectif est de reconstruire la requête SQL dans le bon ordre avant de l'envoyer à la base de données : nous isolons donc les attributs de la requête dans un tableau grâce à des expressions régulières :
+\begin{lstlisting}[style=py, caption=serveur.py : expressions régulières, label=idc]
+    match = re.search(r'^SELECT (.*) FROM .*;', query)
+    if match != None:
+        # On remet les attributs dans l'ordre afin de les recevoir correctement, et que le
+        # client les recoive dans l'ordre
+        rows = match.group(1).split(', ')
+\end{lstlisting}
+puis on appelle notre fonction \verb!triFusion! sur le tableau d'attributs (la fonction est adaptée pour pouvoir trier le tableau de chaîne de caractère par rapport au dictionnaire \verb!idColonnes!). Le tableau d'attributs est donc dans le bon ordre après cette opération, nous n'avons plus qu'à reconstruire la requête à partir de ce tableau et à l'exécuter dans la base de données. \\
 Une fois que ceci est fait, le reste est essentiellement la même chose que dans le premier cas. \\
 
 Cette fonction s'exécute en temps $O(nm)$ avec $n$ le nombre d'item renvoyé par la base de données et $m$ le nombre d'attributs pour chaque item. Le code Python de cette fonction est disponible en annexe \ref{sql}
@@ -575,84 +615,27 @@ Cette fonction s'exécute en temps $O(nm)$ avec $n$ le nombre d'item renvoyé pa
 \chapter{Gestion du Projet}
 \section{Organisation et planification}
 Durant le développement de Punyduck, dès son début, nous avons décidé d'avancer le projet après les repas du midi,
-ou dès que l'occasion se présentait. Étant toujours ensemble la plupart du temps, c'était donc de manière quotidienne que se faisait l'avancée du projet. Quand le travail se faisait à distance via la plate-forme "discord", nous faisions en sorte de garder toutes traces de ce qui avait été fait, et de ce qui restait à faire, ainsi que de bien penser à mettre le git à jour pour chaque membres du projet.\\
+ou dès que l'occasion se présentait. Étant toujours ensemble la plupart du temps, c'était donc de manière quotidienne que se faisait l'avancée du projet. Quand le travail se faisait à distance via la plate-forme "discord", nous faisions en sorte de garder toutes traces de ce qui avait été fait, et de ce qui restait à faire, ainsi que de bien penser à mettre le git à jour pour chaque membre du projet.\\
 
 À chaque fin de mois, nous organisions une entrevue avec notre encadrante Mme Anne-Elisabeth \textsc{Baert} afin de faire le point sur l'avancée du projet et de connaître ses priorités. Cela nous a permis de ne pas dériver et d'arriver jusqu'à l'aboutissement du projet. \\
 
 Le développement du projet à été découpé en trois partie (hors site web et rapport) qui sont : la partie réseau en Python (le serveur/client et la base de données PostgreSQL), la partie framework et l'interface de notre application. Le groupe à été séparé au départ en deux groupes : un pour la partie réseau et l'autre pour la partie framework. La dernière partie a réuni les deux groupes afin de produire la liaison Python/C++ et la mise en place de l'interface graphique grâce au framework. \\
 
 Une fois l'ensemble de l'application finie et fonctionnelle, nous avons mit le serveur en ligne afin que l'on puisse lancer l'application de n'importe où. \\
-Également, le site web se faisait en parallèle du projet par un Valentin \textsc{Peron} durant cette phase.\\
+Également, le site web se faisait en parallèle du projet par Valentin \textsc{Peron} durant cette phase.\\
 
 \section{Changements majeurs}
 L'organisation initiale du projet s'est vue considérablement changée tout au long du projet. En premier lieu, nous avons dû gérer la programmation de l'application avec seulement 3 membres du groupes sur les 5. Les tâches ont donc été au départ répartie de la manière suivante : Valentin \textsc{Fontaine} s'occupait du framework, Esteban \textsc{Baron} des débuts de l'interface graphique utilisant le framework, et Paul \textsc{Bunel} de la partie réseau en Python. \\
-Puis, une fois ces parties bien avancées, nous avons commencé à mettre en place l'architecture MVC de notre application. À partir de là, nous n'étions plus que deux à s'occuper du code de l'application : ainsi, Valentin \textsc{Fontaine}, aidé par Paul \textsc{Bunel}, se sont donc occupé de l'implémentation de l'architecture MVC, ainsi que de la majorité de l'interface graphique de l'application. \\
+Puis, une fois ces parties bien avancées, nous avons commencé à mettre en place l'architecture MVC de notre application. À partir de là, nous n'étions plus que deux à nous occuper du code de l'application : ainsi, Valentin \textsc{Fontaine}, aidé par Paul \textsc{Bunel}, se sont donc occupés de l'implémentation de l'architecture MVC, ainsi que de la majorité de l'interface graphique de l'application. \\
 Le diagramme de Gantt final du projet est disponnible à la figure \ref{Gantt}.
 
 \newpage
+%\vspace{-2cm}
 \begin{rotate}{270}
-\begin{comment}
-%police du gantt au choix selon préférence
-\setganttlinklabel{s-s}{START-TO-START}
-\setganttlinklabel{f-s}{FINISH-TO-START}
-\setganttlinklabel{f-f}{FINISH-TO-FINISH}
-\begin{ganttchart}[
-    canvas/.append style={fill=none, draw=black!25, line width=3pt},
-    hgrid style/.style={draw=black!5, line width=.75pt},
-    vgrid={*1{draw=black!5, line width=.75pt}},
-    x unit=0.85cm,
-    today label font=\small\bfseries,
-    title/.style={draw=none, fill=none},
-    title label font=\bfseries\footnotesize,
-    title label node/.append style={below=7pt},
-    include title in canvas=false,
-    %Zone des sous parties d'un groupe
-    bar label font=\mdseries\small\color{black!90},
-    bar label node/.append style={left=1cm},
-    bar/.append style={draw=none, fill=darkgreen!60},
-    bar incomplete/.append style={fill=bargreen},
-    bar progress label font=\mdseries\footnotesize\color{black!70},
-    %tête de groupe (Réseau, framwork)
-    group incomplete/.append style={fill=groupgreen!85},
-    group/.append style={draw=none, fill=darkgreen},
-    group left shift=0,
-    group right shift=0,
-    group height=0.3,
-    group peaks tip position=0,
-    group label node/.append style={left=1.5cm},
-    group progress label font=\bfseries\small,
-    %zone rouge / avancement
-    link/.style={-latex, line width=1.5pt, linkred},
-    link label font=\scriptsize\bfseries,
-    link label node/.append style={below left=-1pt and 0pt}
-  ]{1}{15}
-  \gantttitle[
-    title label node/.append style={below left=7pt and -3pt}
-  ]{SEMAINES:\quad1}{1}
-  \gantttitlelist{2,...,15}{1} \\
-  \ganttgroup{Préliminaire Projet}{1}{1} \\[grid]
-  \ganttgroup[name = R]{Partie Réseaux}{2}{10} \\
-  \ganttbar[progress=75,name=PR1A]{\textbf{PR 1.1} Activité A}{2}{8} \\
-  \ganttbar[progress=67,name=PR1B]{\textbf{PR 1.2} Activité B}{2}{10} \\
-  \ganttbar[progress=0 ,name=PR1C]{\textbf{PR 1.4} Activité C}{4}{10} \\[grid]
-  \ganttgroup{Partie framework}{2}{10} \\
-  \ganttbar[progress=0]{\textbf{PFRA 2.1} Activité D}{2}{5} \\
-  \ganttbar[progress=0]{\textbf{PFRA 2.2} Activité E}{3}{5} \\
-  \ganttbar[progress=0]{\textbf{PFRA 2.3} Activité F}{4}{5}\\[grid]
-  \ganttgroup[name= F]{Partie frontwork}{11}{14} \\
-  \ganttbar[progress=0]{\textbf{PFRO 2.1} Activité G}{5}{6} \\
-  \ganttbar[progress=0]{\textbf{PFRO 2.2} Activité H}{6}{8} \\
-  \ganttbar[progress=0]{\textbf{PFRO 2.3} Activité I}{9}{10}\\[grid]
-  \ganttgroup{Partie Rapport}{2}{15}\\[grid]
-  \ganttgroup{Partie Site web}{9}{13}
-  
   %link entre activitées
-  \ganttlink[link type=s-s]{PR1A}{PR1B}
-  \ganttlink[link type=f-s]{R}{F}
-  \ganttlink[link type=f-f,link label node/.append style=left]{PR1C}{PR1B}
-\end{ganttchart}
-\end{comment}
-%plus qu'à compléter
+  %\ganttlink[link type=s-s]{PR1A}{PR1B}
+  %\ganttlink[link type=f-s]{R}{F}
+  %\ganttlink[link type=f-f,link label node/.append style=left]{PR1C}{PR1B}
 \setganttlinklabel{s-s}{START-TO-START}
 \setganttlinklabel{f-s}{FINISH-TO-START}
 \setganttlinklabel{f-f}{FINISH-TO-FINISH}
@@ -660,7 +643,7 @@ Le diagramme de Gantt final du projet est disponnible à la figure \ref{Gantt}.
         hgrid,
         vgrid={*{6}{draw=none},{dotted}},
         vrule/.style={very thick, red},
-        x unit=0.160cm,
+        x unit=0.155cm,
         time slot format=isodate,
         time slot unit=day,
         calendar week text = {W\currentweek{}},
@@ -677,15 +660,14 @@ Le diagramme de Gantt final du projet est disponnible à la figure \ref{Gantt}.
         \ganttbar[bar/.append style={fill=groupgreen}]{Interface python/C++}{2020-03-18}{2020-04-01}\\
         \ganttbar[bar/.append style={fill=darkgreen!60}]{Event et Callback}{2020-03-29}{2020-04-20}\\
         \ganttbar[bar/.append style={fill=darkgreen!60}]{Interface graphique}{2020-04-26}{2020-05-01}\\
-        \ganttbar[bar/.append style={fill=bargreen}]{Task6}{2020-02-01}{2020-02-05}\\
-        \ganttbar[bar/.append style={fill=bargreen}]{Task7}{2020-02-01}{2020-02-05}\\
-        \ganttbar[bar/.append style={fill=bargreen}]{Task8}{2020-02-01}{2020-02-05}\\
-        \ganttbar[bar/.append style={fill=bargreen}]{Task9}{2020-02-01}{2020-02-05}\\
-        \ganttbar[bar/.append style={fill=bargreen}]{Task10}{2020-02-01}{2020-02-05}\\
-        \ganttbar[bar/.append style={fill=bargreen}]{Task11}{2020-02-01}{2020-02-05}\\
-        \ganttbar[bar/.append style={fill=bargreen}]{Task12}{2020-02-01}{2020-02-05}\\
-        \ganttbar[bar/.append style={fill=bargreen}]{Task13}{2020-02-01}{2020-02-05}\\
-        \ganttbar[bar/.append style={fill=bargreen}, name=SW]{Site Web}{2020-03-28}{2020-04-30}\\
+        \ganttbar[bar/.append style={fill=darkgreen!60}]{Task6}{2020-02-01}{2020-02-05}\\
+        \ganttbar[bar/.append style={fill=darkgreen!60}]{Task7}{2020-02-01}{2020-02-05}\\
+        \ganttbar[bar/.append style={fill=darkgreen!60}]{Task8}{2020-02-01}{2020-02-05}\\
+        \ganttbar[bar/.append style={fill=darkgreen!60}]{Task9}{2020-02-01}{2020-02-05}\\
+        \ganttbar[bar/.append style={fill=darkgreen!60}]{Task10}{2020-02-01}{2020-02-05}\\
+        \ganttbar[bar/.append style={fill=darkgreen!60}]{Task11}{2020-02-01}{2020-02-05}\\
+        \ganttbar[bar/.append style={fill=darkgreen!60}]{Task12}{2020-02-01}{2020-02-05}\\
+        \ganttbar[bar/.append style={fill=darkgreen!60}, name=SW]{Site Web}{2020-03-28}{2020-04-30}\\
         \ganttbar[bar/.append style={fill=bargreen!50}]{Rapport}{2020-04-15}{2020-05-10}
         \ganttvrule{2020-05-30}{2020-04-30}
         %link
@@ -697,17 +679,16 @@ Le diagramme de Gantt final du projet est disponnible à la figure \ref{Gantt}.
     \caption{Diagramme de Gantt pour notre projet}
     \label{Gantt}
 \end{figure}
-%.Partie 6 1 page
+%.Partie 6
 \chapter{Bilan et Perspectives} %bilan et Conclusion, parler en onction du cahier des charges, les perspectives futur du projet et l'apport.
-Le bilan de cette fin de projet est très positive, en comparant à notre cahier des charges, la quasi totalité des demandes et des objectif a été atteints. Malgré le manque de mains d'oeuvres pour la partie informatique, 3 au lieu de 5, le projet à pu voir le jour avec succès.
-Bilan partie réseau
-Bilan partie front et framework
-Bilan des aides (cours, site, grâce à quoi, etc...)
+Le bilan pour la fin de projet est positive, bien que les objectifs du cahier des charges n'aient pas du tout été tous atteints, nous avons quand même énormément appris grâce à ce projet, et avons produit une application dont nous sommes fiers même avec une équipe réduite pour le développement. \\
+Grâce au développement de cette application, nous avons pu mettre en pratique les enseignements de plusieurs modules de licence : le module HLIN304 - Systèmes d'information et bases de données 1 pour les requêtes SQL, les modules de programmation impérative pour le développement en C++, le module HLIN406 - Modélisation et programmation par objet 1 pour la programmation orientée objet et le diagramme UML du framework, ainsi que les modules d'Algorithmique et de complexité pour l'étude de la complexité de nos principaux algorithmes. \\
+De plus, nous avons réalisé cette application en partant du bas niveau pour le côté graphique, ce qui nous a permit de comprendre certaines mécaniques lors de la réalisation d'une telle application ; et nous avons pour la première fois fait de la programmation en réseau et en multithread.
 
-\vspace{1cm}
-\section*{Conclusion}
+\section*{Perspectives}
+Après la fin de ce projet, nous avons encore beaucoup de choses à améliorer pour l'application : plus de personnalisation de l'interface graphique, amélioration du framework, augmenter la sécurité du serveur, etc. Nous comptons donc continuer le développement du projet durant l'été qui suit, afin de produire une application aboutie, avec un maximum de fonctionnalité implentées sur les 3 plans framework/interface graphique/réseau.
 
-Conclusion globale, point négatif et positif + terminer par les perspectives du client.
+% Développer le fait qu'on va sûrement continuer le projet durant l'été
 
 %.Partie 7
 \part*{Annexes}
@@ -715,6 +696,7 @@ Conclusion globale, point négatif et positif + terminer par les perspectives du
 
 \begin{appendix}
 \chapter{Visuels de l'application}
+\label{visuels}
 \begin{figure}[!h]
     \centering 
     \includegraphics[scale=0.2]{punyduck-img-1.png}
